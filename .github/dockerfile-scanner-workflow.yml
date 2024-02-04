@@ -1,0 +1,66 @@
+on:
+  schedule:
+    - cron: '00 10 * * 2' # Run every Tuesday at 10:00 AM
+
+env:
+  AWS_DEFAULT_REGION: eu-west-1
+  AWS_DEFAULT_OUTPUT: json
+  IMAGE_TAG: 'dockerfile-scanner-image'
+  AWS_ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY_STAGING }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID_STAGING }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGING }}
+  AWS_ECR_REPOSITORY: liopard-plm-api-staging
+  KUBECONFIG: /tmp/config
+  KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_DATA_STAGING }}
+
+  TARGET_ENV: staging
+
+  DEWEY_SSH_PRIVATE_KEY: ${{ secrets.DEWEY_SSH_PRIVATE_KEY }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: clone submodule
+        uses: actions/checkout@v3
+        with:
+          repository: marleyspoon/dewey
+          path: dewey
+          ssh-key: ${{ secrets.DEWEY_SSH_PRIVATE_KEY }}
+          persist-credentials: true
+
+      - name: checkout submodule
+        run: |
+          git submodule init
+          git submodule update
+
+      - uses: azure/setup-kubectl@v3.0 # https://marleyspoon.slack.com/archives/G2JTSKC1Z/p1651759663825039?thread_ts=1651754605.644029&cid=G2JTSKC1Z
+        with:
+          version: 'v1.22.9'
+        id: install
+        name: Install kubectl
+
+      - name: Build docker image for ${{ env.TARGET_ENV }}
+        env:
+          LATEST_IMAGE: ${{ env.AWS_ECR_REGISTRY }}/${{ env.AWS_ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          TARGET_ENV: ${{ env.TARGET_ENV }}
+        run: |
+          docker build . -t $LATEST_IMAGE --build-arg IMAGE_TAG=$IMAGE_TAG  --build-arg TARGET_ENV=$TARGET_ENV --file docker/$TARGET_ENV.Dockerfile
+
+      - name: Scan docker image
+        env:
+          LATEST_IMAGE: ${{ env.AWS_ECR_REGISTRY }}/${{ env.AWS_ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          TARGET_ENV: ${{ env.TARGET_ENV }}
+        uses: Azure/container-scan@v0
+        with:
+          image-name: ${{ env.LATEST_IMAGE }}
+          severity-threshold: 'Critical'

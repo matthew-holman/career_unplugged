@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "fastapi_template"
+version = "0.1.0"
+description = "basic template"
+authors = ["matthewh <mholman000@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9, <3.11"
+alembic = "1.9.0"
+better-exceptions = "0.3.3"
+fastapi = "0.84.0"
+psycopg2 = "2.9.3"
+pydantic = "1.10.2"
+python-dateutil = "~=2.8.2"
+SQLAlchemy = "1.4.29"
+sqlalchemy-stubs = "0.4"
+sqlalchemy-utils = "0.41.1"
+starlette = "0.19.1"
+uvicorn = {version = "0.20.0", extras = ["standard"]}
+freezegun = "1.2.1"
+pre-commit = "^3.6.0"
+pytest = "7.2.0"
+pytest-cov = "4.0.0"
+pytest-github-actions-annotate-failures = "^0.1.8"
+sqlmodel = "0.0.6"
+
+[tool.poetry.dev-dependencies]
+requests-mock = "^1.10.0"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.6.0"
+
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.venv
+)/
+'''
+
+[tool.coverage.run]
+omit = []
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

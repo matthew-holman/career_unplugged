@@ -1,0 +1,38 @@
+version: '3'
+services:
+  db:
+    image: "postgres:${POSTGRES_VERSION}"
+    ports:
+      - 5432:5432
+    container_name: fastapi_dev_db
+    env_file:
+      - .env
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${FASTAPI_DB_USER}"]
+      interval: 8s
+      timeout: 8s
+      retries: 5
+
+  rest-api:
+    build:
+      context: ./
+      dockerfile: docker/local-dev.Dockerfile #build docker image based on dockerfile in same directory
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db
+    ports:
+      - "8000:8000"
+    container_name: fastapi_dev_web
+    volumes:
+      - $PWD/app:/api/app
+      - $PWD/alembic:/api/alembic
+      - $PWD/tests:/api/tests
+      - $PWD/main.py:/api/main.py
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+    command: bash -c "make migrations && make main"
