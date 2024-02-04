@@ -1,5 +1,3 @@
-import datetime
-
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from starlette import status

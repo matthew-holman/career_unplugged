@@ -7,7 +7,7 @@ name: CI/CD
 on: [push]
 
 jobs:
-  code-quality:
+  lint:
     name: Check coding standards
     runs-on: ubuntu-latest
     steps:

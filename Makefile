@@ -19,7 +19,7 @@ mypy:
 	pre-commit run --all mypy
 
 pytest:
-	poetry run pytest tests --cov-config=.coveragerc --cov-fail-under=100 --cov=app --cov-report term-missing -p
+	poetry run pytest tests --cov-config=.coveragerc --cov-fail-under=100 --cov=app --cov-report term-missing
 
 run-all-pre-commit-hooks:
 	pre-commit run --all

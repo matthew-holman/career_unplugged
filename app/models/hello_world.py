@@ -6,4 +6,3 @@ class HelloWorld(BaseModel):
 
     hello: bool = True
     world: str = "earth"
-

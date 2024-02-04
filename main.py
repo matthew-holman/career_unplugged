@@ -1,25 +1,17 @@
-import logging
-import os
-
-from typing import List
-
 import uvicorn
 
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
-from fastapi.staticfiles import StaticFiles
 from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
-from starlette import status
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, RedirectResponse, Response
+from starlette.responses import JSONResponse, RedirectResponse
 
-from app.db.db import get_db
+from app.log import Log
 from app.routers.hello_world import router as hello_world
 from app.settings import config
-from app.log import Log
 
 
 def get_app():

@@ -1,13 +1,14 @@
+from typing import Generator
+
 import pytest
-from typing import Generator, Optional
 
 from sqlalchemy_utils import create_database, database_exists, drop_database
 from sqlmodel import Session, SQLModel, create_engine
 from starlette.testclient import TestClient
 
 from app.db.db import get_db
-from app.settings import config
 from app.log import Log
+from app.settings import config
 from main import get_app
 
 DATABASE_URL = (

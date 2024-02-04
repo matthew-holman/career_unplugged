@@ -1,5 +1,3 @@
-import datetime
-
 from starlette import status
 from starlette.testclient import TestClient
 
@@ -8,7 +6,6 @@ from app.routers.hello_world import INTERFACE as STATS_INTERFACE
 
 
 def test_get_hello_world(client: TestClient):
-
     response = client.get(
         f"/{STATS_INTERFACE}/helloworld/",
     )
