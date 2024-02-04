@@ -8,7 +8,7 @@ on: [push]
 
 jobs:
   lint:
-    name: Check coding standards
+    name: Code style checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,75 +29,40 @@ jobs:
         with:
           extra_args: --all
 
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13.4-alpine
+        env:
+          POSTGRES_USER: ${{ env.FASTAPI_DB_USER }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_PASSWORD:  ${{ env.FASTAPI_DB_PASSWORD }}
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
 
-#  test:
-#    name: Run tests
-#    needs: code-quality
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#
-#      - name: Install poetry
-#        run: pipx install poetry
-#
-#      - uses: actions/setup-python@v4
-#        with:
-#          python-version: 3.9
-#          cache: poetry
-#
-#      - name: Install dependencies
-#        run: poetry install
-#
-#      - name: pytest Check
-#        run: make pytest
-#        env:
-#          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+      - name: Install poetry
+        run: pipx install poetry
 
-#jobs:
-#  lint:
-#    name: Code style checks
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#      - name: checkout submodule
-#        run: |
-#          git submodule init
-#          git submodule update
-#
-#      - name: Install python requirements
-#        uses: .github/actions/python-requirements
-#
-#      - name: Run all linters
-#        uses: pre-commit/action@v3.0.0
-#        with:
-#          extra_args: --all
-#
-#  test:
-#    runs-on: ubuntu-latest
-#    services:
-#      postgres:
-#        image: postgres:13.4-alpine
-#        env:
-#          POSTGRES_USER: ${{ env.FASTAPI_DB_USER }}
-#          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-#          POSTGRES_PASSWORD:  ${{ env.FASTAPI_DB_PASSWORD }}
-#        ports: ["5432:5432"]
-#        options: >-
-#          --health-cmd pg_isready
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 5
-#    steps:
-#      - uses: actions/checkout@v3
-#
-#      - name: Install python requirements
-#        uses: .github/actions/python-requirements
-#
-#      - name: Running alembic version upgrade
-#        run: |
-#          make migrations
-#
-#      - name: pytest Check
-#        run: make pytest
-#        env:
-#          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+          cache: poetry
+
+      - name: Install Python dependencies
+        run: poetry install
+
+      - name: Running alembic version upgrade
+        run: |
+          make migrations
+
+      - name: pytest Check
+        run: make pytest
+        env:
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
