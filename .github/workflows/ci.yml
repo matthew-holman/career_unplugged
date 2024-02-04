@@ -58,6 +58,11 @@ jobs:
       - name: Install Python dependencies
         run: poetry install
 
+      - name: Open Web Client Directory
+        working-directory: alembic
+        run: |
+          ls -la
+
       - name: Running alembic version upgrade
         run: |
           make migrations
