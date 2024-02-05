@@ -8,14 +8,14 @@ authors = ["matthewh <mholman000@gmail.com>"]
 python = ">=3.9, <3.11"
 alembic = "1.9.0"
 better-exceptions = "0.3.3"
-fastapi = "0.84.0"
+fastapi = "0.99.1"
 psycopg2 = "2.9.3"
 pydantic = "1.10.2"
 python-dateutil = "~=2.8.2"
 SQLAlchemy = "1.4.29"
 sqlalchemy-stubs = "0.4"
 sqlalchemy-utils = "0.41.1"
-starlette = "0.19.1"
+#  starlette = "0.19.1"  no need to explicitly install allow fastpai to handle dependecy
 uvicorn = {version = "0.20.0", extras = ["standard"]}
 freezegun = "1.2.1"
 pre-commit = "^3.6.0"
@@ -26,6 +26,7 @@ sqlmodel = "0.0.6"
 
 [tool.poetry.dev-dependencies]
 requests-mock = "^1.10.0"
+httpx = "0.22.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.6.0"
