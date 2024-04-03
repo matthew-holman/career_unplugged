@@ -15,7 +15,8 @@ REMOTE_REG_EX_PATTERNS = [
     r"\sCET\s",
     "remote in eu",
     "distributed",
-    r"remote[-\s]first" r"remote[-\s]friendly",
+    r"remote[-\s]first",
+    r"remote[-\s]friendly",
 ]
 
 with next(get_db()) as db_session:
@@ -38,10 +39,10 @@ with next(get_db()) as db_session:
                 )
             )
 
+        job_description_text = job_description.content.decode("utf-8")
+
         for pattern in REMOTE_REG_EX_PATTERNS:
-            match = re.search(
-                pattern, job_description.content.decode("utf-8"), re.IGNORECASE
-            )
+            match = re.search(pattern, job_description_text, re.IGNORECASE)
             if match is not None:
                 job_handler.set_sweden_remote(job)
                 continue

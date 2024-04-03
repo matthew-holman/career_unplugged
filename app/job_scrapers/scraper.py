@@ -107,5 +107,5 @@ class Scraper:
     def __init__(self, proxy: list[str] | None = None):
         self.proxy = (lambda p: {"http": p, "https": p} if p else None)(proxy)
 
-    def scrape(self, scraper_input: ScraperInput) -> JobResponse:
+    def scrape(self, scraper_input: ScraperInput):
         pass
