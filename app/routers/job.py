@@ -1,11 +1,14 @@
+from http.client import HTTPException
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from starlette import status
 
 from app.db.db import get_db
-from app.models import HelloWorld
+from app.handlers.job import JobHandler
+from app.models.job import JobRead
 
-INTERFACE = "helloworld"
+INTERFACE = "job"
 
 router = APIRouter(
     prefix=f"/{INTERFACE}",
@@ -20,12 +23,14 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "/{job_id}",
     status_code=status.HTTP_200_OK,
-    response_model=HelloWorld,
+    response_model=JobRead,
 )
-def get_hello_world(
-    db_session: Session = Depends(get_db),
-) -> HelloWorld:
-    hello_world = HelloWorld()
-    return hello_world
+def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
+    job_handler = JobHandler(db_session)
+    job = job_handler.get(job_id=job_id)
+    if job:
+        return job
+    else:
+        raise HTTPException()

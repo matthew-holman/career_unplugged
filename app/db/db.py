@@ -5,7 +5,7 @@ from typing import Any, Generator, List, Optional, Set
 from sqlalchemy import MetaData, create_engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
+from sqlmodel import Session
 
 from app.db.orm_mixins import ColumnMappingMixIn
 from app.settings import config

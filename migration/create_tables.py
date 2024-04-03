@@ -1,4 +1,4 @@
-# from settings import config
+from sqlmodel import SQLModel
 
 from app.db.db import Base, engine
 
@@ -9,4 +9,4 @@ if __name__ == "__main__":
     #     raise Exception("This script is for only local development!")
 
     Base.metadata.bind = engine.connect()
-    Base.metadata.create_all()  # create tables in local
+    SQLModel.metadata.create_all(engine)  # create tables in local

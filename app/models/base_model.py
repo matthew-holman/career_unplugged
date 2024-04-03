@@ -2,8 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import Extra
-from sqlalchemy import Column, DateTime
-from sqlmodel import Field, SQLModel, func
+from sqlmodel import Field, SQLModel
 
 
 def to_camel(string: str) -> str:
@@ -20,29 +19,37 @@ def default_now() -> datetime:
 
 class BaseModel(SQLModel):
     __abstract__ = True
+    # created_at: Optional[datetime] = Field(
+    #     sa_column=Column(
+    #         DateTime(timezone=True),
+    #         default=default_now,
+    #         server_default=func.now(),
+    #         index=True,
+    #     )
+    # )
     created_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime(timezone=True),
-            default=default_now,
-            server_default=func.now(),
-            index=True,
-        )
+        default_factory=datetime.utcnow, nullable=False
     )
     updated_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime(timezone=True),
-            default=None,
-            index=True,
-            onupdate=default_now,
-        )
+        default_factory=datetime.utcnow, nullable=False
     )
+    # updated_at: Optional[datetime] = Field(
+    #     sa_column=Column(
+    #         DateTime(timezone=True),
+    #         default=None,
+    #         index=True,
+    #         onupdate=default_now,
+    #     )
+    # )
+    # deleted_at: Optional[datetime] = Field(
+    #     sa_column=Column(
+    #         DateTime(timezone=True),
+    #         index=True,
+    #     )
+    # )
     deleted_at: Optional[datetime] = Field(
-        sa_column=Column(
-            DateTime(timezone=True),
-            index=True,
-        )
+        default_factory=datetime.utcnow, nullable=False
     )
-
     deleted: bool = Field(nullable=False, index=True, default=False)
 
     def delete(self):
@@ -51,8 +58,5 @@ class BaseModel(SQLModel):
 
     class Config:
         alias_generator = to_camel
-        allow_population_by_field_name = True
+        populate_by_name = True
         extra = Extra.ignore
-        error_msg_templates = {
-            "type_error.none.not_allowed": "Value is missing",
-        }

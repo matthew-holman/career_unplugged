@@ -10,7 +10,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 
 from app.log import Log
-from app.routers.hello_world import router as hello_world
+from app.routers.job import router as job
 from app.routers.user import router as user
 from app.settings import config
 
@@ -30,8 +30,8 @@ def get_app():
         allow_headers=["*"],
     )
 
-    application.include_router(hello_world)
     application.include_router(user)
+    application.include_router(job)
 
     @application.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):
