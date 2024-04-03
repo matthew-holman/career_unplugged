@@ -1,5 +1,7 @@
 import logging
+import os
 
+from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 
 from app.db.db import get_db
@@ -8,9 +10,12 @@ from app.job_scrapers.linkedin import LinkedInScraper
 from app.job_scrapers.scraper import JobType, ScraperInput
 from app.models.job import JobCreate
 
+# load env file
+load_dotenv()
+
 scraper_input = ScraperInput(
     site_name=["linkedin"],
-    search_term="engineering manager",
+    search_term=os.getenv("LINKEDIN_SEARCH_TERM"),
     location="European Union",
     job_type=JobType.FULL_TIME,
     results_wanted=200,
