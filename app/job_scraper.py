@@ -16,7 +16,7 @@ load_dotenv()
 scraper_input = ScraperInput(
     site_name=["linkedin"],
     search_term=os.getenv("LINKEDIN_SEARCH_TERM"),
-    location="European Union",
+    location=os.getenv("LINKEDIN_SEARCH_LOCATION"),
     job_type=JobType.FULL_TIME,
     results_wanted=200,
     hours_old=24,

@@ -39,7 +39,7 @@ def upgrade():
             unique=True,
         ),
         sa.Column("applied", sa.Boolean(), nullable=False),
-        sa.Column("sweden_remote", sa.Boolean(), nullable=True),
+        sa.Column("remote", sa.Boolean(), nullable=True),
         sa.Column("analysed", sa.Boolean(), nullable=False),
         sa.Column("deleted", sa.Boolean(), nullable=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=False),

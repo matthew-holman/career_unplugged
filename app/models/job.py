@@ -15,7 +15,7 @@ class JobBase(BaseModel, table=False):  # type: ignore
     city: Optional[str] = Field(nullable=True)
     linkedin_url: str = Field(nullable=False, primary_key=False, unique=True)
     applied: bool = Field(nullable=True, default=False)
-    sweden_remote: Optional[bool] = Field(nullable=True, default=False)
+    remote: Optional[bool] = Field(nullable=True, default=False)
     analysed: bool = Field(nullable=True, default=False)
 
 
