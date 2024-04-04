@@ -1,12 +1,13 @@
 from http.client import HTTPException
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends
-from sqlmodel import Session
+from sqlmodel import Session, select
 from starlette import status
 
 from app.db.db import get_db
 from app.handlers.job import JobHandler
-from app.models.job import JobRead
+from app.models.job import Job, JobBase, JobRead
 
 INTERFACE = "job"
 
@@ -34,3 +35,39 @@ def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
         return job
     else:
         raise HTTPException()
+
+
+@router.get(
+    "/",
+    status_code=status.HTTP_200_OK,
+    response_model=List[Job],
+)
+def list_jobs(
+    title: Optional[str] = None,
+    company: Optional[str] = None,
+    country: Optional[str] = None,
+    city: Optional[str] = None,
+    applied: Optional[bool] = None,
+    remote: Optional[bool] = None,
+    analysed: Optional[bool] = None,
+    db_session: Session = Depends(get_db),
+) -> List[Job]:
+    query = select(Job)
+
+    if title is not None:
+        query = query.where(JobBase.title == title)
+    if company is not None:
+        query = query.where(JobBase.company == company)
+    if country is not None:
+        query = query.where(JobBase.country == country)
+    if city is not None:
+        query = query.where(JobBase.city == city)
+    if applied is not None:
+        query = query.where(JobBase.applied == applied)
+    if remote is not None:
+        query = query.where(JobBase.remote == remote)
+    if analysed is not None:
+        query = query.where(JobBase.analysed == analysed)
+
+    results = db_session.exec(query).all()
+    return results

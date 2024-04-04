@@ -13,6 +13,7 @@ def test_get_job(client: TestClient, db_session: Session):
         company="test company",
         location="test location",
         linkedin_url="test linkedin url",
+        country="test country",
     )
 
     job = JobHandler(db_session).create(job=job)
@@ -20,3 +21,20 @@ def test_get_job(client: TestClient, db_session: Session):
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
+
+
+def test_list_jobs(client: TestClient, db_session: Session):
+    job = JobCreate(
+        title="test title",
+        company="test company",
+        location="test location",
+        linkedin_url="test linkedin url",
+        country="test country",
+    )
+
+    job = JobHandler(db_session).create(job=job)
+    url = f"/{JOB_INTERFACE}/?location=test location"
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) == 1
