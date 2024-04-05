@@ -12,9 +12,23 @@ REMOTE_REG_EX_PATTERNS = [
     r"remote[-\s]friendly",
 ]
 
+TRUE_REMOTE_COUNTRIES = [
+    "EMEA",
+    "European Union",
+    "European Economic Area",
+]
+
 with next(get_db()) as db_session:
     job_handler = JobHandler(db_session)
     jobs = job_handler.get_unanalysed()
+
+    session = create_session(is_tls=False, has_retry=True, delay=5)
+    for job in jobs:
+        if job.country.lower() in [
+            remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
+        ]:
+            job_handler.set_true_remote(job)
+            continue
 
     session = create_session(is_tls=False, has_retry=True, delay=5)
     for job in jobs:
@@ -31,7 +45,7 @@ with next(get_db()) as db_session:
         for pattern in REMOTE_REG_EX_PATTERNS:
             match = re.search(pattern, job_description_text, re.IGNORECASE)
             if match is not None:
-                job_handler.set_remote(job)
+                job_handler.set_true_remote(job)
                 continue
 
         job_handler.set_analysed(job)

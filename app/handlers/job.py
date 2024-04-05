@@ -27,8 +27,8 @@ class JobHandler:
         self.db_session.refresh(validated_job)
         return JobRead.from_orm(validated_job)
 
-    def set_remote(self, job: Job) -> JobRead:
-        job.remote = True
+    def set_true_remote(self, job: Job) -> JobRead:
+        job.true_remote = True
         job.analysed = True
         self.db_session.add(job)
         self.db_session.commit()

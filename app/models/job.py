@@ -13,7 +13,10 @@ class JobBase(BaseModel, table=False):  # type: ignore
     city: str | None = Field(default=None)
     linkedin_url: str = Field(nullable=False, primary_key=False, unique=True)
     applied: bool = Field(nullable=False, default=False)
-    remote: bool | None = Field(default=None)
+    listing_remote: str | None = Field(
+        nullable=True, primary_key=False, default=None
+    )
+    true_remote: bool | None = Field(nullable=False, default=False)
     analysed: bool = Field(nullable=True, default=False)
 
 

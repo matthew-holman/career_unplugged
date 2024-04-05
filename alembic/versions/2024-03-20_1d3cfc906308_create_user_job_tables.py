@@ -39,7 +39,10 @@ def upgrade():
             unique=True,
         ),
         sa.Column("applied", sa.Boolean(), nullable=False),
-        sa.Column("remote", sa.Boolean(), nullable=True),
+        sa.Column("true_remote", sa.Boolean(), nullable=False),
+        sa.Column(
+            "listing_remote", sqlmodel.sql.sqltypes.AutoString(), nullable=True
+        ),
         sa.Column("analysed", sa.Boolean(), nullable=False),
         sa.Column("deleted", sa.Boolean(), nullable=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=False),

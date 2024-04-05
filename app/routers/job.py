@@ -7,7 +7,7 @@ from starlette import status
 
 from app.db.db import get_db
 from app.handlers.job import JobHandler
-from app.models.job import Job, JobBase, JobRead
+from app.models.job import Job, JobRead
 
 INTERFACE = "job"
 
@@ -48,26 +48,27 @@ def list_jobs(
     country: Optional[str] = None,
     city: Optional[str] = None,
     applied: Optional[bool] = None,
-    remote: Optional[bool] = None,
+    true_remote: Optional[bool] = None,
     analysed: Optional[bool] = None,
     db_session: Session = Depends(get_db),
 ) -> List[Job]:
     query = select(Job)
 
     if title is not None:
-        query = query.where(JobBase.title == title)
+        query = query.where(Job.title == title)
     if company is not None:
-        query = query.where(JobBase.company == company)
+        query = query.where(Job.company == company)
     if country is not None:
-        query = query.where(JobBase.country == country)
+        query = query.where(Job.country == country)
     if city is not None:
-        query = query.where(JobBase.city == city)
+        query = query.where(Job.city == city)
     if applied is not None:
-        query = query.where(JobBase.applied == applied)
-    if remote is not None:
-        query = query.where(JobBase.remote == remote)
+        query = query.where(Job.applied == applied)
+    if true_remote is not None:
+        print(true_remote)
+        query = query.where(Job.true_remote == true_remote)
     if analysed is not None:
-        query = query.where(JobBase.analysed == analysed)
+        query = query.where(Job.analysed == analysed)
 
     results = db_session.exec(query).all()
     return results
