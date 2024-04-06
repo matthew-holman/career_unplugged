@@ -18,6 +18,8 @@ class JobBase(BaseModel, table=False):  # type: ignore
     )
     true_remote: bool | None = Field(nullable=False, default=False)
     analysed: bool = Field(nullable=True, default=False)
+    positive_keyword_match: bool = Field(nullable=True, default=False)
+    negative_keyword_match: bool = Field(nullable=True, default=False)
 
 
 class Job(JobBase, table=True):  # type: ignore

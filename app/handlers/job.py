@@ -35,6 +35,22 @@ class JobHandler:
         self.db_session.refresh(job)
         return JobRead.from_orm(job)
 
+    def set_positive_match(self, job: Job) -> JobRead:
+        job.positive_keyword_match = True
+        job.analysed = True
+        self.db_session.add(job)
+        self.db_session.commit()
+        self.db_session.refresh(job)
+        return JobRead.from_orm(job)
+
+    def set_negative_match(self, job: Job) -> JobRead:
+        job.negative_keyword_match = True
+        job.analysed = True
+        self.db_session.add(job)
+        self.db_session.commit()
+        self.db_session.refresh(job)
+        return JobRead.from_orm(job)
+
     def set_analysed(self, job: Job) -> JobRead:
         job.analysed = True
         self.db_session.add(job)

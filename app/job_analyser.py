@@ -3,13 +3,14 @@ import re
 from app.db.db import get_db
 from app.handlers.job import JobHandler
 from app.job_scrapers.utils import create_session
+from config import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 
 REMOTE_REG_EX_PATTERNS = [
     r"\sCET\s",
     "remote in eu",
-    "distributed",
     r"remote[-\s]first",
     r"remote[-\s]friendly",
+    r"100%[-\s]remote",
 ]
 
 TRUE_REMOTE_COUNTRIES = [
@@ -46,6 +47,18 @@ with next(get_db()) as db_session:
             match = re.search(pattern, job_description_text, re.IGNORECASE)
             if match is not None:
                 job_handler.set_true_remote(job)
-                continue
+                break
+
+        for pattern in POSITIVE_MATCH_KEYWORDS:
+            match = re.search(pattern, job_description_text, re.IGNORECASE)
+            if match is not None:
+                job_handler.set_positive_match(job)
+                break
+
+        for pattern in NEGATIVE_MATCH_KEYWORDS:
+            match = re.search(pattern, job_description_text, re.IGNORECASE)
+            if match is not None:
+                job_handler.set_negative_match(job)
+                break
 
         job_handler.set_analysed(job)

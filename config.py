@@ -9,14 +9,19 @@ from app.job_scrapers.scraper import SearchLocation
 # but don't partially match.
 # E.G. "backend team lead" will match "python backend team lead"
 # "engineering manager" will not match "product manager"
-JOB_TITLES = [
+JOB_TITLES: List[str] = [
     "engineering manager",
     "engineering team lead",
+    "Engineering Lead",
     "software team lead",
     "backend team lead",
     "fullstack team lead",
-    "cto",
+    "Chief Technology Officer",
+    " cto ",
     "head of engineering",
+    "Software Development Manager",
+    "head of technology",
+    "Developer Team Lead",
     # "senior engineer",
     # "backend engineer",
     # "python engineer"
@@ -27,22 +32,31 @@ JOB_TITLES = [
 # Think in terms of skills that a recruiter might add to your desired role.
 # Roles will still be filtered on job titles
 ADDITIONAL_SEARCH_TERMS: List[str] = [
-    # "agile"
+    # "Agile",
     # "scrum"
 ]
 
+# jobs from these companies will be ignored
+COMPANIES_TO_IGNORE: List[str] = ["Canonical"]
+
 # this is a list of locations that the scraper will loop through
 JOB_LOCATIONS: List[SearchLocation] = [
-    # SearchLocation(location="Berlin", remote=False),
-    SearchLocation(location="European Economic Area", remote=True)
+    SearchLocation(location="Berlin, Germany", remote=False),
+    SearchLocation(
+        location="Greater Gothenburg Metropolitan Area", remote=False
+    ),
+    SearchLocation(location="London Area, United Kingdom", remote=False),
+    SearchLocation(location="Amsterdam Area", remote=False),
+    SearchLocation(location="EMEA", remote=True),
 ]
 
 # the linkedin job search does not check the body text, the analyser will use
 # these keywords and if found set job.keyword_match to true.
 POSITIVE_MATCH_KEYWORDS: List[str] = [
     "Python",
-    "Fast API",
-    "GreenTech" "DeepTech"
+    "FastAPI",
+    "GreenTech",
+    "DeepTech"
     # add more keywords
 ]
 
@@ -53,7 +67,8 @@ NEGATIVE_MATCH_KEYWORDS = ["crypto", "web3.0"]
 
 def linkedin_search_string():
     # Format the unique phrases with quotes and join them with ' OR '
+    search_terms = JOB_TITLES + ADDITIONAL_SEARCH_TERMS
     formatted_string = (
-        "(" + " OR ".join(f'"{title}"' for title in JOB_TITLES) + ")"
+        "(" + " OR ".join(f'"{string}"' for string in search_terms) + ")"
     )
     return formatted_string

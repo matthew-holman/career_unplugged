@@ -44,6 +44,8 @@ def upgrade():
             "listing_remote", sqlmodel.sql.sqltypes.AutoString(), nullable=True
         ),
         sa.Column("analysed", sa.Boolean(), nullable=False),
+        sa.Column("positive_keyword_match", sa.Boolean(), nullable=False),
+        sa.Column("negative_keyword_match", sa.Boolean(), nullable=False),
         sa.Column("deleted", sa.Boolean(), nullable=False),
         sa.Column("deleted_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id"),

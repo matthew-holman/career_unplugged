@@ -7,31 +7,48 @@ from app.db.db import get_db
 from app.handlers.job import JobHandler
 from app.job_scrapers.linkedin import LinkedInScraper
 from app.job_scrapers.scraper import JobPost, JobType, ScraperInput
+from app.job_scrapers.utils import set_logger_level
 from app.models.job import JobCreate
-from config import JOB_LOCATIONS, JOB_TITLES, linkedin_search_string
+from config import (
+    COMPANIES_TO_IGNORE,
+    JOB_LOCATIONS,
+    JOB_TITLES,
+    linkedin_search_string,
+)
 
 # load env file
 load_dotenv()
 
 
 def save_job(job_post: JobPost) -> bool:
+    for company in COMPANIES_TO_IGNORE:
+        if company.lower() == job_post.company_name.lower():
+            logging.info(f"Ignoring job from {job_post.company_name}")
+            return False
+
     for job_title in JOB_TITLES:
-        if job_title in job_post.title.lower():
+        if job_title.lower() in job_post.title.lower():
+            logging.info(f"Ignoring job with title {job_post.title}")
             return True
     return False
 
 
+set_logger_level(2)
 scraper = LinkedInScraper()
 
 with next(get_db()) as db_session:
     for job_location in JOB_LOCATIONS:
+        logging.info(
+            f"Scraping jobs for {job_location.location} "
+            f"with remote {job_location.remote}"
+        )
         scraper_input = ScraperInput(
             search_term=linkedin_search_string(),
-            location=job_location,
+            location=job_location.location,
             job_type=JobType.FULL_TIME,
-            results_wanted=10,
+            results_wanted=200,
             hours_old=24,
-            is_remote=True,
+            is_remote=job_location.remote,
         )
 
         response = scraper.scrape(scraper_input=scraper_input)

@@ -35,13 +35,13 @@ class LinkedInScraper(Scraper):
     delay = 3
     band_delay = 4
     jobs_per_page = 25
+    scraper_input: ScraperInput | None = None
 
     def __init__(self, proxy: str | None = None):
         """
         Initializes LinkedInScraper with the LinkedIn job search url
         """
         super().__init__(proxy=proxy)
-        self.scraper_input = None
         self.country = "worldwide"
 
     def scrape(self, scraper_input: ScraperInput) -> JobResponse:
@@ -266,6 +266,7 @@ class LinkedInScraper(Scraper):
             div_content = remove_attributes(div_content)
             description = div_content.prettify(formatter="html")
             if (
+                self.scraper_input.description_format and
                 self.scraper_input.description_format
                 == DescriptionFormat.MARKDOWN
             ):
