@@ -69,7 +69,7 @@ class LinkedInScraper(Scraper):
                 "keywords": scraper_input.search_term,
                 "location": scraper_input.location,
                 "distance": scraper_input.distance,
-                "f_WT": 2 if scraper_input.is_remote else None,
+                "f_WT": scraper_input.remote_status.value,
                 "f_JT": (
                     self.job_type_code(scraper_input.job_type)
                     if scraper_input.job_type
@@ -139,6 +139,7 @@ class LinkedInScraper(Scraper):
                     fetch_desc = scraper_input.linkedin_fetch_description
                     job_post = self._process_job(job_card, job_url, fetch_desc)
                     if job_post:
+                        job_post.remote_status = scraper_input.remote_status
                         job_list.append(job_post)
                     if not continue_search():
                         break
@@ -197,7 +198,13 @@ class LinkedInScraper(Scraper):
         location = self._get_location(metadata_card)
 
         datetime_tag = (
-            metadata_card.find("time", class_="job-search-card__listdate")
+            metadata_card.find(
+                "time",
+                class_=[
+                    "job-search-card__listdate",
+                    "job-search-card__listdate--new",
+                ],
+            )
             if metadata_card
             else None
         )
@@ -266,7 +273,6 @@ class LinkedInScraper(Scraper):
             div_content = remove_attributes(div_content)
             description = div_content.prettify(formatter="html")
             if (
-                self.scraper_input.description_format and
                 self.scraper_input.description_format
                 == DescriptionFormat.MARKDOWN
             ):

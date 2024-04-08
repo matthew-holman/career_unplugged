@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from enum import Enum
+from enum import Enum, IntEnum
 
 from pydantic import BaseModel
 
@@ -14,6 +14,12 @@ class JobType(Enum):
     TEMPORARY = "Temporary"
 
 
+class RemoteStatus(IntEnum):
+    ONSITE = 1
+    HYBRID = 3
+    REMOTE = 2
+
+
 class DescriptionFormat(Enum):
     MARKDOWN = "markdown"
     HTML = "html"
@@ -23,14 +29,13 @@ class ScraperInput(BaseModel):
     search_term: str
     location: str
     distance: int | None = None
-    is_remote: bool = True
+    remote_status: RemoteStatus | None = None
     job_type: JobType
     easy_apply: bool | None = None
     offset: int = 0
     linkedin_fetch_description: bool = False
     linkedin_company_ids: list[int] | None = None
     description_format: DescriptionFormat | None = DescriptionFormat.MARKDOWN
-
     results_wanted: int = 15
     hours_old: int | None = None
 
@@ -96,7 +101,7 @@ class JobPost(BaseModel):
     compensation: Compensation | None = None
     date_posted: date | None = None
     emails: list[str] | None = None
-    is_remote: bool | None = None
+    remote_status: RemoteStatus | None = None
 
 
 class JobResponse(BaseModel):

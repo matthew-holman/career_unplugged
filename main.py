@@ -11,7 +11,6 @@ from starlette.responses import JSONResponse, RedirectResponse
 
 from app.log import Log
 from app.routers.job import router as job
-from app.routers.user import router as user
 from app.settings import config
 
 
@@ -30,7 +29,6 @@ def get_app():
         allow_headers=["*"],
     )
 
-    application.include_router(user)
     application.include_router(job)
 
     @application.exception_handler(HTTPException)

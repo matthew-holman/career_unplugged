@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from http.client import HTTPException
 from typing import List, Optional
 
@@ -7,6 +8,7 @@ from starlette import status
 
 from app.db.db import get_db
 from app.handlers.job import JobHandler
+from app.job_scrapers.scraper import RemoteStatus
 from app.models.job import Job, JobRead
 
 INTERFACE = "job"
@@ -48,8 +50,12 @@ def list_jobs(
     country: Optional[str] = None,
     city: Optional[str] = None,
     applied: Optional[bool] = None,
+    positive_keyword_match: Optional[bool] = None,
+    negative_keyword_match: Optional[bool] = None,
     true_remote: Optional[bool] = None,
     analysed: Optional[bool] = None,
+    recent: Optional[bool] = None,
+    listing_remote: Optional[RemoteStatus] = None,
     db_session: Session = Depends(get_db),
 ) -> List[Job]:
     query = select(Job)
@@ -65,10 +71,22 @@ def list_jobs(
     if applied is not None:
         query = query.where(Job.applied == applied)
     if true_remote is not None:
-        print(true_remote)
         query = query.where(Job.true_remote == true_remote)
+    if positive_keyword_match is not None:
+        query = query.where(
+            Job.positive_keyword_match == positive_keyword_match
+        )
+    if negative_keyword_match is not None:
+        query = query.where(
+            Job.negative_keyword_match == negative_keyword_match
+        )
+    if listing_remote is not None:
+        query = query.where(Job.listing_remote == listing_remote)
     if analysed is not None:
         query = query.where(Job.analysed == analysed)
+    if recent:
+        twenty_four_hours_ago = datetime.now() - timedelta(hours=24)
+        query = query.where(Job.created_at >= twenty_four_hours_ago)
 
     results = db_session.exec(query).all()
     return results

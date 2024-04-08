@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import Extra
+from sqlalchemy import DateTime, func
 from sqlmodel import Field, SQLModel
 
 
@@ -19,38 +19,21 @@ def default_now() -> datetime:
 
 class BaseModel(SQLModel):
     __abstract__ = True
-    # created_at: Optional[datetime] = Field(
-    #     sa_column=Column(
-    #         DateTime(timezone=True),
-    #         default=default_now,
-    #         server_default=func.now(),
-    #         index=True,
-    #     )
-    # )
-    created_at: Optional[datetime] = Field(
+    created_at: datetime = Field(
         default_factory=datetime.utcnow, nullable=False
     )
-    updated_at: Optional[datetime] = Field(
-        default_factory=datetime.utcnow, nullable=False
+
+    updated_at: datetime | None = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),
+        sa_column_kwargs={"onupdate": func.now(), "nullable": True},
     )
-    # updated_at: Optional[datetime] = Field(
-    #     sa_column=Column(
-    #         DateTime(timezone=True),
-    #         default=None,
-    #         index=True,
-    #         onupdate=default_now,
-    #     )
-    # )
-    # deleted_at: Optional[datetime] = Field(
-    #     sa_column=Column(
-    #         DateTime(timezone=True),
-    #         index=True,
-    #     )
-    # )
-    deleted_at: Optional[datetime] = Field(
-        default_factory=datetime.utcnow, nullable=False
+
+    deleted_at: datetime | None = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),
+        sa_column_kwargs={"nullable": True},
     )
-    deleted: bool = Field(nullable=False, index=True, default=False)
 
     def delete(self):
         self.deleted = True

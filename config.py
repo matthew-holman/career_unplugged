@@ -31,15 +31,15 @@ JOB_TITLES: List[str] = [
 # the role, so any additional search terms will also be added to the search.
 # Think in terms of skills that a recruiter might add to your desired role.
 # Roles will still be filtered on job titles
-ADDITIONAL_SEARCH_TERMS: List[str] = [
-    # "Agile",
-    # "scrum"
-]
+ADDITIONAL_SEARCH_TERMS: List[str] = ["Agile", "scrum"]
 
 # jobs from these companies will be ignored
-COMPANIES_TO_IGNORE: List[str] = ["Canonical"]
+# Crossover seems a company to avoid
+COMPANIES_TO_IGNORE: List[str] = ["Canonical", "Crossover"]
 
 # this is a list of locations that the scraper will loop through
+# remote false will search for roles listed as onsite and hybrid,
+# remote true will search for remote
 JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="Berlin, Germany", remote=False),
     SearchLocation(
@@ -47,6 +47,7 @@ JOB_LOCATIONS: List[SearchLocation] = [
     ),
     SearchLocation(location="London Area, United Kingdom", remote=False),
     SearchLocation(location="Amsterdam Area", remote=False),
+    SearchLocation(location="Sweden", remote=True),
     SearchLocation(location="EMEA", remote=True),
 ]
 
@@ -56,13 +57,17 @@ POSITIVE_MATCH_KEYWORDS: List[str] = [
     "Python",
     "FastAPI",
     "GreenTech",
-    "DeepTech"
+    "DeepTech",
+    "Vue",
+    "sustainability",
+    "Node",
+    "energy"
     # add more keywords
 ]
 
 # the analyser will use these keywords and if found set job.keyword_match
 # to false. Think of these as terms to help you filter out roles
-NEGATIVE_MATCH_KEYWORDS = ["crypto", "web3.0"]
+NEGATIVE_MATCH_KEYWORDS = ["crypto", "web3", "blockchain"]
 
 
 def linkedin_search_string():
