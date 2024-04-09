@@ -18,6 +18,7 @@ JOB_TITLES: List[str] = [
     "fullstack team lead",
     "Chief Technology Officer",
     " cto ",
+    "(cto)",
     "head of engineering",
     "Software Development Manager",
     "head of technology",

@@ -1,5 +1,3 @@
-import logging
-
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 
@@ -12,8 +10,8 @@ from app.job_scrapers.scraper import (
     RemoteStatus,
     ScraperInput,
 )
-from app.job_scrapers.utils import logger, set_logger_level
 from app.models.job import JobCreate
+from app.utils.logging import LoggerFactory, LogLevels
 from config import (
     COMPANIES_TO_IGNORE,
     JOB_LOCATIONS,
@@ -23,22 +21,22 @@ from config import (
 
 # load env file
 load_dotenv()
+logger = LoggerFactory.get_logger("job scraper", log_level=LogLevels.DEBUG)
 
 
 def save_job(job_post: JobPost) -> bool:
     for company in COMPANIES_TO_IGNORE:
         if company.lower() == job_post.company_name.lower():
-            logging.info(f"Ignoring job from {job_post.company_name}")
+            logger.info(f"Ignoring job from {job_post.company_name}")
             return False
 
     for job_title in JOB_TITLES:
         if job_title.lower() in job_post.title.lower():
-            logging.info(f"Ignoring job with title {job_post.title}")
+            logger.info(f"Ignoring job with title {job_post.title}")
             return True
     return False
 
 
-set_logger_level(2)
 scraper = LinkedInScraper()
 
 with next(get_db()) as db_session:

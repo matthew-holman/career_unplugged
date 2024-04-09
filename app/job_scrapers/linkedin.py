@@ -11,7 +11,6 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 
 from app.job_scrapers.scraper import (
-    Compensation,
     DescriptionFormat,
     JobPost,
     JobResponse,
@@ -22,11 +21,14 @@ from app.job_scrapers.scraper import (
 )
 from app.job_scrapers.utils import (
     create_session,
-    currency_parser,
     extract_emails_from_text,
     get_enum_from_job_type,
-    logger,
     markdown_converter,
+)
+from app.utils.logging import LoggerFactory, LogLevels
+
+logger = LoggerFactory.get_logger(
+    "Linkedin scraper", log_level=LogLevels.DEBUG
 )
 
 
@@ -42,7 +44,7 @@ class LinkedInScraper(Scraper):
         Initializes LinkedInScraper with the LinkedIn job search url
         """
         super().__init__(proxy=proxy)
-        self.country = "worldwide"
+        self.country = "EMEA"
 
     def scrape(self, scraper_input: ScraperInput) -> JobResponse:
         """
@@ -64,7 +66,7 @@ class LinkedInScraper(Scraper):
         )
         while continue_search():
             logger.info(f"LinkedIn search page: {page // 25 + 1}")
-            session = create_session(is_tls=False, has_retry=True, delay=5)
+            session = create_session(is_tls=False, has_retry=True, delay=15)
             params = {
                 "keywords": scraper_input.search_term,
                 "location": scraper_input.location,
@@ -162,22 +164,6 @@ class LinkedInScraper(Scraper):
             "span", class_="job-search-card__salary-info"
         )
 
-        compensation = None
-        if salary_tag:
-            salary_text = salary_tag.get_text(separator=" ").strip()
-            salary_values = [
-                currency_parser(value) for value in salary_text.split("-")
-            ]
-            salary_min = salary_values[0]
-            salary_max = salary_values[1]
-            currency = salary_text[0] if salary_text[0] != "$" else "USD"
-
-            compensation = Compensation(
-                min_amount=int(salary_min),
-                max_amount=int(salary_max),
-                currency=currency,
-            )
-
         title_tag = job_card.find("span", class_="sr-only")
         title = title_tag.get_text(strip=True) if title_tag else "N/A"
 
@@ -225,7 +211,6 @@ class LinkedInScraper(Scraper):
             location=location,
             date_posted=date_posted,
             job_url=job_url,
-            compensation=compensation,
             job_type=job_type,
             description=description,
             emails=extract_emails_from_text(description)
@@ -245,7 +230,7 @@ class LinkedInScraper(Scraper):
         :return: description or None
         """
         try:
-            session = create_session(is_tls=False, has_retry=True)
+            session = create_session(is_tls=False, has_retry=True, delay=15)
             response = session.get(
                 job_page_url,
                 headers=self.headers,

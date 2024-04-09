@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import logging
 import re
 
-import numpy as np
 import requests
 import tls_client
 
@@ -11,31 +9,6 @@ from markdownify import markdownify as md
 from requests.adapters import HTTPAdapter, Retry
 
 from app.job_scrapers.scraper import JobType
-
-logger = logging.getLogger("job scraping")
-logger.propagate = False
-if not logger.handlers:
-    logger.setLevel(logging.INFO)
-    console_handler = logging.StreamHandler()
-    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    formatter = logging.Formatter(format)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-
-
-def set_logger_level(verbose: int = 2):
-    """
-    Parameters:
-    - verbose: int {0, 1, 2} (default=2, all logs)
-    """
-    if verbose is None:
-        return
-    level_name = {2: "INFO", 1: "WARNING", 0: "ERROR"}.get(verbose, "INFO")
-    level = getattr(logging, level_name.upper(), None)
-    if level is not None:
-        logger.setLevel(level)
-    else:
-        raise ValueError(f"Invalid log level: {level_name}")
 
 
 def markdown_converter(description_html: str):
@@ -91,20 +64,3 @@ def get_enum_from_job_type(job_type_str: str) -> JobType | None:
         if job_type_str in job_type.value:
             res = job_type
     return res
-
-
-def currency_parser(cur_str):
-    # Remove any non-numerical characters
-    # except for ',' '.' or '-' (e.g. EUR)
-    cur_str = re.sub("[^-0-9.,]", "", cur_str)
-    # Remove any 000s separators (either , or .)
-    cur_str = re.sub("[.,]", "", cur_str[:-3]) + cur_str[-3:]
-
-    if "." in list(cur_str[-3:]):
-        num = float(cur_str)
-    elif "," in list(cur_str[-3:]):
-        num = float(cur_str.replace(",", "."))
-    else:
-        num = float(cur_str)
-
-    return np.round(num, 2)

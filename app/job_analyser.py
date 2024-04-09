@@ -23,7 +23,6 @@ with next(get_db()) as db_session:
     job_handler = JobHandler(db_session)
     jobs = job_handler.get_unanalysed()
 
-    session = create_session(is_tls=False, has_retry=True, delay=5)
     for job in jobs:
         if job.country.lower() in [
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
@@ -31,7 +30,7 @@ with next(get_db()) as db_session:
             job_handler.set_true_remote(job)
             continue
 
-    session = create_session(is_tls=False, has_retry=True, delay=5)
+    session = create_session(is_tls=False, has_retry=True, delay=15)
     for job in jobs:
         job_description = session.get(job.linkedin_url)
         if job_description.status_code != 200:

@@ -37,7 +37,7 @@ class ScraperInput(BaseModel):
     linkedin_company_ids: list[int] | None = None
     description_format: DescriptionFormat | None = DescriptionFormat.MARKDOWN
     results_wanted: int = 15
-    hours_old: int | None = None
+    hours_old: int = 24
 
 
 class Location(BaseModel):
@@ -79,13 +79,6 @@ class CompensationInterval(Enum):
             )
 
 
-class Compensation(BaseModel):
-    interval: CompensationInterval | None = None
-    min_amount: float | None = None
-    max_amount: float | None = None
-    currency: str | None = "USD"
-
-
 class JobPost(BaseModel):
     title: str
     company_name: str | None = None
@@ -98,7 +91,6 @@ class JobPost(BaseModel):
     company_url_direct: str | None = None
 
     job_type: list[JobType] | None = None
-    compensation: Compensation | None = None
     date_posted: date | None = None
     emails: list[str] | None = None
     remote_status: RemoteStatus | None = None
