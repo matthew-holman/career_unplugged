@@ -48,7 +48,9 @@ JOB_LOCATIONS: List[SearchLocation] = [
     ),
     SearchLocation(location="London Area, United Kingdom", remote=False),
     SearchLocation(location="Amsterdam Area", remote=False),
+    SearchLocation(location="Sweden", remote=False),
     SearchLocation(location="Sweden", remote=True),
+    SearchLocation(location="European Union", remote=True),
     SearchLocation(location="EMEA", remote=True),
 ]
 
@@ -56,6 +58,8 @@ JOB_LOCATIONS: List[SearchLocation] = [
 # these keywords and if found set job.keyword_match to true.
 POSITIVE_MATCH_KEYWORDS: List[str] = [
     "Python",
+    "Typescript",
+    "NestJs",
     "FastAPI",
     "GreenTech",
     "DeepTech",
@@ -68,7 +72,7 @@ POSITIVE_MATCH_KEYWORDS: List[str] = [
 
 # the analyser will use these keywords and if found set job.keyword_match
 # to false. Think of these as terms to help you filter out roles
-NEGATIVE_MATCH_KEYWORDS = ["crypto", "web3", "blockchain"]
+NEGATIVE_MATCH_KEYWORDS = ["crypto", "web3", "blockchain", "Java", "C#", "Kotlin"]
 
 
 def linkedin_search_string():

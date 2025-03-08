@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fastapi_template"
+name = "career_unplugged"
 version = "0.1.0"
 description = "basic template"
 authors = ["matthewh <mholman000@gmail.com>"]
@@ -25,6 +25,8 @@ pytest-cov = "4.0.0"
 pytest-github-actions-annotate-failures = "^0.1.8"
 sqlmodel = "^0.0.16"
 beautifulsoup4 = "4.12.3"
+tls-client = "1.0.1"
+markdownify = "1.1.0"
 
 [tool.poetry.dev-dependencies]
 requests-mock = "^1.10.0"
