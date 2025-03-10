@@ -32,9 +32,10 @@ def save_job(job_post: JobPost) -> bool:
 
     for job_title in JOB_TITLES:
         if job_title.lower() not in job_post.title.lower():
-            logger.info(f"Ignoring job with title {job_post.title}")
-            return False
-    return True
+            return True
+
+    logger.info(f"Ignoring job with title {job_post.title} from {job_post.company_name}")
+    return False
 
 
 scraper = LinkedInScraper()
@@ -55,7 +56,7 @@ with next(get_db()) as db_session:
                 location=job_location.location,
                 job_type=JobType.FULL_TIME,
                 results_wanted=400,
-                hours_old=72,
+                hours_old=48,
                 remote_status=remote_status,
             )
 

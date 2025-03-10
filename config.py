@@ -23,6 +23,7 @@ JOB_TITLES: List[str] = [
     "Software Development Manager",
     "head of technology",
     "Developer Team Lead",
+    "Engineering Squad Lead"
     # "senior engineer",
     # "backend engineer",
     # "python engineer"
