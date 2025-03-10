@@ -38,7 +38,7 @@ jobs:
           POSTGRES_USER: ${{ env.FASTAPI_DB_USER }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
           POSTGRES_PASSWORD:  ${{ env.FASTAPI_DB_PASSWORD }}
-        ports: ["5432:5432"]
+        ports: ["6666:6666"]
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

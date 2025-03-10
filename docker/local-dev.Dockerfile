@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.10.16-slim
 
 ENV PYTHONPATH=${PYTHONPATH}:.
 ENV POETRY_VERSION=1.4.0

@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     DB_USER: str = Field(default="postgres", env="FASTAPI_DB_USER")
     DB_PASSWORD: str = Field(default="postgres", env="FASTAPI_DB_PASSWORD")
 
-    DB_HOST: str = Field(default="localhost", env="POSTGRES_HOST")
+    DB_HOST: str = Field(default="0.0.0.0", env="POSTGRES_HOST")
     DB_PORT: int = Field(default=5432, env="POSTGRES_PORT")
 
     DB_POOL_SIZE: int = Field(default=4, env="DB_POOL_SIZE")
