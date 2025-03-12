@@ -32,6 +32,7 @@ def save_job(job_post: JobPost) -> bool:
 
     for job_title in JOB_TITLES:
         if job_title.lower() in job_post.title.lower():
+            logger.info(f"Adding job {job_post.title} from {job_post.company_name}")
             return True
 
     logger.info(f"Ignoring job with title {job_post.title} from {job_post.company_name}")
@@ -56,7 +57,7 @@ with next(get_db()) as db_session:
                 location=job_location.location,
                 job_type=JobType.FULL_TIME,
                 results_wanted=400,
-                hours_old=48,
+                hours_old=24,
                 remote_status=remote_status,
             )
 
