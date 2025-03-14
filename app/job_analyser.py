@@ -31,7 +31,7 @@ with next(get_db()) as db_session:
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
         ]:
             job_handler.set_true_remote(job)
-            logger.info(f"Job {job.title} at {job.company_name} with country {job.country} is EU remote.")
+            logger.info(f"Job {job.title} at {job.company} with country {job.country} is EU remote.")
             continue
 
     session = create_session(is_tls=False, has_retry=True, delay=15)
@@ -50,7 +50,7 @@ with next(get_db()) as db_session:
             match = re.search(pattern, job_description_text, re.IGNORECASE)
             if match is not None:
                 job_handler.set_true_remote(job)
-                logger.info(f"Job {job.title} at {job.company_name} has match with {pattern} in job description text.")
+                logger.info(f"Job {job.title} at {job.company} has match with {pattern} in job description text.")
                 break
 
         for pattern in POSITIVE_MATCH_KEYWORDS:
