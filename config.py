@@ -50,6 +50,8 @@ JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="London Area, United Kingdom", remote=False),
     SearchLocation(location="Amsterdam Area", remote=False),
     SearchLocation(location="Sweden", remote=False),
+    SearchLocation(location="Gothenburg, Västra Götaland County, Sweden", remote=False),
+    SearchLocation(location="Gothenburg, Västra Götaland County, Sweden", remote=True),
     SearchLocation(location="Sweden", remote=True),
     SearchLocation(location="European Union", remote=True),
     SearchLocation(location="EMEA", remote=True),
