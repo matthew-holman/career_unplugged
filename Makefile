@@ -1,5 +1,5 @@
 requirements:
-	poetry install
+	poetry install --no-root --with dev
 	# pre-commit install --install-hooks
 	export BETTER_EXCEPTIONS=1
 
@@ -34,6 +34,6 @@ start-db:
 	docker-compose up -d db
 
 main:
-	python main.py
+	poetry run python3 main.py
 
 start: requirements start-db migrations main

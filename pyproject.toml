@@ -9,7 +9,6 @@ python = ">=3.10, <3.11"
 alembic = "^1.9.0"
 better-exceptions = "0.3.3"
 fastapi = "~=0.110.0"
-psycopg2 = "2.9.3"
 pydantic = ">=2.3.0,<3.0.0"
 pydantic_settings = "^2.0.0"
 python-dateutil = "~=2.8.2"
@@ -27,12 +26,11 @@ sqlmodel = "^0.0.16"
 beautifulsoup4 = "4.12.3"
 tls-client = "1.0.1"
 markdownify = "1.1.0"
-
-[tool.poetry.dev-dependencies]
-requests-mock = "^1.10.0"
-httpx = "0.22.0"
+psycopg2-binary = "^2.9.10"
 
 [tool.poetry.group.dev.dependencies]
+requests-mock = "^1.10.0"
+httpx = "0.22.0"
 pre-commit = "^3.6.0"
 
 [tool.black]
