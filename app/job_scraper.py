@@ -57,7 +57,7 @@ with next(get_db()) as db_session:
                 location=job_location.location,
                 job_type=JobType.FULL_TIME,
                 results_wanted=400,
-                hours_old=24,
+                hours_old=96,
                 remote_status=remote_status,
             )
 
@@ -65,6 +65,13 @@ with next(get_db()) as db_session:
 
             job_handler = JobHandler(db_session)
             for job_post in response.jobs:
+
+                if job_post.location.country.lower() in ["united states", "tx", "ny", "wi", "ca", "wa"]:
+                    logger.warning(
+                        f"USA job returned when scraping {job_location}, ignoring: "
+                        f"{job.title} at {job.company}"
+                    )
+
                 if save_job(job_post):
                     job = JobCreate(
                         title=job_post.title,

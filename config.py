@@ -44,9 +44,6 @@ COMPANIES_TO_IGNORE: List[str] = ["Canonical", "Crossover"]
 # remote true will search for remote
 JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="Berlin, Germany", remote=False),
-    SearchLocation(
-        location="Greater Gothenburg Metropolitan Area", remote=False
-    ),
     SearchLocation(location="London Area, United Kingdom", remote=False),
     SearchLocation(location="Amsterdam Area", remote=False),
     SearchLocation(location="Sweden", remote=False),
