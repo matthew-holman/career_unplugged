@@ -31,7 +31,7 @@ router = APIRouter(
     response_model=JobRead,
 )
 def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
-    job_handler = JobHandler(db_session)
+    job_handler = vJobHandler(db_session)
     job = job_handler.get(job_id=job_id)
     if job:
         return job
