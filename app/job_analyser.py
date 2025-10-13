@@ -6,7 +6,7 @@ from app.db.db import get_db
 from app.handlers.job import JobHandler
 from app.job_scrapers.scraper import RemoteStatus
 from app.job_scrapers.utils import create_session
-from app.utils.logging import LoggerFactory, LogLevels
+from app.utils.log_wrapper import LoggerFactory, LogLevels
 from config import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 
 REMOTE_REG_EX_PATTERNS = [

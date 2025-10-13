@@ -25,7 +25,7 @@ from app.job_scrapers.utils import (
     get_enum_from_job_type,
     markdown_converter,
 )
-from app.utils.logging import LoggerFactory, LogLevels
+from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 logger = LoggerFactory.get_logger(
     "Linkedin scraper", log_level=LogLevels.DEBUG

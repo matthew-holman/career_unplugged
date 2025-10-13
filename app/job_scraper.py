@@ -11,7 +11,7 @@ from app.job_scrapers.scraper import (
     ScraperInput,
 )
 from app.models.job import JobCreate
-from app.utils.logging import LoggerFactory, LogLevels
+from app.utils.log_wrapper import LoggerFactory, LogLevels
 from config import (
     COMPANIES_TO_IGNORE,
     JOB_LOCATIONS,
@@ -64,7 +64,7 @@ with next(get_db()) as db_session:
                 location=job_location.location,
                 job_type=JobType.FULL_TIME,
                 results_wanted=400,
-                hours_old=150,
+                hours_old=480,
                 remote_status=remote_status,
             )
 
