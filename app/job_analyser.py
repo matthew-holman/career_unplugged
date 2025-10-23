@@ -27,7 +27,7 @@ REMOTE_REG_EX_PATTERNS = [
     r"\b(async[-\s]?team)\b",
     r"\b(we\soperate\sasync)\b",
     r"\b(fully[-\s]?distributed)\b",
-    r"\b(across\s(Europe|EMEA|EU|timezones))\b",
+    r"\b(across\s(EMEA|EU|timezones))\b",
     r"\b(flexible\slocation)\b",
     r"\b(work\sanywhere\s(in|across)\sEurope)\b",
     r"\b(remote\s(within|from)?\s(Sweden|Europe|EU|EMEA))\b",

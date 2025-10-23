@@ -10,14 +10,15 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 
 from app.log import Log
+from app.routers.career_pages import router as career_pages
 from app.routers.job import router as job
 from app.settings import config
 
 
 def get_app():
     application = FastAPI(
-        title="Fast API template",
-        description="template for FastApi app",
+        title="job scraper",
+        description="help me get a job",
         version=f"{config.API_VERSION}-{config.IMAGE_TAG}",
     )
 
@@ -29,6 +30,7 @@ def get_app():
         allow_headers=["*"],
     )
 
+    application.include_router(career_pages)
     application.include_router(job)
 
     @application.exception_handler(HTTPException)
