@@ -30,7 +30,14 @@ def save_job(job_post: JobPost) -> bool:
             logger.info(f"Ignoring job from {job_post.company_name}")
             return False
 
-    if job_post.location.country.lower() in ["united states", "tx", "ny", "wi", "ca", "wa"]:
+    if job_post.location.country.lower() in [
+        "united states",
+        "tx",
+        "ny",
+        "wi",
+        "ca",
+        "wa",
+    ]:
         logger.warning(
             f"USA job returned when scraping {job_location}, ignoring: "
             f"{job_post.title} at {job_post.company_name}"
@@ -42,7 +49,9 @@ def save_job(job_post: JobPost) -> bool:
             logger.info(f"Adding job {job_post.title} from {job_post.company_name}")
             return True
 
-    logger.info(f"Ignoring job with title {job_post.title} from {job_post.company_name}")
+    logger.info(
+        f"Ignoring job with title {job_post.title} from {job_post.company_name}"
+    )
     return False
 
 
@@ -72,7 +81,6 @@ with next(get_db()) as db_session:
 
             job_handler = JobHandler(db_session)
             for job_post in response.jobs:
-
                 if save_job(job_post):
                     job = JobCreate(
                         title=job_post.title,

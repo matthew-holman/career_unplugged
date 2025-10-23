@@ -40,7 +40,7 @@ def create_session(
         session.proxies = proxy
     else:
         session = requests.Session()
-        session.allow_redirects = True
+        session.max_redirects = 5
         if proxy:
             session.proxies.update(proxy)
         if has_retry:

@@ -32,8 +32,7 @@ REMOTE_REG_EX_PATTERNS = [
     r"\b(work\sanywhere\s(in|across)\sEurope)\b",
     r"\b(remote\s(within|from)?\s(Sweden|Europe|EU|EMEA))\b",
     r"\b(no\srelocation\sneeded)\b",
-    r"\b(location[-\s]?agnostic)\b"
-    r"\b(distributed[-\s]?team)\b",
+    r"\b(location[-\s]?agnostic)\b" r"\b(distributed[-\s]?team)\b",
     r"\b(CET|CEST|Central European (Standard|Summer)? Time)\b",
     r"\b(UTC[\s±+-]?\d{1,2})\b",  # e.g. UTC+1, UTC -2
     r"\b(European\s+timezones?)\b",
@@ -63,12 +62,19 @@ with next(get_db()) as db_session:
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
         ]:
             job_handler.set_true_remote(job)
-            logger.info(f"Job {job.title} at {job.company} with country {job.country} is EU remote.")
+            logger.info(
+                f"Job {job.title} at {job.company} with country {job.country} is EU remote."
+            )
             continue
 
-        if "sweden" in job.country.lower() and job.listing_remote == RemoteStatus.REMOTE:
+        if (
+            "sweden" in job.country.lower()
+            and job.listing_remote == RemoteStatus.REMOTE
+        ):
             job_handler.set_true_remote(job)
-            logger.info(f"Job {job.title} at {job.company} with country {job.country} is Sweden remote.")
+            logger.info(
+                f"Job {job.title} at {job.company} with country {job.country} is Sweden remote."
+            )
             continue
 
     session = create_session(is_tls=False, has_retry=True, delay=15)
@@ -82,7 +88,9 @@ with next(get_db()) as db_session:
             )
 
         soup = BeautifulSoup(job_description_response.text, "html.parser")
-        description_section = soup.find("section", class_="core-section-container my-3 description")
+        description_section = soup.find(
+            "section", class_="core-section-container my-3 description"
+        )
 
         if description_section:
             job_description_text = description_section.decode_contents()
@@ -95,7 +103,9 @@ with next(get_db()) as db_session:
             match = re.search(pattern, job_description_text, re.IGNORECASE)
             if match is not None:
                 job_handler.set_true_remote(job)
-                logger.info(f"Job {job.title} at {job.company} has match with {pattern} in job description text.")
+                logger.info(
+                    f"Job {job.title} at {job.company} has match with {pattern} in job description text."
+                )
                 break
 
         for pattern in POSITIVE_MATCH_KEYWORDS:

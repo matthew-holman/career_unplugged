@@ -3,11 +3,10 @@ from numbers import Number
 from typing import Dict
 
 from sqlalchemy import Column
-from sqlalchemy.ext.declarative import declared_attr
 
 
 class ColumnMappingMixIn:  # pragma: no cover
-    @declared_attr
+    @classmethod
     def column_mapping(cls) -> Dict[str, str]:
         return {
             column_name: cls._get_column_type(column)

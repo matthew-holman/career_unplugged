@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 from sqlmodel import Session, select
+
 from app.models.career_page import CareerPage, CareerPageCreate, CareerPageRead
 
 
@@ -24,7 +25,9 @@ class CareerPageHandler:
         self.db_session.refresh(validated_page)
         return CareerPageRead.model_validate(validated_page)
 
-    def update(self, page_id: int, update: CareerPageCreate) -> Optional[CareerPageRead]:
+    def update(
+        self, page_id: int, update: CareerPageCreate
+    ) -> Optional[CareerPageRead]:
         page = self.get(page_id)
         if not page:
             return None

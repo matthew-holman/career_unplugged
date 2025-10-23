@@ -23,7 +23,7 @@ JOB_TITLES: List[str] = [
     "Software Development Manager",
     "head of technology",
     "Developer Team Lead",
-    "Engineering Squad Lead"
+    "Engineering Squad Lead",
     # "senior engineer",
     # "backend engineer",
     # "python engineer"
@@ -69,19 +69,24 @@ POSITIVE_MATCH_KEYWORDS: List[str] = [
     "Vue",
     "sustainability",
     "Node",
-    "energy"
+    "energy",
     # add more keywords
 ]
 
 # the analyser will use these keywords and if found set job.keyword_match
 # to false. Think of these as terms to help you filter out roles
-NEGATIVE_MATCH_KEYWORDS = ["crypto", "web3", "blockchain", "Java", "C#", "Kotlin"]
+NEGATIVE_MATCH_KEYWORDS = [
+    "crypto",
+    "web3",
+    "blockchain",
+    "Java",
+    "C#",
+    "Kotlin",
+]
 
 
 def linkedin_search_string():
     # Format the unique phrases with quotes and join them with ' OR '
     search_terms = JOB_TITLES + ADDITIONAL_SEARCH_TERMS
-    formatted_string = (
-        "(" + " OR ".join(f'"{string}"' for string in search_terms) + ")"
-    )
+    formatted_string = "(" + " OR ".join(f'"{string}"' for string in search_terms) + ")"
     return formatted_string
