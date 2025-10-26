@@ -1,11 +1,15 @@
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session
 
 from app.db.db import get_db
+from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
+from app.job_scrapers.ats_scraper_factory import AtsScraperFactory
 from app.job_scrapers.linkedin import LinkedInScraper
 from app.job_scrapers.scraper import (
     JobPost,
+    JobResponse,
     JobType,
     RemoteStatus,
     ScraperInput,
@@ -24,25 +28,11 @@ load_dotenv()
 logger = LoggerFactory.get_logger("job scraper", log_level=LogLevels.DEBUG)
 
 
-def save_job(job_post: JobPost) -> bool:
+def should_save_job(job_post: JobPost) -> bool:
     for company in COMPANIES_TO_IGNORE:
         if company.lower() == job_post.company_name.lower():
             logger.info(f"Ignoring job from {job_post.company_name}")
             return False
-
-    if job_post.location.country.lower() in [
-        "united states",
-        "tx",
-        "ny",
-        "wi",
-        "ca",
-        "wa",
-    ]:
-        logger.warning(
-            f"USA job returned when scraping {job_location}, ignoring: "
-            f"{job_post.title} at {job_post.company_name}"
-        )
-        return False
 
     for job_title in JOB_TITLES:
         if job_title.lower() in job_post.title.lower():
@@ -57,7 +47,45 @@ def save_job(job_post: JobPost) -> bool:
 
 scraper = LinkedInScraper()
 
-with next(get_db()) as db_session:
+
+def persist_job_response(response: JobResponse, job_location: str, db_session: Session):
+    job_handler = JobHandler(db_session)
+    for job_post in response.jobs:
+        if job_post.location.country.lower() in [
+            "united states",
+            "tx",
+            "ny",
+            "wi",
+            "ca",
+            "wa",
+        ]:
+            logger.warning(
+                f"USA job returned when scraping {job_location}, ignoring: "
+                f"{job_post.title} at {job_post.company_name}"
+            )
+            continue
+
+        if should_save_job(job_post):
+            job = JobCreate(
+                title=job_post.title,
+                company=job_post.company_name,
+                country=job_post.location.country,
+                city=job_post.location.city,
+                linkedin_url=job_post.job_url,
+                listing_date=job_post.date_posted,
+                listing_remote=job_post.remote_status,
+            )
+            try:
+                job_handler.create(job)
+            except IntegrityError:
+                logger.warning(
+                    f"Duplicate job found and skipped: " f"{job.title} at {job.company}"
+                )
+                job_handler.db_session.rollback()
+                continue
+
+
+def run_linkedin_scraper(db_session: Session):
     for job_location in JOB_LOCATIONS:
         logger.info(f"Scraping jobs for {job_location.location}")
 
@@ -79,24 +107,29 @@ with next(get_db()) as db_session:
 
             response = scraper.scrape(scraper_input=scraper_input)
 
-            job_handler = JobHandler(db_session)
-            for job_post in response.jobs:
-                if save_job(job_post):
-                    job = JobCreate(
-                        title=job_post.title,
-                        company=job_post.company_name,
-                        country=job_post.location.country,
-                        city=job_post.location.city,
-                        linkedin_url=job_post.job_url,
-                        listing_date=job_post.date_posted,
-                        listing_remote=job_post.remote_status,
-                    )
-                    try:
-                        job_handler.create(job)
-                    except IntegrityError:
-                        logger.warning(
-                            f"Duplicate job found and skipped: "
-                            f"{job.title} at {job.company}"
-                        )
-                        job_handler.db_session.rollback()
-                        continue
+            persist_job_response(response, job_location, db_session)
+
+
+def run_ats_scrapers(db_session: Session):
+    page_handler = CareerPageHandler(db_session)
+    career_pages = page_handler.get_all()
+
+    for page in career_pages:
+        logger.info(f"Processing {page.company_name or page.url}")
+        ats_scraper = AtsScraperFactory.get_parser(page.url)
+        if not scraper:
+            logger.warning(f"No supported ATS parser for {page.url}")
+            continue
+
+        response = ats_scraper.scrape(page.url)
+        persist_job_response(response, db_session)
+
+
+def main():
+    with next(get_db()) as db_session:
+        # run_linkedin_scraper(db_session)
+        run_ats_scrapers(db_session)
+
+
+if __name__ == "__main__":
+    main()

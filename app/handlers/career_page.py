@@ -10,11 +10,11 @@ from app.models.career_page import CareerPage, CareerPageCreate, CareerPageRead
 class CareerPageHandler:
     db_session: Session
 
-    def get(self, page_id: int) -> Optional[CareerPage]:
+    def get_by_id(self, page_id: int) -> Optional[CareerPage]:
         statement = select(CareerPage).where(CareerPage.id == page_id)
         return self.db_session.exec(statement).first()
 
-    def list_all(self) -> Sequence[CareerPage]:
+    def get_all(self) -> Sequence[CareerPage]:
         statement = select(CareerPage)
         return self.db_session.exec(statement).all()
 
@@ -28,7 +28,7 @@ class CareerPageHandler:
     def update(
         self, page_id: int, update: CareerPageCreate
     ) -> Optional[CareerPageRead]:
-        page = self.get(page_id)
+        page = self.get_by_id(page_id)
         if not page:
             return None
         for field, value in update.model_dump(exclude_unset=True).items():

@@ -72,11 +72,7 @@ class CompensationInterval(Enum):
         if pay_period in interval_mapping:
             return interval_mapping[pay_period].value
         else:
-            return (
-                cls[pay_period].value
-                if pay_period in cls.__members__
-                else None
-            )
+            return cls[pay_period].value if pay_period in cls.__members__ else None
 
 
 class JobPost(BaseModel):
@@ -109,5 +105,5 @@ class Scraper:
     def __init__(self, proxy: str | None = None):
         self.proxy = (lambda p: {"http": p, "https": p} if p else None)(proxy)
 
-    def scrape(self, scraper_input: ScraperInput):
+    def scrape(self, scraper_input: ScraperInput | None):
         pass

@@ -17,13 +17,13 @@ def create_career_page(page: CareerPageCreate, db_session: Session = Depends(get
 @router.get("/", status_code=status.HTTP_200_OK, response_model=list[CareerPageRead])
 def list_career_pages(db_session: Session = Depends(get_db)):
     handler = CareerPageHandler(db_session)
-    return handler.list_all()
+    return handler.get_all()
 
 
 @router.get("/{page_id}", status_code=status.HTTP_200_OK, response_model=CareerPageRead)
 def get_career_page(page_id: int, db_session: Session = Depends(get_db)):
     handler = CareerPageHandler(db_session)
-    page = handler.get(page_id)
+    page = handler.get_by_id(page_id)
     if not page:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
