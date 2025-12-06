@@ -27,9 +27,10 @@ class JobHandler:
         self.db_session.refresh(validated_job)
         return JobRead.from_orm(validated_job)
 
-    def set_true_remote(self, job: Job) -> JobRead:
+    def set_true_remote(self, job: Job, flag_reason: str) -> JobRead:
         job.true_remote = True
         job.analysed = True
+        job.remote_flag_reason = flag_reason
         self.db_session.add(job)
         self.db_session.commit()
         self.db_session.refresh(job)

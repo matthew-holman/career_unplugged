@@ -10,7 +10,7 @@ from app.utils.log_wrapper import LoggerFactory, LogLevels
 from config import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 
 REMOTE_REG_EX_PATTERNS = [
-    r"\sCET\s",
+    r"\s(GMT|CET)\s",
     "remote in eu",
     r"remote[-\s]first",
     r"remote[-\s]friendly",
@@ -33,12 +33,12 @@ REMOTE_REG_EX_PATTERNS = [
     r"\b(remote\s(within|from)?\s(Sweden|Europe|EU|EMEA))\b",
     r"\b(no\srelocation\sneeded)\b",
     r"\b(location[-\s]?agnostic)\b" r"\b(distributed[-\s]?team)\b",
-    r"\b(CET|CEST|Central European (Standard|Summer)? Time)\b",
+    r"\b(GMT|CET|CEST|Central European (Standard|Summer)? Time)\b",
     r"\b(UTC[\s±+-]?\d{1,2})\b",  # e.g. UTC+1, UTC -2
     r"\b(European\s+timezones?)\b",
-    r"\b(within\s+([±+−-]?\s?\d{1,2}\s?(hrs?|hours?)?)\s+of\s+(CET|UTC))\b",
-    r"\b(time[-\s]?zone:\s?(CET|UTC[\s+-]?\d))\b",
-    r"\b(\bwithin\b\s?\d{1,2}[-\s]?(hrs?|hours?)\s?(of)?\s?(CET|Central European Time|UTC))",
+    r"\b(within\s+([±+−-]?\s?\d{1,2}\s?(hrs?|hours?)?)\s+of\s+(GMT|CET|UTC))\b",
+    r"\b(time[-\s]?zone:\s?(GMT|CET|UTC[\s+-]?\d))\b",
+    r"\b(\bwithin\b\s?\d{1,2}[-\s]?(hrs?|hours?)\s?(of)?\s?(GMT|CET|Central European Time|UTC))",
     r"\b(based in\s+(Europe|EU|EMEA)[\s,]+but\s+open\s+to\s+remote)\b",
     r"\b(remote[-\s]work\s+(within|across)\s+(Europe|EU|EMEA))\b",
     r"\b(work\sfrom\sanywhere\s(in|within)\s(Europe|EMEA))\b",
@@ -61,7 +61,7 @@ with next(get_db()) as db_session:
         if job.country.lower() in [
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
         ]:
-            job_handler.set_true_remote(job)
+            job_handler.set_true_remote(job, "True Remote Location")
             logger.info(
                 f"Job {job.title} at {job.company} with country {job.country} is EU remote."
             )
@@ -71,7 +71,7 @@ with next(get_db()) as db_session:
             "sweden" in job.country.lower()
             and job.listing_remote == RemoteStatus.REMOTE
         ):
-            job_handler.set_true_remote(job)
+            job_handler.set_true_remote(job, "Sweden Remote")
             logger.info(
                 f"Job {job.title} at {job.company} with country {job.country} is Sweden remote."
             )
@@ -102,7 +102,7 @@ with next(get_db()) as db_session:
         for pattern in REMOTE_REG_EX_PATTERNS:
             match = re.search(pattern, job_description_text, re.IGNORECASE)
             if match is not None:
-                job_handler.set_true_remote(job)
+                job_handler.set_true_remote(job, pattern)
                 logger.info(
                     f"Job {job.title} at {job.company} has match with {pattern} in job description text."
                 )

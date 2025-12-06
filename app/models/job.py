@@ -24,6 +24,10 @@ class JobBase(BaseModel, table=False):  # type: ignore
     )
     true_remote: bool | None = Field(nullable=False, default=False)
     analysed: bool = Field(nullable=True, default=False)
+    remote_flag_reason: str | None = Field(
+        default=None,
+        description="Reason this job was flagged as remote (pattern match, location, etc.)",
+    )
     positive_keyword_match: bool = Field(nullable=True, default=False)
     negative_keyword_match: bool = Field(nullable=True, default=False)
 
