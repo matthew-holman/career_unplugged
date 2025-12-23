@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 from http.client import HTTPException
-from typing import List, Optional
+from typing import List, Optional, Sequence
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.sql.roles import _T_co
 from sqlmodel import Session, select
 from starlette import status
 
@@ -42,7 +43,7 @@ def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=List[Job],
+    response_model=Sequence[Job],
 )
 def list_jobs(
     title: Optional[str] = None,
@@ -57,7 +58,7 @@ def list_jobs(
     recent: Optional[bool] = None,
     listing_remote: Optional[RemoteStatus] = None,
     db_session: Session = Depends(get_db),
-) -> List[Job]:
+) -> Sequence[Job]:
     query = select(Job)
 
     if title is not None:

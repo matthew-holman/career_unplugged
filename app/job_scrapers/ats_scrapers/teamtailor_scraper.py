@@ -5,13 +5,17 @@ import requests
 from bs4 import BeautifulSoup
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, JobResponse, Location
+from app.job_scrapers.scraper import JobPost, JobResponse, Location, Source
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 
-logger = LoggerFactory.get_logger("TeamtailorScraper", log_level=LogLevels.DEBUG)
+logger = LoggerFactory.get_logger("TeamTailorScraper", log_level=LogLevels.DEBUG)
 
 
-class TeamtailorScraper(AtsScraper):
+class TeamTailorScraper(AtsScraper):
+
+    @property
+    def source_name(self) -> Source:
+        return Source.TEAMTAILOR
 
     @classmethod
     def supports(cls, url: str) -> bool:
@@ -124,6 +128,7 @@ class TeamtailorScraper(AtsScraper):
                     job_type=None,
                     description=None,
                     remote_status=self.parse_remote_status(work_mode_raw),
+                    source=self.source_name
                 )
             )
 

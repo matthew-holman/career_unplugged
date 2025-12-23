@@ -17,7 +17,7 @@ from app.job_scrapers.scraper import (
     JobType,
     Location,
     Scraper,
-    ScraperInput,
+    ScraperInput, Source,
 )
 from app.job_scrapers.utils import (
     create_session,
@@ -45,6 +45,10 @@ class LinkedInScraper(Scraper):
         """
         super().__init__(proxy=proxy)
         self.country = "EMEA"
+
+    @property
+    def source_name(self) -> Source:
+        return Source.LINKEDIN
 
     def scrape(self, scraper_input: ScraperInput) -> JobResponse:
         """
@@ -216,6 +220,7 @@ class LinkedInScraper(Scraper):
             emails=extract_emails_from_text(description)
             if description
             else None,
+            source=self.source_name
         )
 
     def _get_job_description(

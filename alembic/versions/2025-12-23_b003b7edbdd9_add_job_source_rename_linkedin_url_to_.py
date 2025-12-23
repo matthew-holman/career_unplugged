@@ -18,25 +18,31 @@ depends_on = None
 
 
 def upgrade():
-    # 1) Add the new 'source' column with a server default so existing rows pass NOT NULL
+
+    # 1) Create enum type in Postgres BEFORE using it
+    source_enum = sa.Enum("LINKEDIN", "TEAMTAILOR", name="source")
+    bind = op.get_bind()
+    source_enum.create(bind, checkfirst=True)
+
+    # 2) Add the new 'source' column with a server default so existing rows pass NOT NULL
     op.add_column(
         "job",
         sa.Column(
             "source",
-            sa.Enum("LINKEDIN", "TEAMTAILOR", name="source"),
+            source_enum,
             nullable=False,
             server_default="LINKEDIN",
         ),
     )
 
-    # 2) Rename linkedin_url -> source_url (keeps existing data)
+    # 3) Rename linkedin_url -> source_url (keeps existing data)
     op.alter_column("job", "linkedin_url", new_column_name="source_url")
 
-    # 3) Swap the unique constraint to the new column name
+    # 4) Swap the unique constraint to the new column name
     op.drop_constraint("job_linkedin_url_key", "job", type_="unique")
     op.create_unique_constraint("job_source_url_key", "job", ["source_url"])
 
-    # 4) Remove the server default (optional, but cleaner long-term)
+    # 5) Remove the server default (optional, but cleaner long-term)
     op.alter_column("job", "source", server_default=None)
 
 

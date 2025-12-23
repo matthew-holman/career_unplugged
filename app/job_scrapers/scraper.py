@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 from datetime import date
 from enum import Enum, IntEnum
 
@@ -112,6 +113,12 @@ class SearchLocation(BaseModel):
 class Scraper:
     def __init__(self, proxy: str | None = None):
         self.proxy = (lambda p: {"http": p, "https": p} if p else None)(proxy)
+
+    @property
+    @abstractmethod
+    def source_name(self) -> Source:
+        """Human-readable source name, e.g. 'linkedin', 'teamtailor'."""
+        pass
 
     def scrape(self, scraper_input: ScraperInput | None):
         pass

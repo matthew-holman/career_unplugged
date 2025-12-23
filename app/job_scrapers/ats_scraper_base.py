@@ -4,7 +4,7 @@ import unicodedata
 from abc import abstractmethod
 from typing import Optional
 
-from app.job_scrapers.scraper import JobResponse, JobType, RemoteStatus
+from app.job_scrapers.scraper import JobResponse, JobType, RemoteStatus, Source
 from app.models.career_page import CareerPage
 
 
@@ -18,6 +18,12 @@ class AtsScraper:
 
     def __init__(self, career_page: CareerPage):
         self.career_page = career_page
+
+    @property
+    @abstractmethod
+    def source_name(self) -> Source:
+        """Human-readable source name, e.g. 'linkedin', 'teamtailor'."""
+        pass
 
     @classmethod
     @abstractmethod
