@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.scraper import JobPost, JobResponse, Location, Source
+from app.utils.country_resolver import CountryResolver
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 logger = LoggerFactory.get_logger("TeamTailorScraper", log_level=LogLevels.DEBUG)
@@ -116,6 +117,9 @@ class TeamTailorScraper(AtsScraper):
             country = None
             if location_raw:
                 city = location_raw.split(",")[0].strip()
+
+            if city and not country:
+                country = CountryResolver.resolve_country(city)
 
             jobs.append(
                 JobPost(
