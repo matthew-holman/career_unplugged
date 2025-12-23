@@ -48,17 +48,23 @@ def should_save_job(job_post: JobPost) -> bool:
 scraper = LinkedInScraper()
 
 
-def persist_job_response(response: JobResponse, job_location: str, db_session: Session):
+def persist_job_response(
+    response: JobResponse, db_session: Session, job_location: str = "Not Sure"
+):
     job_handler = JobHandler(db_session)
     for job_post in response.jobs:
-        if job_post.location.country.lower() in [
-            "united states",
-            "tx",
-            "ny",
-            "wi",
-            "ca",
-            "wa",
-        ]:
+        if (
+            job_post.location.country is not None
+            and job_post.location.country.lower()
+            in [
+                "united states",
+                "tx",
+                "ny",
+                "wi",
+                "ca",
+                "wa",
+            ]
+        ):
             logger.warning(
                 f"USA job returned when scraping {job_location}, ignoring: "
                 f"{job_post.title} at {job_post.company_name}"
@@ -71,7 +77,7 @@ def persist_job_response(response: JobResponse, job_location: str, db_session: S
                 company=job_post.company_name,
                 country=job_post.location.country,
                 city=job_post.location.city,
-                linkedin_url=job_post.job_url,
+                source_url=job_post.job_url,
                 listing_date=job_post.date_posted,
                 listing_remote=job_post.remote_status,
             )
@@ -101,13 +107,13 @@ def run_linkedin_scraper(db_session: Session):
                 location=job_location.location,
                 job_type=JobType.FULL_TIME,
                 results_wanted=400,
-                hours_old=168,
+                hours_old=48,
                 remote_status=remote_status,
             )
 
             response = scraper.scrape(scraper_input=scraper_input)
 
-            persist_job_response(response, job_location, db_session)
+            persist_job_response(response, db_session, job_location)
 
 
 def run_ats_scrapers(db_session: Session):
@@ -116,19 +122,19 @@ def run_ats_scrapers(db_session: Session):
 
     for page in career_pages:
         logger.info(f"Processing {page.company_name or page.url}")
-        ats_scraper = AtsScraperFactory.get_parser(page.url)
-        if not scraper:
+        ats_scraper = AtsScraperFactory.get_parser(page)
+        if not ats_scraper:
             logger.warning(f"No supported ATS parser for {page.url}")
             continue
 
-        response = ats_scraper.scrape(page.url)
+        response = ats_scraper.scrape()
         persist_job_response(response, db_session)
 
 
 def main():
     with next(get_db()) as db_session:
-        run_linkedin_scraper(db_session)
-        # run_ats_scrapers(db_session)
+        # run_linkedin_scraper(db_session)
+        run_ats_scrapers(db_session)
 
 
 if __name__ == "__main__":

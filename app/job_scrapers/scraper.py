@@ -20,6 +20,12 @@ class RemoteStatus(IntEnum):
     REMOTE = 2
 
 
+class Source(str, Enum):
+    LINKEDIN = "linkedin"
+    TEAMTAILOR = "teamtailor"
+    # later: GREENHOUSE, LEVER, WORKABLE, etc.
+
+
 class DescriptionFormat(Enum):
     MARKDOWN = "markdown"
     HTML = "html"
@@ -90,6 +96,8 @@ class JobPost(BaseModel):
     date_posted: date | None = None
     emails: list[str] | None = None
     remote_status: RemoteStatus | None = None
+
+    source: Source | None = None
 
 
 class JobResponse(BaseModel):

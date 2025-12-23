@@ -12,7 +12,7 @@ from config import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 REMOTE_REG_EX_PATTERNS = [
     r"\s(GMT|CET)\s",
     "remote in eu",
-    r"remote[-\s]first",
+    r"Remote[-\s]first in Europe" r"remote[-\s]first",
     r"remote[-\s]friendly",
     r"100%[-\s]remote",
     r"Western[-\s]European[-\s]timezones",
@@ -58,7 +58,7 @@ with next(get_db()) as db_session:
     jobs = job_handler.get_unanalysed()
 
     for job in jobs:
-        if job.country.lower() in [
+        if job.country is not None and job.country.lower() in [
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
         ]:
             job_handler.set_true_remote(job, "True Remote Location")
@@ -68,7 +68,8 @@ with next(get_db()) as db_session:
             continue
 
         if (
-            "sweden" in job.country.lower()
+            job.country is not None
+            and "sweden" in job.country.lower()
             and job.listing_remote == RemoteStatus.REMOTE
         ):
             job_handler.set_true_remote(job, "Sweden Remote")
@@ -79,7 +80,7 @@ with next(get_db()) as db_session:
 
     session = create_session(is_tls=False, has_retry=True, delay=15)
     for job in jobs:
-        job_description_response = session.get(job.linkedin_url)
+        job_description_response = session.get(job.source_url)
         if job_description_response.status_code != 200:
             raise Exception(
                 "Got an error response, status code: {}".format(

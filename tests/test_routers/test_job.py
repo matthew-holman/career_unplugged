@@ -18,7 +18,7 @@ def job(db_session: Session) -> JobRead:
         title="test title",
         company="test company",
         location="test location",
-        linkedin_url="test linkedin url",
+        source_url="test linkedin url",
         listing_remote=choice(list(RemoteStatus)),
         country="test country",
     )
