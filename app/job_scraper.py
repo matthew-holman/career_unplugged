@@ -80,6 +80,7 @@ def persist_job_response(
                 source_url=job_post.job_url,
                 listing_date=job_post.date_posted,
                 listing_remote=job_post.remote_status,
+                source=job_post.source,
             )
             try:
                 job_handler.create(job)

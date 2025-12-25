@@ -86,31 +86,50 @@ class TeamTailorScraper(AtsScraper):
             metadata_container = li.find(
                 "div", class_=lambda c: isinstance(c, str) and "mt-1" in c.split()
             )
-            metadata_spans = (
-                metadata_container.find_all("span") if metadata_container else []
-            )
 
-            if len(metadata_spans) < 5:
+            def _is_separator_span(span) -> bool:
+                return span.get_text(strip=True) == "·"
+
+            def _clean_token(text: str) -> str:
+                return " ".join(text.split()).strip()
+
+            tokens: list[str] = []
+            work_mode_raw: str | None = None
+
+            if metadata_container:
+                # Only direct child spans to avoid nested icon spans
+                for span in metadata_container.find_all("span", recursive=False):
+                    if _is_separator_span(span):
+                        continue
+
+                    text = _clean_token(span.get_text(" ", strip=True))
+                    if not text:
+                        continue
+
+                    # Try to detect work mode by content, not position
+                    if self.parse_remote_status(text) is not None:
+                        work_mode_raw = text
+                        continue
+
+                    tokens.append(text)
+
+            # tokens now contains department/location-ish text, work_mode_raw may be set
+            department: str | None = None
+            location_raw: str | None = None
+
+            if len(tokens) == 0:
                 logger.warning(
-                    f"Skipping job: {job_title}, at: {self.career_page.company_name} with insufficient metadata."
+                    f"Skipping job: {job_title}, at: {self.career_page.company_name} with no metadata tokens."
                 )
                 continue
 
-            department = (
-                metadata_spans[0].get_text(strip=True)
-                if len(metadata_spans) >= 1
-                else None
-            )
-            location_raw = (
-                metadata_spans[2].get_text(strip=True)
-                if len(metadata_spans) >= 2
-                else None
-            )
-            work_mode_raw = (
-                metadata_spans[4].get_text(strip=True)
-                if len(metadata_spans) >= 3
-                else None
-            )
+            if len(tokens) == 1:
+                # e.g. ["London"]
+                location_raw = tokens[0]
+            else:
+                # e.g. ["Commercial", "Paris"] or ["Software Development", "Kaunas, Vilnius"]
+                department = tokens[0]
+                location_raw = tokens[1]
 
             # Keep location parsing simple for now; you can improve later
             city = None
@@ -132,7 +151,7 @@ class TeamTailorScraper(AtsScraper):
                     job_type=None,
                     description=None,
                     remote_status=self.parse_remote_status(work_mode_raw),
-                    source=self.source_name
+                    source=self.source_name,
                 )
             )
 
