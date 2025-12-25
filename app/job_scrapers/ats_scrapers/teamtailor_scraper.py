@@ -1,8 +1,11 @@
+from dataclasses import dataclass
 from urllib.parse import urljoin, urlparse
 
 import requests
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
+from mypy.checkexpr import Optional
+from requests import Response
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.scraper import JobPost, JobResponse, Location, Source
@@ -10,6 +13,13 @@ from app.utils.country_resolver import CountryResolver
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 logger = LoggerFactory.get_logger("TeamTailorScraper", log_level=LogLevels.DEBUG)
+
+
+@dataclass(frozen=True)
+class JobCardMetadata:
+    department: Optional[str]
+    location_raw: Optional[str]
+    work_mode_raw: Optional[str]
 
 
 class TeamTailorScraper(AtsScraper):
@@ -23,6 +33,11 @@ class TeamTailorScraper(AtsScraper):
         """
         Return True if the given URL belongs to a Teamtailor-powered site.
         """
+
+        # most team tailor sites are subdomains of teamtailor.com
+        if "teamtailor" in url:
+            return True
+
         try:
             response = requests.get(
                 url,
@@ -44,22 +59,13 @@ class TeamTailorScraper(AtsScraper):
     def scrape(self) -> JobResponse:
         jobs_url = self._resolve_jobs_index_url(self.career_page.url)
         if not jobs_url:
-            logger.warning(
-                f"Could not resolve Teamtailor jobs page from: {self.career_page.url}"
-            )
             return JobResponse(jobs=[])
 
-        logger.info(f"Fetching Teamtailor jobs from {jobs_url}")
-        response = requests.get(
-            jobs_url,
-            headers={"User-Agent": "Mozilla/5.0"},
-            timeout=10,
-        )
-        if response.status_code != 200:
-            logger.warning(f"Failed to fetch {jobs_url}: {response.status_code}")
+        jobs_page = self._fetch_jobs_page(jobs_url)
+        if not jobs_page:
             return JobResponse(jobs=[])
 
-        soup = BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(jobs_page.text, "html.parser")
 
         jobs_list = soup.find("ul", id="jobs_list_container")
         if not jobs_list:
@@ -69,76 +75,19 @@ class TeamTailorScraper(AtsScraper):
         jobs: list[JobPost] = []
         seen_urls: set[str] = set()
 
-        # iterate direct children only (each <li> is a job card)
         for li in jobs_list.find_all("li", recursive=False):
-            link = li.find("a", href=True)
-            if not link:
+            job_link = self._extract_job_link(li)
+            if not job_link:
                 continue
 
-            job_title = link.get_text(strip=True)
-            job_url = urljoin(jobs_url, link["href"])
-
+            job_title, job_url = job_link
             if job_url in seen_urls:
                 continue
             seen_urls.add(job_url)
 
-            # metadata area: <div class="mt-1 text-md"> <span>Dept</span> · <span>Location</span> · <span>Hybrid</span>
-            metadata_container = li.find(
-                "div", class_=lambda c: isinstance(c, str) and "mt-1" in c.split()
-            )
+            metadata = self._extract_job_metadata(li)
 
-            def _is_separator_span(span) -> bool:
-                return span.get_text(strip=True) == "·"
-
-            def _clean_token(text: str) -> str:
-                return " ".join(text.split()).strip()
-
-            tokens: list[str] = []
-            work_mode_raw: str | None = None
-
-            if metadata_container:
-                # Only direct child spans to avoid nested icon spans
-                for span in metadata_container.find_all("span", recursive=False):
-                    if _is_separator_span(span):
-                        continue
-
-                    text = _clean_token(span.get_text(" ", strip=True))
-                    if not text:
-                        continue
-
-                    # Try to detect work mode by content, not position
-                    if self.parse_remote_status(text) is not None:
-                        work_mode_raw = text
-                        continue
-
-                    tokens.append(text)
-
-            # tokens now contains department/location-ish text, work_mode_raw may be set
-            department: str | None = None
-            location_raw: str | None = None
-
-            if len(tokens) == 0:
-                logger.warning(
-                    f"Skipping job: {job_title}, at: {self.career_page.company_name} with no metadata tokens."
-                )
-                continue
-
-            if len(tokens) == 1:
-                # e.g. ["London"]
-                location_raw = tokens[0]
-            else:
-                # e.g. ["Commercial", "Paris"] or ["Software Development", "Kaunas, Vilnius"]
-                department = tokens[0]
-                location_raw = tokens[1]
-
-            # Keep location parsing simple for now; you can improve later
-            city = None
-            country = None
-            if location_raw:
-                city = location_raw.split(",")[0].strip()
-
-            if city and not country:
-                country = CountryResolver.resolve_country(city)
+            city, country = self._parse_location(metadata.location_raw)
 
             jobs.append(
                 JobPost(
@@ -150,17 +99,125 @@ class TeamTailorScraper(AtsScraper):
                     job_url=job_url,
                     job_type=None,
                     description=None,
-                    remote_status=self.parse_remote_status(work_mode_raw),
+                    remote_status=self.parse_remote_status(metadata.work_mode_raw),
                     source=self.source_name,
                 )
             )
 
             logger.debug(
                 f"Parsed Teamtailor job card: title='{job_title}', "
-                f"dept='{department}', location='{location_raw}', work_mode='{work_mode_raw}', url='{job_url}'"
+                f"dept='{metadata.department}', location='{metadata.location_raw}', "
+                f"work_mode='{metadata.work_mode_raw}', url='{job_url}'"
             )
 
         return JobResponse(jobs=jobs)
+
+    def _extract_job_link(self, li: Tag) -> Optional[tuple[str, str]]:
+        link = li.find("a", href=True)
+        if not link:
+            return None
+
+        job_title = link.get_text(strip=True)
+        job_url = urljoin(self.career_page.url, link["href"])
+        return job_title, job_url
+
+    def _extract_job_metadata(self, li: Tag) -> JobCardMetadata:
+        """
+        Teamtailor job card metadata typically looks like:
+          <span>Dept</span> · <span>Location</span> · <span>Hybrid</span>
+        But Dept may be missing:
+          <span>Location</span> · <span>Hybrid</span>
+        Also: icon spans can be nested inside the work-mode span.
+        """
+        metadata_container = li.find(
+            "div", class_=lambda c: isinstance(c, str) and "mt-1" in c.split()
+        )
+        if not metadata_container:
+            return JobCardMetadata(
+                department=None, location_raw=None, work_mode_raw=None
+            )
+
+        content_spans = self._get_direct_content_spans(metadata_container)
+
+        # Split into "work mode" vs "other tokens" by content (not position)
+        tokens: list[str] = []
+        work_mode_raw: Optional[str] = None
+
+        for text in content_spans:
+            # if it looks like Hybrid/Remote/Onsite, treat it as work mode
+            if self.parse_remote_status(text) is not None:
+                work_mode_raw = text
+                continue
+            tokens.append(text)
+
+        # tokens now contains dept/location-ish data
+        if len(tokens) == 0:
+            return JobCardMetadata(
+                department=None, location_raw=None, work_mode_raw=work_mode_raw
+            )
+
+        if len(tokens) == 1:
+            # e.g. ["London"]
+            return JobCardMetadata(
+                department=None, location_raw=tokens[0], work_mode_raw=work_mode_raw
+            )
+
+        # e.g. ["Commercial", "Paris"] or ["Software Development", "Kaunas, Vilnius"]
+        return JobCardMetadata(
+            department=tokens[0], location_raw=tokens[1], work_mode_raw=work_mode_raw
+        )
+
+    @staticmethod
+    def _get_direct_content_spans(metadata_container: Tag) -> list[str]:
+        """
+        Returns cleaned text from direct child <span> elements,
+        excluding separator spans ("·") and empty spans.
+        Uses get_text(" ", strip=True) to flatten nested icon spans safely.
+        """
+
+        def clean(dirt_text: str) -> str:
+            return " ".join(dirt_text.split()).strip()
+
+        results: list[str] = []
+        for span in metadata_container.find_all("span", recursive=False):
+            text = clean(span.get_text(" ", strip=True))
+            if not text or text == "·":
+                continue
+            results.append(text)
+        return results
+
+    @staticmethod
+    def _parse_location(
+        location_raw: Optional[str],
+    ) -> tuple[Optional[str], Optional[str]]:
+        if not location_raw:
+            return None, None
+
+        city = location_raw.split(",")[0].strip() if location_raw else None
+        country = None
+
+        if city:
+            country = CountryResolver.resolve_country(city)
+
+        return city, country
+
+    @staticmethod
+    def _fetch_jobs_page(jobs_url: str) -> Optional[Response]:
+        if not jobs_url:
+            logger.warning(f"Could not resolve Teamtailor jobs page from: {jobs_url}")
+            return None
+
+        logger.info(f"Fetching Teamtailor jobs from {jobs_url}")
+        response = requests.get(
+            jobs_url,
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=10,
+        )
+        if response.status_code != 200:
+            logger.warning(f"Failed to fetch {jobs_url}: {response.status_code}")
+            return None
+
+        return response
 
     @staticmethod
     def _resolve_jobs_index_url(url: str) -> str | None:

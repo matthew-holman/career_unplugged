@@ -11,11 +11,16 @@ class CountryResolver:
         "riga": "Latvia",
         "vilnius": "Lithuania",
         "kaunas": "Lithuania",
+        # Estonia
+        "tallinn": "Estonia",
+        "tartu": "Estonia",
         # France
         "paris": "France",
         "paris | headquarters": "France",
         # Germany
         "berlin": "Germany",
+        # India
+        "gurugram": "India",
         # Netherlands
         "amsterdam": "Netherlands",
         "Haarlem": "Netherlands",
@@ -27,6 +32,11 @@ class CountryResolver:
         "iasi": "Romania",
         "sibiu": "Romania",
         "bucharest": "Romania",
+        # Serbia
+        "beograd": "serbia",
+        # Spain
+        "barcelona": "Spain",
+        "madrid": "Spain",
         # Sweden
         "stockholm": "Sweden",
         "gothenburg": "Sweden",
