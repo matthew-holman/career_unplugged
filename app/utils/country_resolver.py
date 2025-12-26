@@ -1,3 +1,6 @@
+import re
+
+
 class CountryResolver:
     CITY_TO_COUNTRY = {
         # Argentina
@@ -16,7 +19,6 @@ class CountryResolver:
         "tartu": "Estonia",
         # France
         "paris": "France",
-        "paris | headquarters": "France",
         # Germany
         "berlin": "Germany",
         # India
@@ -42,7 +44,6 @@ class CountryResolver:
         "gothenburg": "Sweden",
         "göteborg": "Sweden",
         "malmö": "Sweden",
-        "hq (stockholm)": "Sweden",  # epidemic sound, should make a partial search
         "uppsala": "Sweden",
         # Poland
         "warsaw": "Poland",
@@ -54,9 +55,24 @@ class CountryResolver:
     }
 
     @classmethod
-    def resolve_country(cls, city: str | None) -> str | None:
-        if not city:
+    def resolve_country(cls, location: str | None) -> str | None:
+        if not location:
             return None
 
-        key = city.strip().lower()
-        return cls.CITY_TO_COUNTRY.get(key)
+        normalized = location.strip().lower()
+
+        # 1. Exact match
+        if normalized in cls.CITY_TO_COUNTRY:
+            return cls.CITY_TO_COUNTRY[normalized]
+
+        # 2. Token-based fallback
+        for part in normalized.split():
+            cleaned = re.sub(r"[^a-zåäö]", "", part)
+            if not cleaned:
+                continue
+
+            country = cls.CITY_TO_COUNTRY.get(cleaned)
+            if country:
+                return country
+
+        return None

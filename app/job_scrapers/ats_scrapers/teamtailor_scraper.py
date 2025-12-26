@@ -193,11 +193,18 @@ class TeamTailorScraper(AtsScraper):
         if not location_raw:
             return None, None
 
-        city = location_raw.split(",")[0].strip() if location_raw else None
-        country = None
+        city: Optional[str] = None
+        country: Optional[str] = None
 
-        if city:
-            country = CountryResolver.resolve_country(city)
+        location = location_raw.split(",")[0].strip() if location_raw else None
+
+        if location:
+            country = CountryResolver.resolve_country(location)
+
+        if country:
+            city = location
+        else:
+            country = location
 
         return city, country
 
