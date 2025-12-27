@@ -1,11 +1,17 @@
 import re
+
+import requests
 import unicodedata
 
 from abc import abstractmethod
 from typing import Optional
 
+from requests import Response
+
 from app.job_scrapers.scraper import JobResponse, JobType, RemoteStatus, Source
+from app.log import Log
 from app.models.career_page import CareerPage
+from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 
 class AtsScraper:
@@ -50,6 +56,18 @@ class AtsScraper:
         # collapse whitespace
         value = re.sub(r"\s+", " ", value).strip()
         return value
+
+    @staticmethod
+    def _fetch_page(url:str) -> Optional[Response]:
+        response = requests.get(
+            url,
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=10,
+        )
+        if response.status_code != 200:
+            Log.warning(f"Failed to fetch {url}: {response.status_code}")
+            return None
+        return response
 
     @classmethod
     def parse_job_type(cls, raw: str | None) -> Optional[JobType]:

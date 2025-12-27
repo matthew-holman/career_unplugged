@@ -9,10 +9,8 @@ from requests import Response
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.scraper import JobPost, JobResponse, Location, Source
+from app.log import Log
 from app.utils.country_resolver import CountryResolver
-from app.utils.log_wrapper import LoggerFactory, LogLevels
-
-logger = LoggerFactory.get_logger("TeamTailorScraper", log_level=LogLevels.DEBUG)
 
 
 @dataclass(frozen=True)
@@ -33,25 +31,17 @@ class TeamTailorScraper(AtsScraper):
         """
         Return True if the given URL belongs to a Teamtailor-powered site.
         """
-
-        # most team tailor sites are subdomains of teamtailor.com
-        if "teamtailor" in url:
-            return True
-
         try:
-            response = requests.get(
-                url,
-                timeout=5,
-                headers={"User-Agent": "Mozilla/5.0 (compatible; JobScraper/1.0)"},
-            )
+            response = TeamTailorScraper._fetch_page(url)
             html = response.text.lower()
         except Exception as e:
-            logger.warning(f"Failed to fetch {url} for ATS detection: {e}")
+            Log.warning(f"Failed to fetch {url} for ATS detection: {e}")
             return False
 
-        # Single simple test — matches JS, CSS, or inline data
-        if "teamtailor" in html:
-            logger.debug(f"Detected Teamtailor ATS on {url}")
+        # We are looking for a Teamtailor page with a teamtailor job list,
+        # other job lists are supported on Teamtailor pages.
+        if "teamtailor" in html and "id=\"jobs_list_container\"" in html:
+            Log.debug(f"Detected Teamtailor page with Teamtailor jobs list on {url}")
             return True
 
         return False
@@ -69,7 +59,7 @@ class TeamTailorScraper(AtsScraper):
 
         jobs_list = soup.find("ul", id="jobs_list_container")
         if not jobs_list:
-            logger.warning(f"Teamtailor jobs container not found on {jobs_url}")
+            Log.warning(f"Teamtailor jobs container not found on {jobs_url}")
             return JobResponse(jobs=[])
 
         jobs: list[JobPost] = []
@@ -104,7 +94,7 @@ class TeamTailorScraper(AtsScraper):
                 )
             )
 
-            logger.debug(
+            Log.debug(
                 f"Parsed Teamtailor job card: title='{job_title}', "
                 f"dept='{metadata.department}', location='{metadata.location_raw}', "
                 f"work_mode='{metadata.work_mode_raw}', url='{job_url}'"
@@ -211,20 +201,11 @@ class TeamTailorScraper(AtsScraper):
     @staticmethod
     def _fetch_jobs_page(jobs_url: str) -> Optional[Response]:
         if not jobs_url:
-            logger.warning(f"Could not resolve Teamtailor jobs page from: {jobs_url}")
+            Log.warning(f"Could not resolve Teamtailor jobs page from: {jobs_url}")
             return None
 
-        logger.info(f"Fetching Teamtailor jobs from {jobs_url}")
-        response = requests.get(
-            jobs_url,
-            headers={"User-Agent": "Mozilla/5.0"},
-            timeout=10,
-        )
-        if response.status_code != 200:
-            logger.warning(f"Failed to fetch {jobs_url}: {response.status_code}")
-            return None
-
-        return response
+        Log.info(f"Fetching Teamtailor jobs from {jobs_url}")
+        return TeamTailorScraper._fetch_page(jobs_url)
 
     @staticmethod
     def _resolve_jobs_index_url(url: str) -> str | None:
@@ -254,7 +235,7 @@ class TeamTailorScraper(AtsScraper):
             if r.status_code == 200:
                 return r.url  # keep redirects (e.g. /en/jobs)
         except Exception as e:
-            logger.debug(f"Error probing {candidate}: {e}")
+            Log.debug(f"Error probing {candidate}: {e}")
 
         # Fallback: fetch landing page and look for a jobs link
         try:
@@ -278,6 +259,6 @@ class TeamTailorScraper(AtsScraper):
                 if a and a.get("href"):
                     return urljoin(landing.url, a["href"])
         except Exception as e:
-            logger.debug(f"Error discovering jobs link from {cleaned}: {e}")
+            Log.debug(f"Error discovering jobs link from {cleaned}: {e}")
 
         return None

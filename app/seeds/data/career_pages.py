@@ -925,4 +925,22 @@ CAREER_PAGE_SEEDS = [
         "ats_provider": "teamtailor",
         "active": True,
     },
+    {
+        "company_name": "sleep cycle",
+        "url": "https://sleepcycleab.teamtailor.com",
+        "ats_provider": "teamtailor",
+        "active": True,
+    },
+    {
+        "company_name": "sleep cycle",
+        "url": "https://sleepcycleab.teamtailor.com",
+        "ats_provider": "teamtailor",
+        "active": True,
+    },
+    {
+        "company_name": "team tailor",
+        "url": "https://career.teamtailor.com/",
+        "ats_provider": "teamtailor",
+        "active": True,
+    },
 ]
