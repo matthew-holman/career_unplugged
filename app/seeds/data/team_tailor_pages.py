@@ -1,6 +1,4 @@
-# app/seed/career_pages_seed.py
-
-CAREER_PAGE_SEEDS = [
+TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "abiosgaming",
         "url": "https://abiosgaming.teamtailor.com",

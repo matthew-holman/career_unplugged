@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from sqlmodel import Session, select
 
 from app.models.career_page import CareerPage
-from app.seeds.data.career_pages import CAREER_PAGE_SEEDS
+from app.seeds.data.team_tailor_pages import TEAM_TAILOR_PAGE_SEEDS
 
 
 @dataclass
@@ -12,8 +12,8 @@ class CareerPageSeeder:
     db_session: Session
 
     def run(self) -> None:
-        for seed in CAREER_PAGE_SEEDS:
-            url = seed["url"].rstrip("/")
+        for seed in TEAM_TAILOR_PAGE_SEEDS:
+            url = seed["url"].rstrip("/")  # type: ignore[attr-defined]
             existing = self.db_session.exec(
                 select(CareerPage).where(CareerPage.url == url)
             ).first()
