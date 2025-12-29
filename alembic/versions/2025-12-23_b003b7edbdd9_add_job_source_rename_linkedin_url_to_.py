@@ -20,7 +20,16 @@ depends_on = None
 def upgrade():
 
     # 1) Create enum type in Postgres BEFORE using it
-    source_enum = sa.Enum("LINKEDIN", "TEAMTAILOR", name="source")
+    source_enum = sa.Enum(
+        "linkedin",
+        "teamtailor",
+        "greenhouse",
+        "ashby",
+        "lever",
+        "recruitee",
+        "rippling",
+        name="source",
+    )
     bind = op.get_bind()
     source_enum.create(bind, checkfirst=True)
 

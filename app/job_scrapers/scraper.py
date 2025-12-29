@@ -26,7 +26,9 @@ class Source(str, Enum):
     TEAMTAILOR = "teamtailor"
     GREENHOUSE = "greenhouse"
     ASHBY = "ashby"
-    # later: GREENHOUSE, LEVER, WORKABLE, etc.
+    LEVER = "lever"
+    RECRUITEE = "recruitee"
+    RIPPLING = "rippling"
 
 
 class DescriptionFormat(Enum):

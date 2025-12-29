@@ -17,7 +17,8 @@ from app.job_scrapers.scraper import (
     JobType,
     Location,
     Scraper,
-    ScraperInput, Source,
+    ScraperInput,
+    Source,
 )
 from app.job_scrapers.utils import (
     create_session,
@@ -27,9 +28,7 @@ from app.job_scrapers.utils import (
 )
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 
-logger = LoggerFactory.get_logger(
-    "Linkedin scraper", log_level=LogLevels.DEBUG
-)
+logger = LoggerFactory.get_logger("Linkedin scraper", log_level=LogLevels.DEBUG)
 
 
 class LinkedInScraper(Scraper):
@@ -65,8 +64,7 @@ class LinkedInScraper(Scraper):
             scraper_input.hours_old * 3600 if scraper_input.hours_old else None
         )
         continue_search = (
-            lambda: len(job_list) < scraper_input.results_wanted
-            and page < 1000
+            lambda: len(job_list) < scraper_input.results_wanted and page < 1000
         )
         while continue_search():
             logger.info(f"LinkedIn search page: {page // 25 + 1}")
@@ -111,8 +109,7 @@ class LinkedInScraper(Scraper):
                         )
                     else:
                         err = (
-                            f"LinkedIn response status code "
-                            f"{response.status_code}"
+                            f"LinkedIn response status code " f"{response.status_code}"
                         )
                         err += f" - {response.text}"
                     logger.error(err)
@@ -153,9 +150,7 @@ class LinkedInScraper(Scraper):
                     raise Exception(str(e))  # noqa
 
             if continue_search():
-                time.sleep(
-                    random.uniform(self.delay, self.delay + self.band_delay)
-                )
+                time.sleep(random.uniform(self.delay, self.delay + self.band_delay))
                 page += self.jobs_per_page
 
         job_list = job_list[: scraper_input.results_wanted]
@@ -164,9 +159,7 @@ class LinkedInScraper(Scraper):
     def _process_job(
         self, job_card: Tag, job_url: str, full_descr: bool
     ) -> JobPost | None:
-        salary_tag = job_card.find(
-            "span", class_="job-search-card__salary-info"
-        )
+        salary_tag = job_card.find("span", class_="job-search-card__salary-info")
 
         title_tag = job_card.find("span", class_="sr-only")
         title = title_tag.get_text(strip=True) if title_tag else "N/A"
@@ -178,13 +171,9 @@ class LinkedInScraper(Scraper):
             if company_a_tag and company_a_tag.has_attr("href")
             else ""
         )
-        company = (
-            company_a_tag.get_text(strip=True) if company_a_tag else "N/A"
-        )
+        company = company_a_tag.get_text(strip=True) if company_a_tag else "N/A"
 
-        metadata_card = job_card.find(
-            "div", class_="base-search-card__metadata"
-        )
+        metadata_card = job_card.find("div", class_="base-search-card__metadata")
         location = self._get_location(metadata_card)
 
         datetime_tag = (
@@ -217,18 +206,13 @@ class LinkedInScraper(Scraper):
             job_url=job_url,
             job_type=job_type,
             description=description,
-            emails=extract_emails_from_text(description)
-            if description
-            else None,
-            source=self.source_name
+            emails=extract_emails_from_text(description) if description else None,
+            source=self.source_name.value,
         )
 
     def _get_job_description(
         self, job_page_url: str
-    ) -> (
-        tuple[None, None]
-        | tuple[str | None, tuple[str | None, JobType | None]]
-    ):
+    ) -> tuple[None, None] | tuple[str | None, tuple[str | None, JobType | None]]:
         """
         Retrieves job description by going to the job page url
         :param job_page_url:
@@ -262,10 +246,7 @@ class LinkedInScraper(Scraper):
 
             div_content = remove_attributes(div_content)
             description = div_content.prettify(formatter="html")
-            if (
-                self.scraper_input.description_format
-                == DescriptionFormat.MARKDOWN
-            ):
+            if self.scraper_input.description_format == DescriptionFormat.MARKDOWN:
                 description = markdown_converter(description)
         return description, self._parse_job_type(soup)
 
@@ -280,9 +261,7 @@ class LinkedInScraper(Scraper):
             location_tag = metadata_card.find(
                 "span", class_="job-search-card__location"
             )
-            location_string = (
-                location_tag.text.strip() if location_tag else "N/A"
-            )
+            location_string = location_tag.text.strip() if location_tag else "N/A"
             parts = location_string.split(", ")
             if len(parts) == 1:
                 country = parts[0]
@@ -321,11 +300,7 @@ class LinkedInScraper(Scraper):
                 employment_type = employment_type.lower()
                 employment_type = employment_type.replace("-", "")
 
-        return (
-            [get_enum_from_job_type(employment_type)]
-            if employment_type
-            else []
-        )
+        return [get_enum_from_job_type(employment_type)] if employment_type else []
 
     @staticmethod
     def job_type_code(job_type_enum: JobType) -> str:

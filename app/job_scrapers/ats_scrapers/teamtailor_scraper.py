@@ -33,14 +33,17 @@ class TeamTailorScraper(AtsScraper):
         """
         try:
             response = TeamTailorScraper._fetch_page(url)
-            html = response.text.lower()
+            if response:
+                html = response.text.lower()
+            else:
+                return False
         except Exception as e:
             Log.warning(f"Failed to fetch {url} for ATS detection: {e}")
             return False
 
         # We are looking for a Teamtailor page with a teamtailor job list,
         # other job lists are supported on Teamtailor pages.
-        if "teamtailor" in html and "id=\"jobs_list_container\"" in html:
+        if "teamtailor" in html and 'id="jobs_list_container"' in html:
             Log.debug(f"Detected Teamtailor page with Teamtailor jobs list on {url}")
             return True
 
@@ -90,7 +93,7 @@ class TeamTailorScraper(AtsScraper):
                     job_type=None,
                     description=None,
                     remote_status=self.parse_remote_status(metadata.work_mode_raw),
-                    source=self.source_name,
+                    source=self.source_name.value,
                 )
             )
 
