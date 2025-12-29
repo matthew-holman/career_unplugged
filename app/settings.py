@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     DB_MAX_OVERFLOW: int = Field(default=2, env="DB_MAX_OVERFLOW")
 
     BASE_URL: str = Field(default="0.0.0.0")
-    PORT: int = Field(default=5000)
+    PORT: int = Field(default=5005)
     NUM_WORKERS: int = Field(default=0)
 
     API_VERSION: str = Field(default="0.1.0", env="API_VERSION")

@@ -1,0 +1,6 @@
+from app.job_analysis.description_extractor import DescriptionExtractorFactory
+from app.job_analysis.description_extractors.linkedin import LinkedIn
+from app.job_analysis.description_extractors.teamtailor import Teamtailor
+
+DescriptionExtractorFactory.register(LinkedIn)
+DescriptionExtractorFactory.register(Teamtailor)

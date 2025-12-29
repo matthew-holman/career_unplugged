@@ -44,11 +44,9 @@ def upsert(
     data = [row.dict(exclude=exclude_columns) for row in data_iter]
     insert_statement = insert(model.__table__).values(data)
     updated_params = {
-        c.key: c
-        for c in insert_statement.excluded
-        if c.key not in exclude_columns
+        c.key: c for c in insert_statement.excluded if c.key not in exclude_columns
     }
-    updated_params["updated_at"] = datetime.datetime.utcnow()
+    updated_params["updated_at"] = datetime.datetime.now(datetime.UTC)
     upsert_statement = insert_statement.on_conflict_do_update(
         constraint=constraint,
         set_=updated_params,

@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 from app.db.db import get_db
 from app.handlers.job import JobHandler
+from app.job_analysis import DescriptionExtractorFactory
 from app.job_scrapers.scraper import RemoteStatus
 from app.job_scrapers.utils import create_session
 from app.utils.log_wrapper import LoggerFactory, LogLevels
@@ -47,6 +48,7 @@ REMOTE_REG_EX_PATTERNS = [
 
 TRUE_REMOTE_COUNTRIES = [
     "EMEA",
+    "European",
     "European Union",
     "European Economic Area",
 ]
@@ -82,23 +84,23 @@ with next(get_db()) as db_session:
     for job in jobs:
         job_description_response = session.get(job.source_url)
         if job_description_response.status_code != 200:
-            raise Exception(
-                "Got an error response, status code: {}".format(
-                    job_description_response.status_code
-                )
+            logger.warning(
+                f"Failed to fetch description for {job.source} job {job.id} "
+                f"({job.source_url}): {job_description_response.status_code}"
             )
+            job_handler.set_analysed(job)
+            continue
 
         soup = BeautifulSoup(job_description_response.text, "html.parser")
-        description_section = soup.find(
-            "section", class_="core-section-container my-3 description"
-        )
 
-        if description_section:
-            job_description_text = description_section.decode_contents()
-        else:
-            job_description_text = ""
+        extractor = DescriptionExtractorFactory.get_for_source(job.source)
+        if not extractor:
+            logger.warning(
+                f"Failed to load description extractor for source:{job.source} and job:{job.id} "
+            )
+            continue
 
-        # job_description_text = job_description.content.decode("utf-8")
+        job_description_text = extractor.extract_description(soup) or ""
 
         for pattern in REMOTE_REG_EX_PATTERNS:
             match = re.search(pattern, job_description_text, re.IGNORECASE)
