@@ -21,13 +21,13 @@ def upgrade():
 
     # 1) Create enum type in Postgres BEFORE using it
     source_enum = sa.Enum(
-        "linkedin",
-        "teamtailor",
-        "greenhouse",
-        "ashby",
-        "lever",
-        "recruitee",
-        "rippling",
+        "LINKEDIN",
+        "TEAMTAILOR",
+        "GREENHOUSE",
+        "ASHBY",
+        "LEVER",
+        "RECRUITEE",
+        "RIPPLING",
         name="source",
     )
     bind = op.get_bind()
@@ -40,7 +40,7 @@ def upgrade():
             "source",
             source_enum,
             nullable=False,
-            server_default="linkedin",
+            server_default="LINKEDIN",
         ),
     )
 

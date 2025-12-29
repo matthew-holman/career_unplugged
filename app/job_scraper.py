@@ -108,7 +108,7 @@ def run_linkedin_scraper(db_session: Session):
                 location=job_location.location,
                 job_type=JobType.FULL_TIME,
                 results_wanted=400,
-                hours_old=48,
+                hours_old=96,
                 remote_status=remote_status,
             )
 
@@ -134,7 +134,7 @@ def run_ats_scrapers(db_session: Session):
 
 def main():
     with next(get_db()) as db_session:
-        # run_linkedin_scraper(db_session)
+        run_linkedin_scraper(db_session)
         run_ats_scrapers(db_session)
 
 

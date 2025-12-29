@@ -207,7 +207,7 @@ class LinkedInScraper(Scraper):
             job_type=job_type,
             description=description,
             emails=extract_emails_from_text(description) if description else None,
-            source=self.source_name.value,
+            source=self.source_name,
         )
 
     def _get_job_description(

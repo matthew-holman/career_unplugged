@@ -93,7 +93,7 @@ class TeamTailorScraper(AtsScraper):
                     job_type=None,
                     description=None,
                     remote_status=self.parse_remote_status(metadata.work_mode_raw),
-                    source=self.source_name.value,
+                    source=self.source_name,
                 )
             )
 
