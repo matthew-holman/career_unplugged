@@ -40,7 +40,7 @@ def upgrade():
             "source",
             source_enum,
             nullable=False,
-            server_default="LINKEDIN",
+            server_default="linkedin",
         ),
     )
 
