@@ -51,6 +51,7 @@ TRUE_REMOTE_COUNTRIES = [
     "European",
     "European Union",
     "European Economic Area",
+    "Europe",
 ]
 
 logger = LoggerFactory.get_logger("job scraper", log_level=LogLevels.DEBUG)

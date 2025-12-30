@@ -364,4 +364,24 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/yext/",
         "active": True,
     },
+    {
+        "company_name": "capital on tap",
+        "url": "https://job-boards.greenhouse.io/capitalontap",
+        "active": True,
+    },
+    {
+        "company_name": "global web index",
+        "url": "https://job-boards.greenhouse.io/globalwebindex",
+        "active": True,
+    },
+    {
+        "company_name": "gradient ai",
+        "url": "https://job-boards.greenhouse.io/gradientai",
+        "active": True,
+    },
+    {
+        "company_name": "profluent",
+        "url": "https://job-boards.greenhouse.io/profluent/",
+        "active": True,
+    },
 ]
