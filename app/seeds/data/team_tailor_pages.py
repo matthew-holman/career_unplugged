@@ -784,4 +784,14 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://career.teamtailor.com/",
         "active": True,
     },
+    {
+        "company_name": "try hackme",
+        "url": "https://careers.tryhackme.com/",
+        "active": True,
+    },
+    {
+        "company_name": "na-kd",
+        "url": "https://career.na-kd.com/",
+        "active": True,
+    },
 ]
