@@ -1,15 +1,14 @@
 from datetime import datetime, timedelta
 from http.client import HTTPException
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.sql.roles import _T_co
 from sqlmodel import Session, select
 from starlette import status
 
 from app.db.db import get_db
 from app.handlers.job import JobHandler
-from app.job_scrapers.scraper import RemoteStatus
+from app.job_scrapers.scraper import RemoteStatus, Source
 from app.models.job import Job, JobRead
 
 INTERFACE = "job"
@@ -57,6 +56,7 @@ def list_jobs(
     analysed: Optional[bool] = None,
     recent: Optional[bool] = None,
     listing_remote: Optional[RemoteStatus] = None,
+    source: Optional[Source] = None,
     db_session: Session = Depends(get_db),
 ) -> Sequence[Job]:
     query = select(Job)
@@ -74,15 +74,13 @@ def list_jobs(
     if true_remote is not None:
         query = query.where(Job.true_remote == true_remote)
     if positive_keyword_match is not None:
-        query = query.where(
-            Job.positive_keyword_match == positive_keyword_match
-        )
+        query = query.where(Job.positive_keyword_match == positive_keyword_match)
     if negative_keyword_match is not None:
-        query = query.where(
-            Job.negative_keyword_match == negative_keyword_match
-        )
+        query = query.where(Job.negative_keyword_match == negative_keyword_match)
     if listing_remote is not None:
         query = query.where(Job.listing_remote == listing_remote)
+    if source is not None:
+        query = query.where(Job.source == source)
     if analysed is not None:
         query = query.where(Job.analysed == analysed)
     if recent:
