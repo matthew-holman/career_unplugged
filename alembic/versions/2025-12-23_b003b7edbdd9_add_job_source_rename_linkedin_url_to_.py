@@ -23,8 +23,8 @@ def upgrade():
     source_enum = sa.Enum(
         "LINKEDIN",
         "TEAMTAILOR",
-        "GREENHOUSE",
-        "ASHBY",
+        "GREENHOUSE_BOARD",
+        "GREENHOUSE_EMBED" "ASHBY",
         "LEVER",
         "RECRUITEE",
         "RIPPLING",

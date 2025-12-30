@@ -24,7 +24,7 @@ class RemoteStatus(IntEnum):
 class Source(str, Enum):
     LINKEDIN = "linkedin"
     TEAMTAILOR = "teamtailor"
-    GREENHOUSE = "greenhouse"
+    GREENHOUSE_BOARD = "GREENHOUSE_BOARD"
     ASHBY = "ashby"
     LEVER = "lever"
     RECRUITEE = "recruitee"
