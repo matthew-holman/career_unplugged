@@ -23,7 +23,6 @@ def upgrade():
         "career_page",
         sa.Column("company_name", sa.VARCHAR(), autoincrement=False, nullable=True),
         sa.Column("url", sa.VARCHAR(), autoincrement=False, nullable=False),
-        sa.Column("ats_provider", sa.VARCHAR(), autoincrement=False, nullable=True),
         sa.Column("active", sa.BOOLEAN(), autoincrement=False, nullable=False),
         sa.Column("id", sa.INTEGER(), autoincrement=True, nullable=False),
         sa.PrimaryKeyConstraint("id", name="career_page_pkey"),

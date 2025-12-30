@@ -7,9 +7,6 @@ from sqlmodel import Field, SQLModel
 class CareerPageBase(SQLModel, table=False):  # type: ignore
     company_name: Optional[str] = Field(default=None)
     url: str = Field(nullable=False, unique=True)
-    ats_provider: Optional[str] = Field(
-        default=None, description="e.g. teamtailor, greenhouse, lever"
-    )
     active: bool = Field(default=True, nullable=False)
 
 
