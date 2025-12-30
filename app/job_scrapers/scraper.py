@@ -124,5 +124,5 @@ class Scraper:
         """Human-readable source name, e.g. 'linkedin', 'teamtailor'."""
         pass
 
-    def scrape(self, scraper_input: ScraperInput | None):
+    def scrape(self, scraper_input: ScraperInput):
         pass

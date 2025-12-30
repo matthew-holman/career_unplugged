@@ -1,17 +1,17 @@
 import re
-
-import requests
 import unicodedata
 
 from abc import abstractmethod
-from typing import Optional
+from typing import Iterable, Optional
 
+import requests
+
+from bs4 import BeautifulSoup
 from requests import Response
 
-from app.job_scrapers.scraper import JobResponse, JobType, RemoteStatus, Source
+from app.job_scrapers.scraper import JobPost, JobResponse, JobType, RemoteStatus, Source
 from app.log import Log
 from app.models.career_page import CareerPage
-from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 
 class AtsScraper:
@@ -38,9 +38,45 @@ class AtsScraper:
         raise NotImplementedError
 
     @abstractmethod
-    def scrape(self) -> JobResponse:
-        """Perform the scrape and return a JobResponse."""
+    def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
         raise NotImplementedError
+
+    @abstractmethod
+    def parse_job_card(self, card: object) -> Optional[JobPost]:
+        raise NotImplementedError
+
+    def scrape(self) -> JobResponse:
+        jobs_url = self.career_page.url
+        if not jobs_url:
+            Log.warning(f"Could not resolve jobs index URL for {self.career_page.url}")
+            return JobResponse(jobs=[])
+
+        response = self._fetch_jobs_page(jobs_url)
+        if not response:
+            return JobResponse(jobs=[])
+
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        job_cards = list(self.find_job_cards(soup))
+        if not job_cards:
+            Log.warning(f"No job cards found on {jobs_url}")
+            return JobResponse(jobs=[])
+
+        jobs: list[JobPost] = []
+        seen_urls: set[str] = set()
+
+        for card in job_cards:
+            job_post = self.parse_job_card(card)
+            if not job_post:
+                continue
+
+            if job_post.job_url in seen_urls:
+                continue
+            seen_urls.add(job_post.job_url)
+
+            jobs.append(job_post)
+
+        return JobResponse(jobs=jobs)
 
     @staticmethod
     def _normalize_scraped_text(value: str) -> str:
@@ -58,7 +94,16 @@ class AtsScraper:
         return value
 
     @staticmethod
-    def _fetch_page(url:str) -> Optional[Response]:
+    def _fetch_jobs_page(jobs_url: str) -> Optional[Response]:
+        if not jobs_url:
+            Log.warning(f"Could not resolve Teamtailor jobs page from: {jobs_url}")
+            return None
+
+        Log.info(f"Fetching Teamtailor jobs from {jobs_url}")
+        return AtsScraper._fetch_page(jobs_url)
+
+    @staticmethod
+    def _fetch_page(url: str) -> Optional[Response]:
         response = requests.get(
             url,
             headers={"User-Agent": "Mozilla/5.0"},
@@ -129,3 +174,6 @@ class AtsScraper:
             return RemoteStatus.ONSITE
 
         return None
+
+    def company_name(self) -> str:
+        return self.career_page.company_name or "Unknown"

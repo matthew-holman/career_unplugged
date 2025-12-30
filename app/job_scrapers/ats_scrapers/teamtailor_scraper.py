@@ -1,14 +1,11 @@
 from dataclasses import dataclass
-from urllib.parse import urljoin, urlparse
-
-import requests
+from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, Tag
 from mypy.checkexpr import Optional
-from requests import Response
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, JobResponse, Location, Source
+from app.job_scrapers.scraper import JobPost, Location, Source
 from app.log import Log
 from app.utils.country_resolver import CountryResolver
 
@@ -49,70 +46,36 @@ class TeamTailorScraper(AtsScraper):
 
         return False
 
-    def scrape(self) -> JobResponse:
-        jobs_url = self._resolve_jobs_index_url(self.career_page.url)
-        if not jobs_url:
-            return JobResponse(jobs=[])
-
-        jobs_page = self._fetch_jobs_page(jobs_url)
-        if not jobs_page:
-            return JobResponse(jobs=[])
-
-        soup = BeautifulSoup(jobs_page.text, "html.parser")
-
+    def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
         jobs_list = soup.find("ul", id="jobs_list_container")
         if not jobs_list:
-            Log.warning(f"Teamtailor jobs container not found on {jobs_url}")
-            return JobResponse(jobs=[])
+            return []
+        return jobs_list.find_all("li", recursive=False)
 
-        jobs: list[JobPost] = []
-        seen_urls: set[str] = set()
-
-        for li in jobs_list.find_all("li", recursive=False):
-            job_link = self._extract_job_link(li)
-            if not job_link:
-                continue
-
-            job_title, job_url = job_link
-            if job_url in seen_urls:
-                continue
-            seen_urls.add(job_url)
-
-            metadata = self._extract_job_metadata(li)
-
-            city, country = self._parse_location(metadata.location_raw)
-
-            jobs.append(
-                JobPost(
-                    title=job_title,
-                    company_name=self.career_page.company_name,
-                    company_url=jobs_url,
-                    location=Location(city=city, country=country),
-                    date_posted=None,
-                    job_url=job_url,
-                    job_type=None,
-                    description=None,
-                    remote_status=self.parse_remote_status(metadata.work_mode_raw),
-                    source=self.source_name,
-                )
-            )
-
-            Log.debug(
-                f"Parsed Teamtailor job card: title='{job_title}', "
-                f"dept='{metadata.department}', location='{metadata.location_raw}', "
-                f"work_mode='{metadata.work_mode_raw}', url='{job_url}'"
-            )
-
-        return JobResponse(jobs=jobs)
-
-    def _extract_job_link(self, li: Tag) -> Optional[tuple[str, str]]:
-        link = li.find("a", href=True)
+    def parse_job_card(self, card: Tag) -> Optional[JobPost]:
+        link = card.find("a", href=True)
         if not link:
             return None
 
-        job_title = link.get_text(strip=True)
+        title = link.get_text(strip=True)
         job_url = urljoin(self.career_page.url, link["href"])
-        return job_title, job_url
+
+        metadata = self._extract_job_metadata(card)
+
+        city, country = self._parse_location(metadata.location_raw)
+
+        return JobPost(
+            title=title,
+            company_name=self.company_name(),
+            company_url=self.career_page.url,
+            location=Location(city=city, country=country),
+            date_posted=None,
+            job_url=job_url,
+            job_type=None,
+            description=None,
+            remote_status=self.parse_remote_status(metadata.work_mode_raw),
+            source=self.source_name,
+        )
 
     def _extract_job_metadata(self, li: Tag) -> JobCardMetadata:
         """
@@ -200,68 +163,3 @@ class TeamTailorScraper(AtsScraper):
             country = location
 
         return city, country
-
-    @staticmethod
-    def _fetch_jobs_page(jobs_url: str) -> Optional[Response]:
-        if not jobs_url:
-            Log.warning(f"Could not resolve Teamtailor jobs page from: {jobs_url}")
-            return None
-
-        Log.info(f"Fetching Teamtailor jobs from {jobs_url}")
-        return TeamTailorScraper._fetch_page(jobs_url)
-
-    @staticmethod
-    def _resolve_jobs_index_url(url: str) -> str | None:
-        """
-        Normalize a Teamtailor URL to a job listings index page.
-        Tries:
-          1) If URL already includes '/jobs' -> use it
-          2) base + '/jobs'
-          3) Discover a jobs link from the landing page HTML
-        """
-        cleaned = url.strip()
-
-        # If already on a jobs page, keep it
-        if "/jobs" in urlparse(cleaned).path:
-            return cleaned
-
-        # Try base + /jobs
-        base = f"{urlparse(cleaned).scheme}://{urlparse(cleaned).netloc}"
-        candidate = urljoin(base + "/", "jobs")
-        try:
-            r = requests.get(
-                candidate,
-                headers={"User-Agent": "Mozilla/5.0"},
-                timeout=10,
-                allow_redirects=True,
-            )
-            if r.status_code == 200:
-                return r.url  # keep redirects (e.g. /en/jobs)
-        except Exception as e:
-            Log.debug(f"Error probing {candidate}: {e}")
-
-        # Fallback: fetch landing page and look for a jobs link
-        try:
-            landing = requests.get(
-                cleaned,
-                headers={"User-Agent": "Mozilla/5.0"},
-                timeout=10,
-                allow_redirects=True,
-            )
-            if landing.status_code != 200:
-                return None
-
-            soup = BeautifulSoup(landing.text, "html.parser")
-            # prioritize likely candidates
-            selectors = [
-                "a[href$='/jobs']",
-                "a[href*='/jobs']",
-            ]
-            for sel in selectors:
-                a = soup.select_one(sel)
-                if a and a.get("href"):
-                    return urljoin(landing.url, a["href"])
-        except Exception as e:
-            Log.debug(f"Error discovering jobs link from {cleaned}: {e}")
-
-        return None

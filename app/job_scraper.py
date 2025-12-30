@@ -30,7 +30,7 @@ logger = LoggerFactory.get_logger("job scraper", log_level=LogLevels.DEBUG)
 
 def should_save_job(job_post: JobPost) -> bool:
     for company in COMPANIES_TO_IGNORE:
-        if company.lower() == job_post.company_name.lower():
+        if job_post.company_name and company.lower() == job_post.company_name.lower():
             logger.info(f"Ignoring job from {job_post.company_name}")
             return False
 
@@ -54,7 +54,8 @@ def persist_job_response(
     job_handler = JobHandler(db_session)
     for job_post in response.jobs:
         if (
-            job_post.location.country is not None
+            job_post.location
+            and job_post.location.country is not None
             and job_post.location.country.lower()
             in [
                 "united states",
@@ -75,8 +76,8 @@ def persist_job_response(
             job = JobCreate(
                 title=job_post.title,
                 company=job_post.company_name,
-                country=job_post.location.country,
-                city=job_post.location.city,
+                country=job_post.location.country if job_post.location else None,
+                city=job_post.location.city if job_post.location else None,
                 source_url=job_post.job_url,
                 listing_date=job_post.date_posted,
                 listing_remote=job_post.remote_status,
@@ -134,7 +135,7 @@ def run_ats_scrapers(db_session: Session):
 
 def main():
     with next(get_db()) as db_session:
-        run_linkedin_scraper(db_session)
+        # run_linkedin_scraper(db_session)
         run_ats_scrapers(db_session)
 
 

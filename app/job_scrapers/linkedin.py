@@ -73,7 +73,11 @@ class LinkedInScraper(Scraper):
                 "keywords": scraper_input.search_term,
                 "location": scraper_input.location,
                 "distance": scraper_input.distance,
-                "f_WT": scraper_input.remote_status.value,
+                "f_WT": (
+                    scraper_input.remote_status.value
+                    if scraper_input.remote_status
+                    else None
+                ),
                 "f_JT": (
                     self.job_type_code(scraper_input.job_type)
                     if scraper_input.job_type
