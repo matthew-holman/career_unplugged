@@ -18,7 +18,7 @@ class GreenhouseBoardJobCard:
     job_url: str
 
 
-class GreenHouseScraper(AtsScraper):
+class GreenHouseBoardScraper(AtsScraper):
 
     @property
     def source_name(self) -> Source:
