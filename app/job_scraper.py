@@ -56,7 +56,7 @@ def persist_job_response(
     for job_post in response.jobs:
         country = job_post.location.country if job_post.location else None
 
-        if not EuropeFilter.is_european(country):
+        if country and not EuropeFilter.is_european(country):
             logger.info(
                 f"Skipping non-European job: "
                 f"{job_post.title} at {job_post.company_name} "
