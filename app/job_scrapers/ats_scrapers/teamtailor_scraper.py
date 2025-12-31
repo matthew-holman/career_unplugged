@@ -7,7 +7,6 @@ from mypy.checkexpr import Optional
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.scraper import JobPost, Location, Source
 from app.log import Log
-from app.utils.country_resolver import CountryResolver
 
 
 @dataclass(frozen=True)
@@ -62,7 +61,7 @@ class TeamTailorScraper(AtsScraper):
 
         metadata = self._extract_job_metadata(card)
 
-        city, country = self._parse_location(metadata.location_raw)
+        city, country = AtsScraper.parse_location(metadata.location_raw)
 
         return JobPost(
             title=title,
@@ -141,25 +140,3 @@ class TeamTailorScraper(AtsScraper):
                 continue
             results.append(text)
         return results
-
-    @staticmethod
-    def _parse_location(
-        location_raw: Optional[str],
-    ) -> tuple[Optional[str], Optional[str]]:
-        if not location_raw:
-            return None, None
-
-        city: Optional[str] = None
-        country: Optional[str] = None
-
-        location = location_raw.split(",")[0].strip() if location_raw else None
-
-        if location:
-            country = CountryResolver.resolve_country(location)
-
-        if country:
-            city = location
-        else:
-            country = location
-
-        return city, country

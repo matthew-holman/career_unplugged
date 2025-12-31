@@ -15,6 +15,7 @@ from app.job_scrapers.scraper import (
     ScraperInput,
 )
 from app.models.job import JobCreate
+from app.utils.europe_filter import EuropeFilter
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 from config import (
     COMPANIES_TO_IGNORE,
@@ -53,22 +54,13 @@ def persist_job_response(
 ):
     job_handler = JobHandler(db_session)
     for job_post in response.jobs:
-        if (
-            job_post.location
-            and job_post.location.country is not None
-            and job_post.location.country.lower()
-            in [
-                "united states",
-                "tx",
-                "ny",
-                "wi",
-                "ca",
-                "wa",
-            ]
-        ):
-            logger.warning(
-                f"USA job returned when scraping {job_location}, ignoring: "
-                f"{job_post.title} at {job_post.company_name}"
+        country = job_post.location.country if job_post.location else None
+
+        if not EuropeFilter.is_european(country):
+            logger.info(
+                f"Skipping non-European job: "
+                f"{job_post.title} at {job_post.company_name} "
+                f"(country='{country}', source='{job_post.source}')"
             )
             continue
 

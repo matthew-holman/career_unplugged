@@ -12,8 +12,8 @@ from app.models import CareerPage
 @pytest.mark.network
 def test_greenhouse_board_scraper() -> None:
     career_page = CareerPage(
-        company_name="Cloudbeds",
-        url="https://job-boards.greenhouse.io/cloudbeds/",
+        company_name="gitlab",
+        url="https://job-boards.greenhouse.io/gitlab",
     )
 
     supports: bool = GreenHouseBoardScraper.supports(career_page.url)

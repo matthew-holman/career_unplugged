@@ -8,10 +8,13 @@ import requests
 
 from bs4 import BeautifulSoup
 from requests import Response
+from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 
 from app.job_scrapers.scraper import JobPost, JobResponse, JobType, RemoteStatus, Source
 from app.log import Log
 from app.models.career_page import CareerPage
+from app.utils.country_resolver import CountryResolver
+from app.utils.europe_filter import EuropeFilter
 
 
 class AtsScraper:
@@ -104,14 +107,32 @@ class AtsScraper:
 
     @staticmethod
     def _fetch_page(url: str) -> Optional[Response]:
-        response = requests.get(
-            url,
-            headers={"User-Agent": "Mozilla/5.0"},
-            timeout=10,
-        )
+        try:
+            response = requests.get(
+                url,
+                headers={"User-Agent": "Mozilla/5.0"},
+                # Tuple timeout: (connect_timeout, read_timeout)
+                timeout=(5, 10),
+            )
+        except ReadTimeout:
+            Log.warning(f"Read timeout while fetching {url}")
+            return None
+        except Timeout:
+            # Covers connect timeout + other timeout variants
+            Log.warning(f"Timeout while fetching {url}")
+            return None
+        except ConnectionError as exc:
+            Log.warning(f"Connection error while fetching {url}: {exc}")
+            return None
+        except requests.RequestException as exc:
+            # Catch-all for requests/urllib3 errors (DNS, SSL, etc.)
+            Log.warning(f"Request error while fetching {url}: {exc}")
+            return None
+
         if response.status_code != 200:
             Log.warning(f"Failed to fetch {url}: {response.status_code}")
             return None
+
         return response
 
     @classmethod
@@ -175,5 +196,188 @@ class AtsScraper:
 
         return None
 
+    @classmethod
+    def extract_remote_from_location(
+        cls, location_raw: Optional[str]
+    ) -> Optional[RemoteStatus]:
+        if not location_raw:
+            return None
+
+        text = location_raw.lower()
+
+        if "remote" in text:
+            return RemoteStatus.REMOTE
+
+        if "hybrid" in text:
+            return RemoteStatus.HYBRID
+
+        if "onsite" in text or "on-site" in text or "on site" in text:
+            return RemoteStatus.ONSITE
+
+        return None
+
     def company_name(self) -> str:
         return self.career_page.company_name or "Unknown"
+
+    @classmethod
+    def parse_location(
+        cls,
+        location_raw: Optional[str],
+        *,
+        prefer_europe: bool = True,
+    ) -> tuple[Optional[str], Optional[str]]:
+        """
+        Parse an ATS location string into (city, country_or_region).
+
+        Rules:
+          - Remove remote/hybrid/onsite markers, but preserve commas (City, Country).
+          - If multi-location (e.g. "Remote, APAC; Remote, Netherlands; ..."):
+              - Prefer first European chunk (if prefer_europe=True)
+              - Else pick first chunk
+          - Interpret "City, Country" when possible.
+          - If no resolvable city->country, treat token as country/region.
+        """
+        if not location_raw:
+            return None, None
+
+        normalized = cls._normalize_location(location_raw)
+        if not normalized:
+            return None, None
+
+        candidates = cls._split_location_candidates(normalized)
+        if not candidates:
+            return None, None
+
+        primary = cls._pick_primary_candidate(candidates, prefer_europe=prefer_europe)
+        if not primary:
+            return None, None
+
+        return cls._parse_single_location_candidate(primary)
+
+    # -----------------------
+    # Internal helpers
+    # -----------------------
+    @classmethod
+    def _normalize_location(cls, location: str) -> str:
+        """
+        Keep delimiters needed for parsing (commas/semicolons),
+        remove remote/hybrid-ish markers, and normalise whitespace/punctuation.
+        """
+        text = " ".join(location.strip().split())
+
+        # remove markers (do not remove commas/semicolons)
+        # NOTE: order matters: handle multi-word before single-word
+        patterns = [
+            r"\bfully\s+remote\b",
+            r"\bremote[-\s]?first\b",
+            r"\bon[-\s]?site\b",
+            r"\bonsite\b",
+            r"\bhybrid\b",
+            r"\bremote\b",
+        ]
+        for pattern in patterns:
+            text = re.sub(pattern, "", text, flags=re.IGNORECASE)
+
+        # normalise dashes and comma spacing; keep ';' as separator
+        text = text.replace("—", "-").replace("–", "-")
+        text = re.sub(r"\s*[-]\s*", " - ", text)
+        text = re.sub(r"\s*,\s*", ", ", text)
+        text = re.sub(r"\s{2,}", " ", text).strip()
+
+        # trim leftover punctuation created by marker removals
+        text = text.strip(" ,;|-")
+        return text
+
+    @classmethod
+    def _split_location_candidates(cls, normalized: str) -> list[str]:
+        """
+        Split multi-location strings into candidate chunks.
+        Primary separator: ';'
+        """
+        parts = [cls._clean_part(p) for p in normalized.split(";")]
+        return [p for p in parts if p]
+
+    @staticmethod
+    def _clean_part(value: str) -> str:
+        # strip leading/trailing separators: space, comma, semicolon, pipe, dash
+        return re.sub(r"^[\s,;|\-]+|[\s,;|\-]+$", "", value)
+
+    @classmethod
+    def _pick_primary_candidate(
+        cls,
+        candidates: list[str],
+        *,
+        prefer_europe: bool,
+    ) -> Optional[str]:
+        if not candidates:
+            return None
+
+        if not prefer_europe:
+            return candidates[0]
+
+        for candidate in candidates:
+            # We pass "country-ish" token into EuropeFilter: prefer right side of comma if present
+            countryish = (
+                candidate.split(",", 1)[-1].strip() if "," in candidate else candidate
+            )
+            if EuropeFilter.is_european(countryish):
+                return candidate
+
+        return candidates[0]
+
+    @classmethod
+    def _parse_single_location_candidate(
+        cls, candidate: str
+    ) -> tuple[Optional[str], Optional[str]]:
+        """
+        Parse a single candidate like:
+          - "Berlin, Germany"
+          - "Netherlands"
+          - "Europe"
+          - "United States & Canada"
+        """
+        candidate = candidate.strip()
+        if not candidate:
+            return None, None
+
+        if "," in candidate:
+            left_raw, right_raw = (p.strip() for p in candidate.split(",", 1))
+            city = cls._clean_atom(left_raw)
+            right = cls._clean_atom(right_raw)
+
+            # If right looks like a known country/region (or can be resolved), treat as country
+            if right:
+                resolved_right = CountryResolver.resolve_country(right) or right
+                # Only treat left as city if right is actually a country (not just any region token)
+                # CountryResolver returning something is the strongest signal.
+                if CountryResolver.resolve_country(right):
+                    return city, resolved_right
+
+            # Otherwise, see if left itself is a city we can resolve
+            if city:
+                resolved_left = CountryResolver.resolve_country(city)
+                if resolved_left:
+                    return city, resolved_left
+
+            # Fallback: keep right side as country/region-ish
+            return None, right
+
+        token = cls._clean_atom(candidate)
+        if not token:
+            return None, None
+
+        resolved = CountryResolver.resolve_country(token)
+        if resolved:
+            # token is city -> country
+            return token, resolved
+
+        # token is country/region
+        return None, token
+
+    @staticmethod
+    def _clean_atom(value: Optional[str]) -> Optional[str]:
+        if not value:
+            return None
+        cleaned = " ".join(value.strip().split())
+        cleaned = cleaned.strip(" ,;|")
+        return cleaned or None

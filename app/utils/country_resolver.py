@@ -38,6 +38,8 @@ class CountryResolver:
         "munich": "Germany",
         "münchen": "Germany",
         "hamburg": "Germany",
+        # Greece
+        "athens": "Greece",
         # Hungary
         "budapest": "Hungary",
         # India
@@ -111,6 +113,8 @@ class CountryResolver:
         "zürich": "Switzerland",
         "geneva": "Switzerland",
         # United Kingdom
+        "brighton": "United Kingdom",
+        "cardiff": "United Kingdom",
         "london": "United Kingdom",
         "manchester": "United Kingdom",
         "edinburgh": "United Kingdom",

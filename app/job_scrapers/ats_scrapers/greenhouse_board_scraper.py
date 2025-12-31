@@ -5,9 +5,8 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Location, RemoteStatus, Source
 from app.log import Log
-from app.utils.country_resolver import CountryResolver
 
 
 @dataclass(frozen=True)
@@ -15,6 +14,7 @@ class GreenhouseBoardJobCard:
     department: Optional[str]
     title: str
     location_raw: Optional[str]
+    remote_status: Optional[RemoteStatus]
     job_url: str
 
 
@@ -26,8 +26,6 @@ class GreenHouseBoardScraper(AtsScraper):
 
     @classmethod
     def supports(cls, url: str) -> bool:
-        # Keep this intentionally simple as requested.
-        # If you later want to be stricter, also check for "div.job-posts" existence.
         try:
             host = urlparse(url.strip()).netloc.lower()
         except ValueError:
@@ -35,10 +33,6 @@ class GreenHouseBoardScraper(AtsScraper):
         return host == "job-boards.greenhouse.io"
 
     def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
-        """
-        On greenhouse board pages each job is a <tr class="job-post">.
-        (Your pasted HTML uses <tr class="job-post">; some boards use "opening".)
-        """
         job_posts_container = soup.select_one("div.job-posts")
         if not job_posts_container:
             Log.warning(
@@ -48,7 +42,6 @@ class GreenHouseBoardScraper(AtsScraper):
 
         rows = job_posts_container.select("tr.job-post")
         if not rows:
-            # defensive fallback for other variants
             rows = job_posts_container.select("tr.opening")
 
         return list(rows)
@@ -58,7 +51,7 @@ class GreenHouseBoardScraper(AtsScraper):
         if not parsed:
             return None
 
-        city, country = self._parse_location(parsed.location_raw)
+        city, country = AtsScraper.parse_location(parsed.location_raw)
 
         return JobPost(
             title=parsed.title,
@@ -69,7 +62,7 @@ class GreenHouseBoardScraper(AtsScraper):
             job_url=parsed.job_url,
             job_type=None,
             description=None,
-            remote_status=None,  # greenhouse board snippet doesn't reliably provide this
+            remote_status=parsed.remote_status,
             source=self.source_name,
         )
 
@@ -83,7 +76,6 @@ class GreenHouseBoardScraper(AtsScraper):
         if not job_url:
             return None
 
-        # Title is usually the first <p> inside the <a>, but be flexible.
         title_tag = link.select_one("p.body--medium") or link.select_one("p")
         title = (
             title_tag.get_text(" ", strip=True)
@@ -92,12 +84,11 @@ class GreenHouseBoardScraper(AtsScraper):
         )
         title = " ".join(title.split()).strip()
 
-        # Location is usually <p class="body__secondary body--metadata">...</p>
         location_tag = link.select_one("p.body__secondary.body--metadata")
         location_raw = location_tag.get_text(" ", strip=True) if location_tag else None
 
-        # Department is the closest preceding department header
-        # <div class="job-posts--table--department"><h3 ...>Engineering</h3> ... <tr class="job-post">...</tr>
+        remote_status = AtsScraper.extract_remote_from_location(location_raw)
+
         department = None
         department_wrapper = row.find_parent(
             "div", class_="job-posts--table--department"
@@ -111,34 +102,6 @@ class GreenHouseBoardScraper(AtsScraper):
             department=department,
             title=title,
             location_raw=location_raw,
+            remote_status=remote_status,
             job_url=job_url,
         )
-
-    @staticmethod
-    def _parse_location(
-        location_raw: Optional[str],
-    ) -> tuple[Optional[str], Optional[str]]:
-        """
-        Greenhouse board locations often look like:
-          "Europe; Latin America; North America"
-          "United Kingdom"
-          "Thailand"
-        So: treat the first token as "city-ish" only if it resolves to a country.
-        Otherwise treat it as country (or region).
-        """
-        if not location_raw:
-            return None, None
-
-        first_token = (
-            location_raw.split(";")[0].split(",")[0].strip() if location_raw else None
-        )
-        if not first_token:
-            return None, None
-
-        resolved_country = CountryResolver.resolve_country(first_token)
-        if resolved_country:
-            # first_token is likely a city
-            return first_token, resolved_country
-
-        # otherwise treat it as country/region
-        return None, first_token
