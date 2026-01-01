@@ -40,6 +40,7 @@ def test_list_jobs(client: TestClient, job: JobRead, db_session: Session):
 
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
+    assert job.listing_remote
 
     url = f"/{JOB_INTERFACE}/?listing_remote={job.listing_remote.value}"
     response = client.get(url)

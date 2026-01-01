@@ -73,8 +73,7 @@ def prepare_tables_in_db(model, db_session=None):
     # Add a guard to check environment type
     if config.TARGET_ENV != "local-dev":
         raise Exception(
-            "This test is destructive and "
-            "only for testing in local development!"
+            "This test is destructive and " "only for testing in local development!"
         )
 
     if model.__table__.exists(db_session.get_bind()):
