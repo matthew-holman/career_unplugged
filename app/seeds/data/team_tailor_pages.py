@@ -775,21 +775,6 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {
-        "company_name": "team tailor",
-        "url": "https://career.teamtailor.com/",
-        "active": True,
-    },
-    {
-        "company_name": "try hackme",
-        "url": "https://careers.tryhackme.com/",
-        "active": True,
-    },
-    {
-        "company_name": "na-kd",
-        "url": "https://career.na-kd.com/",
-        "active": True,
-    },
-    {
         "company_name": "atlasrenewableenergy",
         "url": "https://atlasrenewableenergy.na.teamtailor.com",
         "active": True,

@@ -1,3 +1,5 @@
+from time import sleep
+
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
@@ -121,13 +123,15 @@ def run_ats_scrapers(db_session: Session):
             logger.warning(f"No supported ATS parser for {page.url}")
             continue
 
+        # I don't want to be blocked or limited.
+        sleep(0.2)
         response = ats_scraper.scrape()
         persist_job_response(response, db_session)
 
 
 def main():
     with next(get_db()) as db_session:
-        # run_linkedin_scraper(db_session)
+        run_linkedin_scraper(db_session)
         run_ats_scrapers(db_session)
 
 
