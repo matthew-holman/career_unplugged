@@ -37,6 +37,7 @@ class GreenHouseEmbedScraper(AtsScraper):
         except ValueError:
             return False
 
+        # this is for greenhouse job board scraper
         if host == "job-boards.greenhouse.io":
             return False
 
@@ -46,14 +47,15 @@ class GreenHouseEmbedScraper(AtsScraper):
 
         html = response.text.lower()
 
+        # greenhouse-job-board
         # Variant A: official greenhouse embed widget
-        if "grnhse_app" in html or "boards.greenhouse.io/embed" in html:
+        if "greenhouse-job-board" in html or "greenhouse-board" in html:
             return True
 
-        # Variant B: site-hosted apply links using gh_jid
-        if "gh_jid=" in html:
-            return True
-
+        if "greenhouse" in html:
+            Log.warning(
+                f"This might be a Greenhouse page even though it's not been detected by this scraper url:{url}."
+            )
         return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
@@ -64,14 +66,16 @@ class GreenHouseEmbedScraper(AtsScraper):
             if openings:
                 return list(openings)
 
-        # Variant B: gh_jid links anywhere on the page
-        gh_links = soup.select('a[href*="gh_jid="]')
+        # Variant B: open position list items
+        gh_links = soup.select("li.cx-gh-open-position")
         if gh_links:
             # Return the <a> as the “card” to keep it simple.
             return list(gh_links)
 
         # Fallback: sometimes the embed is iframed or script-injected; you won't see it in HTML.
-        Log.warning(f"Greenhouse embed: no recognizable job cards on {self.career_page.url}")
+        Log.warning(
+            f"Greenhouse embed: no recognizable job cards on {self.career_page.url}"
+        )
         return []
 
     def parse_job_card(self, job_card: Tag) -> Optional[JobPost]:
@@ -123,7 +127,9 @@ class GreenHouseEmbedScraper(AtsScraper):
                 return None
 
             location_tag = card.select_one(".location")
-            location_raw = location_tag.get_text(" ", strip=True) if location_tag else None
+            location_raw = (
+                location_tag.get_text(" ", strip=True) if location_tag else None
+            )
 
             dept_tag = card.find_previous("h3")
             department = dept_tag.get_text(" ", strip=True) if dept_tag else None
@@ -135,46 +141,54 @@ class GreenHouseEmbedScraper(AtsScraper):
                 department=department,
             )
 
-        # Variant B: card is the <a href*="gh_jid=">
-        if card.name == "a":
-            job_url = (card.get("href") or "").strip()
-            if not job_url:
-                return None
+        return GreenHouseEmbedScraper._parse_wordpress_open_position(card)
 
-            title = card.get_text(" ", strip=True)
-            title = " ".join(title.split()).strip()
-            if not title:
-                return None
+    @staticmethod
+    def _parse_wordpress_open_position(card: Tag) -> Optional[GreenhouseEmbedJobCard]:
+        """
+        Variant B (WordPress plugin):
+        <li class="cx-gh-open-position">
+          <a href="...gh_jid=...">Title</a>
+          <div class="cx-gh-location"><span class="location">Brazil</span></div>
+          # sometimes also: <div class="tooltip-inner"><p>...</p></div>
+        </li>
+        """
+        if card.name != "li" or "cx-gh-open-position" not in (card.get("class") or []):
+            return None
 
-            # Heuristic: location is often near the link (parent container text)
-            # Try: look for the closest parent that looks like a list item / block and extract non-title text.
-            container = card.find_parent(["li", "div", "p"]) or card.parent
-            location_raw = None
-            if container and isinstance(container, Tag):
-                # candidate texts around the link
-                # Prefer elements following the link in the same container.
-                # e.g. <a>Title</a> <span>Berlin</span> or next <p>
-                location_candidate = None
-                next_span = card.find_next_sibling(["span", "p", "div"])
-                if isinstance(next_span, Tag):
-                    location_candidate = next_span.get_text(" ", strip=True)
+        link = card.select_one("a[href]")
+        if not link:
+            return None
 
-                if location_candidate:
-                    location_raw = " ".join(location_candidate.split()).strip()
-                else:
-                    # fallback: container text minus title (rough)
-                    all_text = container.get_text("\n", strip=True)
-                    all_text = all_text.replace(title, "").strip()
-                    # pick first non-empty line
-                    for line in [x.strip() for x in all_text.splitlines()]:
-                        if line:
-                            location_raw = line
-                            break
+        job_url = (link.get("href") or "").strip()
+        if not job_url:
+            return None
 
-            return GreenhouseEmbedJobCard(
-                title=title,
-                location_raw=location_raw,
-                job_url=job_url,
-            )
+        title = link.get_text(" ", strip=True)
+        title = " ".join(title.split()).strip()
+        if not title:
+            return None
 
-        return None
+        # Primary location text
+        location_container = card.select_one(".cx-gh-location")
+        location_raw: Optional[str] = None
+
+        if location_container:
+            # Prefer explicit multi-location content if present
+            tooltip_paragraph = location_container.select_one(".tooltip-inner p")
+            if tooltip_paragraph:
+                location_raw = tooltip_paragraph.get_text(" ", strip=True)
+            else:
+                # Fallback: single location
+                location_span = location_container.select_one(".location")
+                if location_span:
+                    location_raw = location_span.get_text(" ", strip=True)
+
+        if location_raw:
+            location_raw = " ".join(location_raw.split()).strip()
+
+        return GreenhouseEmbedJobCard(
+            title=title,
+            location_raw=location_raw,
+            job_url=job_url,
+        )
