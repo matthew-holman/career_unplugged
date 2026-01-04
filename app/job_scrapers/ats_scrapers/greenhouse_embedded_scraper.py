@@ -60,11 +60,13 @@ class GreenHouseEmbedScraper(AtsScraper):
 
     def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
         # Variant A: official embed widget
-        grnhse_root = soup.select_one("#grnhse_app")
-        if grnhse_root:
-            openings = grnhse_root.select(".opening")
-            if openings:
-                return list(openings)
+        greenhouse_root = soup.select_one("div.js-greenhouse-board")
+        if greenhouse_root:
+                # eg https://api.greenhouse.io/v1/boards/addepar1/jobs the company path is not
+            # the guaranteed to be the same as the main url
+            Log.warning(f"Official Greenhouse embedded, requires API call with "
+                        f"correct path, not implemented yet for page {self.career_page.url}")
+            return []
 
         # Variant B: open position list items
         gh_links = soup.select("li.cx-gh-open-position")
