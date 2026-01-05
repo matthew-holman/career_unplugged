@@ -263,4 +263,31 @@ ASHBY_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "ashby", "url": "https://www.ashbyhq.com/careers", "active": True},
+    {"company_name": "aios", "url": "https://jobs.ashbyhq.com/aios", "active": True},
+    {"company_name": "duvo", "url": "https://jobs.ashbyhq.com/duvo", "active": True},
+    {
+        "company_name": "graphite",
+        "url": "https://jobs.ashbyhq.com/graphite",
+        "active": True,
+    },
+    {
+        "company_name": "heron-power",
+        "url": "https://jobs.ashbyhq.com/heron-power",
+        "active": True,
+    },
+    {
+        "company_name": "mollie",
+        "url": "https://jobs.ashbyhq.com/mollie",
+        "active": True,
+    },
+    {
+        "company_name": "partly",
+        "url": "https://jobs.ashbyhq.com/partly.com",
+        "active": True,
+    },
+    {
+        "company_name": "trunk-tools",
+        "url": "https://jobs.ashbyhq.com/trunk-tools",
+        "active": True,
+    },
 ]

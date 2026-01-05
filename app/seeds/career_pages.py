@@ -4,11 +4,17 @@ from dataclasses import dataclass
 from sqlmodel import Session, select
 
 from app.models.career_page import CareerPage
+from app.seeds.data.ashby_pages import ASHBY_PAGE_SEEDS
 from app.seeds.data.career_pages import CAREER_PAGE_SEEDS
 from app.seeds.data.greenhouse_pages import GREENHOUSE_PAGE_SEEDS
 from app.seeds.data.team_tailor_pages import TEAM_TAILOR_PAGE_SEEDS
 
-SEED_LISTS = [CAREER_PAGE_SEEDS, TEAM_TAILOR_PAGE_SEEDS, GREENHOUSE_PAGE_SEEDS]
+SEED_LISTS = [
+    ASHBY_PAGE_SEEDS,
+    CAREER_PAGE_SEEDS,
+    TEAM_TAILOR_PAGE_SEEDS,
+    GREENHOUSE_PAGE_SEEDS,
+]
 
 
 @dataclass
