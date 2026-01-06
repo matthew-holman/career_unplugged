@@ -1,24 +1,31 @@
 from typing import Optional
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
+from app.job_scrapers.ats_scrapers.ashby_board_scraper import AshbyBoardScraper
 from app.job_scrapers.ats_scrapers.greenhouse_board_scraper import (
     GreenHouseBoardScraper,
 )
+from app.job_scrapers.ats_scrapers.greenhouse_embedded_scraper import (
+    GreenHouseEmbedScraper,
+)
 from app.job_scrapers.ats_scrapers.teamtailor_scraper import TeamTailorScraper
+from app.log import Log
 from app.models.career_page import CareerPage
-from app.utils.log_wrapper import LoggerFactory, LogLevels
-
-logger = LoggerFactory.get_logger("AtsParserFactory", log_level=LogLevels.DEBUG)
 
 
 class AtsScraperFactory:
-    SCRAPERS = {TeamTailorScraper, GreenHouseBoardScraper}
+    SCRAPERS = {
+        AshbyBoardScraper,
+        GreenHouseEmbedScraper,
+        GreenHouseBoardScraper,
+        TeamTailorScraper,
+    }
 
     @classmethod
-    def get_parser(cls, career_page: CareerPage) -> Optional[AtsScraper]:
+    def get_ats_scraper(cls, career_page: CareerPage) -> Optional[AtsScraper]:
         for scraper_cls in cls.SCRAPERS:
             if scraper_cls.supports(career_page.url):
-                logger.debug(f"Matched {scraper_cls.__name__} for {career_page.url}")
+                Log.info(f"Matched {scraper_cls.__name__} for {career_page.url}")
                 return scraper_cls(career_page)
-        logger.warning(f"No ATS scraper matched for {career_page.url}")
+        Log.warning(f"No ATS scraper matched for {career_page.url}")
         return None

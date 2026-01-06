@@ -17,7 +17,8 @@ from app.job_scrapers.scraper import (
     ScraperInput,
 )
 from app.models.job import JobCreate
-from app.utils.europe_filter import EuropeFilter
+from app.utils.locations.europe_filter import EuropeFilter
+from app.utils.locations.remote_filter import RemoteFilter
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 from config import (
     COMPANIES_TO_IGNORE,
@@ -58,13 +59,16 @@ def persist_job_response(
     for job_post in response.jobs:
         country = job_post.location.country if job_post.location else None
 
-        if country and not EuropeFilter.is_european(country):
-            logger.info(
-                f"Skipping non-European job: "
-                f"{job_post.title} at {job_post.company_name} "
-                f"(country='{country}', source='{job_post.source}')"
-            )
-            continue
+        if country:
+            if not (
+                EuropeFilter.is_european(country) or RemoteFilter.is_remote(country)
+            ):
+                logger.info(
+                    f"Skipping non-European job: "
+                    f"{job_post.title} at {job_post.company_name} "
+                    f"(country='{country}', source='{job_post.source}')"
+                )
+                continue
 
         if should_save_job(job_post):
             job = JobCreate(
@@ -118,7 +122,7 @@ def run_ats_scrapers(db_session: Session):
 
     for page in career_pages:
         logger.info(f"Processing {page.company_name or page.url}")
-        ats_scraper = AtsScraperFactory.get_parser(page)
+        ats_scraper = AtsScraperFactory.get_ats_scraper(page)
         if not ats_scraper:
             logger.warning(f"No supported ATS parser for {page.url}")
             continue

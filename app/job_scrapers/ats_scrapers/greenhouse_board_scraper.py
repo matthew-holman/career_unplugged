@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Iterable, Optional, cast
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, Tag
@@ -32,7 +32,7 @@ class GreenHouseBoardScraper(AtsScraper):
             return False
         return host == "job-boards.greenhouse.io"
 
-    def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
+    def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
         job_posts_container = soup.select_one("div.job-posts")
         if not job_posts_container:
             Log.warning(
@@ -46,8 +46,13 @@ class GreenHouseBoardScraper(AtsScraper):
 
         return list(rows)
 
-    def parse_job_card(self, job_card: Tag) -> Optional[JobPost]:
-        parsed = self._parse_greenhouse_board_job_card(job_card)
+    def parse_job_card(self, card: object) -> Optional[JobPost]:
+
+        if not isinstance(card, Tag):
+            return None
+        card = cast(Tag, card)
+
+        parsed = self._parse_greenhouse_board_job_card(card)
         if not parsed:
             return None
 

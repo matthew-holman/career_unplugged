@@ -13,8 +13,8 @@ from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 from app.job_scrapers.scraper import JobPost, JobResponse, JobType, RemoteStatus, Source
 from app.log import Log
 from app.models.career_page import CareerPage
-from app.utils.country_resolver import CountryResolver
-from app.utils.europe_filter import EuropeFilter
+from app.utils.locations.country_resolver import CountryResolver
+from app.utils.locations.europe_filter import EuropeFilter
 
 
 class AtsScraper:
@@ -96,13 +96,14 @@ class AtsScraper:
         value = re.sub(r"\s+", " ", value).strip()
         return value
 
-    @staticmethod
-    def _fetch_jobs_page(jobs_url: str) -> Optional[Response]:
+    @classmethod
+    def _fetch_jobs_page(cls, jobs_url: str) -> Optional[Response]:
+        scraper_name = cls.__name__
         if not jobs_url:
-            Log.warning(f"Could not resolve Teamtailor jobs page from: {jobs_url}")
+            Log.warning(f"Could not resolve {scraper_name} jobs page from: {jobs_url}")
             return None
 
-        Log.info(f"Fetching Teamtailor jobs from {jobs_url}")
+        Log.info(f"Fetching {scraper_name} jobs from {jobs_url}")
         return AtsScraper._fetch_page(jobs_url)
 
     @staticmethod

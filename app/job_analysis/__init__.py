@@ -1,4 +1,5 @@
 from app.job_analysis.description_extractor import DescriptionExtractorFactory
+from app.job_analysis.description_extractors.ashby_board import AshbyBoard
 from app.job_analysis.description_extractors.greenhouse_board import GreenHouseBoard
 from app.job_analysis.description_extractors.linkedin import LinkedIn
 from app.job_analysis.description_extractors.teamtailor import Teamtailor
@@ -6,3 +7,4 @@ from app.job_analysis.description_extractors.teamtailor import Teamtailor
 DescriptionExtractorFactory.register(GreenHouseBoard)
 DescriptionExtractorFactory.register(LinkedIn)
 DescriptionExtractorFactory.register(Teamtailor)
+DescriptionExtractorFactory.register(AshbyBoard)

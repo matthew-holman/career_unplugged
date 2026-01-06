@@ -1,15 +1,18 @@
 import json
 import re
-from typing import List, Optional, Any, Iterable
+
+from typing import Iterable, Optional
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import Source, JobPost, Location
+from app.job_scrapers.scraper import JobPost, Location, Source
 from app.log import Log
 
 JSON_DATA_VAR = "window.__appData = "
+JSON_JOB_BOARD_KEY = "jobBoard"
+
 
 class AshbyBoardScraper(AtsScraper):
 
@@ -26,12 +29,12 @@ class AshbyBoardScraper(AtsScraper):
         return host == "jobs.ashbyhq.com"
 
     def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
-        script_tags = soup.select('script')
+        script_tags = soup.select("script")
         for script in script_tags:
-            if JSON_DATA_VAR in script.text:
+            if JSON_DATA_VAR in script.text and JSON_JOB_BOARD_KEY in script.text:
 
                 pattern = re.compile(
-                    re.escape(JSON_DATA_VAR) + r"\s*(.+?);",
+                    re.escape(JSON_DATA_VAR) + r"\s*(\{.*?\});",
                     re.DOTALL,
                 )
 
@@ -41,10 +44,12 @@ class AshbyBoardScraper(AtsScraper):
 
                 raw_json = match.group(1).strip()
                 json_data = json.loads(raw_json)
-                if json_data:
-                    return json_data.get("jobBoard")['jobPostings']
+                if json_data and json_data.get(JSON_JOB_BOARD_KEY):
+                    return json_data.get(JSON_JOB_BOARD_KEY)["jobPostings"]
 
-        Log.warning(f"Couldn't find app data json when scraping page: {self.career_page.url}")
+        Log.warning(
+            f"Couldn't find app data json when scraping page: {self.career_page.url}"
+        )
         return []
 
     def parse_job_card(self, job_card: Tag) -> Optional[JobPost]:
@@ -67,8 +72,10 @@ class AshbyBoardScraper(AtsScraper):
         # you likely normalize elsewhere. If not, set None.
         date_posted = published_date if isinstance(published_date, str) else None
 
-        job_id = job_card.get("id").strip()
-        job_url = f"{self.career_page.url.rstrip('/')}/{job_id}"
+        job_url = None
+        job_id = job_card.get("id")
+        if job_id:
+            job_url = f"{self.career_page.url.rstrip('/')}/{job_id.strip()}"
         if job_url is None:
             return None
 

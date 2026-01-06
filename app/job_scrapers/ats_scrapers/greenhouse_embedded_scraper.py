@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Iterable, Optional
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, Tag
@@ -58,14 +58,16 @@ class GreenHouseEmbedScraper(AtsScraper):
             )
         return False
 
-    def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
+    def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
         # Variant A: official embed widget
         greenhouse_root = soup.select_one("div.js-greenhouse-board")
         if greenhouse_root:
-                # eg https://api.greenhouse.io/v1/boards/addepar1/jobs the company path is not
+            # eg https://api.greenhouse.io/v1/boards/addepar1/jobs the company path is not
             # the guaranteed to be the same as the main url
-            Log.warning(f"Official Greenhouse embedded, requires API call with "
-                        f"correct path, not implemented yet for page {self.career_page.url}")
+            Log.warning(
+                f"Official Greenhouse embedded, requires API call with "
+                f"correct path, not implemented yet for page {self.career_page.url}"
+            )
             return []
 
         # Variant B: open position list items
