@@ -11,6 +11,17 @@ from app.job_scrapers.scraper import SearchLocation
 # "engineering manager" will not match "product manager"
 JOB_TITLES: List[str] = [
     "engineering manager",
+    "senior engineering manager",
+    "group engineering manager",
+    "engineering director",
+    "director of engineering",
+    "director, engineering",
+    "head of software engineering",
+    "director of software engineering",
+    "technical lead manager",
+    "tech lead manager",
+    "engineering lead manager",
+    "principal engineering manager",
     "engineering team lead",
     "Engineering Lead",
     "software team lead",
@@ -19,14 +30,15 @@ JOB_TITLES: List[str] = [
     "Chief Technology Officer",
     " cto ",
     "(cto)",
+    "chief technical officer",
+    "interim cto",
+    "fractional cto",
     "head of engineering",
+    "vp of engineering",
     "Software Development Manager",
     "head of technology",
     "Developer Team Lead",
     "Engineering Squad Lead",
-    # "senior engineer",
-    # "backend engineer",
-    # "python engineer"
 ]
 
 # the linkedin search is weird, I think it also checks skills listed against
