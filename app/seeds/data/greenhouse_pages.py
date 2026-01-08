@@ -384,4 +384,9 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/profluent/",
         "active": True,
     },
+    {
+        "company_name": "autoproff",
+        "url": "https://job-boards.greenhouse.io/autoproff",
+        "active": True,
+    },
 ]
