@@ -8,18 +8,20 @@ from app.job_scrapers.ats_scrapers.greenhouse_board_scraper import (
 from app.job_scrapers.ats_scrapers.greenhouse_embedded_scraper import (
     GreenHouseEmbedScraper,
 )
+from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 from app.job_scrapers.ats_scrapers.teamtailor_scraper import TeamTailorScraper
 from app.log import Log
 from app.models.career_page import CareerPage
 
 
 class AtsScraperFactory:
-    SCRAPERS = {
+    SCRAPERS = [
         AshbyBoardScraper,
-        GreenHouseEmbedScraper,
         GreenHouseBoardScraper,
+        GreenHouseEmbedScraper,
+        LeverScraper,
         TeamTailorScraper,
-    }
+    ]
 
     @classmethod
     def get_ats_scraper(cls, career_page: CareerPage) -> Optional[AtsScraper]:
