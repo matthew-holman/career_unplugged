@@ -60,6 +60,16 @@ make requirements
 make main
 ```
 
+#### Running scrapers
+```bash
+make scrape
+```
+
+#### Running analyser
+```bash
+make analyse
+```
+
 #### Running Code Quality checks
 ```bash
 make check

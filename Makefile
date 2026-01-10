@@ -36,4 +36,10 @@ start-db:
 main:
 	poetry run python3 main.py
 
+scrape:
+	poetry run python3 -m app.workers.job_scraper
+
+analyse:
+	poetry run python3 -m app.workers.job_analyser
+
 start: requirements start-db migrations main
