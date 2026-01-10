@@ -70,7 +70,7 @@ def main() -> int:
     logger = _get_logger()
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
-        jobs = job_handler.get_unanalysed()
+        jobs = job_handler.get_pending_analysis()
 
         for job in jobs:
             if job.country is not None and job.country.lower() in [

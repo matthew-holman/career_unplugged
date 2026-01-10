@@ -15,7 +15,7 @@ class JobHandler:
         job = self.db_session.exec(statement).first()
         return job
 
-    def get_unanalysed(self) -> List[Job]:
+    def get_pending_analysis(self) -> List[Job]:
         statement = select(Job).where(Job.analysed == False)  # noqa
         jobs = self.db_session.exec(statement).all()
         return jobs
@@ -25,7 +25,7 @@ class JobHandler:
         self.db_session.add(validated_job)
         self.db_session.commit()
         self.db_session.refresh(validated_job)
-        return JobRead.from_orm(validated_job)
+        return JobRead.model_validate(validated_job)
 
     def set_true_remote(self, job: Job, flag_reason: str) -> JobRead:
         job.true_remote = True
@@ -34,7 +34,7 @@ class JobHandler:
         self.db_session.add(job)
         self.db_session.commit()
         self.db_session.refresh(job)
-        return JobRead.from_orm(job)
+        return JobRead.model_validate(job)
 
     def set_positive_match(self, job: Job) -> JobRead:
         job.positive_keyword_match = True
@@ -42,7 +42,7 @@ class JobHandler:
         self.db_session.add(job)
         self.db_session.commit()
         self.db_session.refresh(job)
-        return JobRead.from_orm(job)
+        return JobRead.model_validate(job)
 
     def set_negative_match(self, job: Job) -> JobRead:
         job.negative_keyword_match = True
@@ -50,11 +50,11 @@ class JobHandler:
         self.db_session.add(job)
         self.db_session.commit()
         self.db_session.refresh(job)
-        return JobRead.from_orm(job)
+        return JobRead.model_validate(job)
 
     def set_analysed(self, job: Job) -> JobRead:
         job.analysed = True
         self.db_session.add(job)
         self.db_session.commit()
         self.db_session.refresh(job)
-        return JobRead.from_orm(job)
+        return JobRead.model_validate(job)
