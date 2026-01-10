@@ -554,4 +554,9 @@ CAREER_PAGE_SEEDS = [
         "url": "https://www.crusoe.ai/about/careers",
         "active": True,
     },
+    {
+        "company_name": "fyul",
+        "url": "https://careers.fyul.com/",
+        "active": True,
+    },
 ]

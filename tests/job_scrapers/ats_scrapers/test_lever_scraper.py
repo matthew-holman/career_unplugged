@@ -7,7 +7,7 @@ from tests.job_scrapers.ats_scrapers.ats_test_base import run_ats_scraper_test
 def test_lever_supports_positive() -> None:
     from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 
-    assert LeverScraper.supports("https://jobs.lever.co/alignable") is True
+    assert LeverScraper.supports("https://jobs.eu.lever.co/tomtom") is True
 
 
 def test_lever_supports_negative() -> None:
@@ -22,8 +22,8 @@ def test_lever_scraper() -> None:
     from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 
     career_page = CareerPage(
-        company_name="alignable",
-        url="https://jobs.lever.co/alignable",
+        company_name="tomtom",
+        url="https://jobs.eu.lever.co/tomtom",
         active=True,
     )
 
