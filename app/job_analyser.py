@@ -54,74 +54,92 @@ TRUE_REMOTE_COUNTRIES = [
     "Europe",
 ]
 
-logger = LoggerFactory.get_logger("job scraper", log_level=LogLevels.DEBUG)
+logger_singleton = None
 
-with next(get_db()) as db_session:
-    job_handler = JobHandler(db_session)
-    jobs = job_handler.get_unanalysed()
 
-    for job in jobs:
-        if job.country is not None and job.country.lower() in [
-            remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
-        ]:
-            job_handler.set_true_remote(job, "True Remote Location")
-            logger.info(
-                f"Job {job.title} at {job.company} with country {job.country} is EU remote."
-            )
-            continue
+def _get_logger():
+    global logger_singleton
+    if logger_singleton is None:
+        logger_singleton = LoggerFactory.get_logger(
+            "job scraper", log_level=LogLevels.DEBUG
+        )
+    return logger_singleton
 
-        if (
-            job.country is not None
-            and "sweden" in job.country.lower()
-            and job.listing_remote == RemoteStatus.REMOTE
-        ):
-            job_handler.set_true_remote(job, "Sweden Remote")
-            logger.info(
-                f"Job {job.title} at {job.company} with country {job.country} is Sweden remote."
-            )
-            continue
 
-    session = create_session(is_tls=False, has_retry=True, delay=15)
-    for job in jobs:
-        job_description_response = session.get(job.source_url)
-        if job_description_response.status_code != 200:
-            logger.warning(
-                f"Failed to fetch description for {job.source} job {job.id} "
-                f"({job.source_url}): {job_description_response.status_code}"
-            )
-            job_handler.set_analysed(job)
-            continue
+def main() -> int:
+    logger = _get_logger()
+    with next(get_db()) as db_session:
+        job_handler = JobHandler(db_session)
+        jobs = job_handler.get_unanalysed()
 
-        soup = BeautifulSoup(job_description_response.text, "html.parser")
-
-        extractor = DescriptionExtractorFactory.get_for_source(job.source)
-        if not extractor:
-            logger.warning(
-                f"Failed to load description extractor for source:{job.source} and job:{job.id} "
-            )
-            continue
-
-        job_description_text = extractor.extract_description(soup) or ""
-
-        for pattern in REMOTE_REG_EX_PATTERNS:
-            match = re.search(pattern, job_description_text, re.IGNORECASE)
-            if match is not None:
-                job_handler.set_true_remote(job, pattern)
+        for job in jobs:
+            if job.country is not None and job.country.lower() in [
+                remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
+            ]:
+                job_handler.set_true_remote(job, "True Remote Location")
                 logger.info(
-                    f"Job {job.title} at {job.company} has match with {pattern} in job description text."
+                    f"Job {job.title} at {job.company} with country {job.country} is EU remote."
                 )
-                break
+                continue
 
-        for pattern in POSITIVE_MATCH_KEYWORDS:
-            match = re.search(pattern, job_description_text, re.IGNORECASE)
-            if match is not None:
-                job_handler.set_positive_match(job)
-                break
+            if (
+                job.country is not None
+                and "sweden" in job.country.lower()
+                and job.listing_remote == RemoteStatus.REMOTE
+            ):
+                job_handler.set_true_remote(job, "Sweden Remote")
+                logger.info(
+                    f"Job {job.title} at {job.company} with country {job.country} is Sweden remote."
+                )
+                continue
 
-        for pattern in NEGATIVE_MATCH_KEYWORDS:
-            match = re.search(pattern, job_description_text, re.IGNORECASE)
-            if match is not None:
-                job_handler.set_negative_match(job)
-                break
+        session = create_session(is_tls=False, has_retry=True, delay=15)
+        for job in jobs:
+            job_description_response = session.get(job.source_url)
+            if job_description_response.status_code != 200:
+                logger.warning(
+                    f"Failed to fetch description for {job.source} job {job.id} "
+                    f"({job.source_url}): {job_description_response.status_code}"
+                )
+                job_handler.set_analysed(job)
+                continue
 
-        job_handler.set_analysed(job)
+            soup = BeautifulSoup(job_description_response.text, "html.parser")
+
+            extractor = DescriptionExtractorFactory.get_for_source(job.source)
+            if not extractor:
+                logger.warning(
+                    f"Failed to load description extractor for source:{job.source} and job:{job.id} "
+                )
+                continue
+
+            job_description_text = extractor.extract_description(soup) or ""
+
+            for pattern in REMOTE_REG_EX_PATTERNS:
+                match = re.search(pattern, job_description_text, re.IGNORECASE)
+                if match is not None:
+                    job_handler.set_true_remote(job, pattern)
+                    logger.info(
+                        f"Job {job.title} at {job.company} has match with {pattern} in job description text."
+                    )
+                    break
+
+            for pattern in POSITIVE_MATCH_KEYWORDS:
+                match = re.search(pattern, job_description_text, re.IGNORECASE)
+                if match is not None:
+                    job_handler.set_positive_match(job)
+                    break
+
+            for pattern in NEGATIVE_MATCH_KEYWORDS:
+                match = re.search(pattern, job_description_text, re.IGNORECASE)
+                if match is not None:
+                    job_handler.set_negative_match(job)
+                    break
+
+            job_handler.set_analysed(job)
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

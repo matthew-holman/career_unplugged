@@ -6,9 +6,7 @@ LOG_NAME = "liopard_logs"
 
 class Log:
     @staticmethod
-    def setup(
-        application_name: str, log_name: str = LOG_NAME
-    ) -> logging.Logger:
+    def setup(application_name: str, log_name: str = LOG_NAME) -> logging.Logger:
         formatter = logging.Formatter(
             fmt=f"%(name)s :: {application_name} - "
             f"%(asctime)s - %(levelname)s - %(message)s",

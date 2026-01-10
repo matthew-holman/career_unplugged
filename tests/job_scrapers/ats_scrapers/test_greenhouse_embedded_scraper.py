@@ -21,6 +21,7 @@ def test_greenhouse_board_scraper_wordpress() -> None:
         career_page=career_page,
     )
 
+
 @pytest.mark.integration
 @pytest.mark.network
 def test_greenhouse_board_scraper_official() -> None:

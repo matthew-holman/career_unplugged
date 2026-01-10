@@ -5,6 +5,7 @@ Revises:
 Create Date: 2024-04-08 10:10:13.763729
 
 """
+
 import sqlalchemy as sa
 import sqlmodel
 
@@ -25,16 +26,10 @@ def upgrade():
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("title", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-        sa.Column(
-            "company", sqlmodel.sql.sqltypes.AutoString(), nullable=False
-        ),
-        sa.Column(
-            "country", sqlmodel.sql.sqltypes.AutoString(), nullable=False
-        ),
+        sa.Column("company", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+        sa.Column("country", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("city", sqlmodel.sql.sqltypes.AutoString(), nullable=True),
-        sa.Column(
-            "linkedin_url", sqlmodel.sql.sqltypes.AutoString(), nullable=False
-        ),
+        sa.Column("linkedin_url", sqlmodel.sql.sqltypes.AutoString(), nullable=False),
         sa.Column("applied", sa.Boolean(), nullable=False),
         sa.Column(
             "listing_remote",

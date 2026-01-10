@@ -14,9 +14,7 @@ class LoggerFactory:
     _log = None
 
     @staticmethod
-    def _create_logger(
-        log_file: str | None, log_level: LogLevels, console_log: bool
-    ):
+    def _create_logger(log_file: str | None, log_level: LogLevels, console_log: bool):
         handlers = []
         if log_file is not None:
             # handlers.append(logging.FileHandler(log_file))

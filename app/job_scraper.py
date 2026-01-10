@@ -1,6 +1,5 @@
 from time import sleep
 
-from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
@@ -27,12 +26,20 @@ from config import (
     linkedin_search_string,
 )
 
-# load env file
-load_dotenv()
-logger = LoggerFactory.get_logger("job scraper", log_level=LogLevels.DEBUG)
+logger_singleton = None
+
+
+def _get_logger():
+    global logger_singleton
+    if logger_singleton is None:
+        logger_singleton = LoggerFactory.get_logger(
+            "job scraper", log_level=LogLevels.DEBUG
+        )
+    return logger_singleton
 
 
 def should_save_job(job_post: JobPost) -> bool:
+    logger = _get_logger()
     for company in COMPANIES_TO_IGNORE:
         if job_post.company_name and company.lower() == job_post.company_name.lower():
             logger.info(f"Ignoring job from {job_post.company_name}")
@@ -49,12 +56,10 @@ def should_save_job(job_post: JobPost) -> bool:
     return False
 
 
-scraper = LinkedInScraper()
-
-
 def persist_job_response(
     response: JobResponse, db_session: Session, job_location: str = "Not Sure"
 ):
+    logger = _get_logger()
     job_handler = JobHandler(db_session)
     for job_post in response.jobs:
         country = job_post.location.country if job_post.location else None
@@ -91,8 +96,9 @@ def persist_job_response(
                 continue
 
 
-def run_linkedin_scraper(db_session: Session):
+def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
     for job_location in JOB_LOCATIONS:
+        logger = _get_logger()
         logger.info(f"Scraping jobs for {job_location.location}")
 
         remote_statuses = [RemoteStatus.ONSITE, RemoteStatus.HYBRID]
@@ -100,6 +106,7 @@ def run_linkedin_scraper(db_session: Session):
             remote_statuses = [RemoteStatus.REMOTE]
 
         for remote_status in remote_statuses:
+            logger = _get_logger()
             logger.info(f"Scraping with remote status {remote_status.name}")
 
             scraper_input = ScraperInput(
@@ -121,6 +128,7 @@ def run_ats_scrapers(db_session: Session):
     career_pages = page_handler.get_all()
 
     for page in career_pages:
+        logger = _get_logger()
         logger.info(f"Processing {page.company_name or page.url}")
         ats_scraper = AtsScraperFactory.get_ats_scraper(page)
         if not ats_scraper:
@@ -133,11 +141,17 @@ def run_ats_scrapers(db_session: Session):
         persist_job_response(response, db_session)
 
 
-def main():
+def main() -> int:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+    scraper = LinkedInScraper()
+
     with next(get_db()) as db_session:
-        run_linkedin_scraper(db_session)
+        run_linkedin_scraper(db_session, scraper)
         run_ats_scrapers(db_session)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

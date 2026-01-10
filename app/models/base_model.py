@@ -7,9 +7,7 @@ from sqlmodel import Field, SQLModel
 
 def to_camel(string: str) -> str:
     split_string = string.split("_")
-    return split_string[0] + "".join(
-        word.capitalize() for word in split_string[1:]
-    )
+    return split_string[0] + "".join(word.capitalize() for word in split_string[1:])
 
 
 def default_now() -> datetime:
@@ -19,9 +17,7 @@ def default_now() -> datetime:
 
 class BaseModel(SQLModel):
     __abstract__ = True
-    created_at: datetime = Field(
-        default_factory=datetime.utcnow, nullable=False
-    )
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     updated_at: datetime | None = Field(
         default=None,
