@@ -1,9 +1,13 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional, Sequence
 
 from sqlmodel import Session, select
 
-from app.models.job import Job, JobCreate, JobRead
+from app.db.db import upsert
+from app.models.job import Job
+
+JOB_UPSERT_CONSTRAINT = "job_source_url_key"
+JOB_UPSERT_EXCLUDE = {"id", "created_at", "updated_at", "deleted_at"}
 
 
 @dataclass
@@ -15,46 +19,36 @@ class JobHandler:
         job = self.db_session.exec(statement).first()
         return job
 
-    def get_pending_analysis(self) -> List[Job]:
+    def get_pending_analysis(self) -> Sequence[Job]:
         statement = select(Job).where(Job.analysed == False)  # noqa
         jobs = self.db_session.exec(statement).all()
         return jobs
 
-    def create(self, job: JobCreate) -> JobRead:
-        validated_job = Job.model_validate(job)
-        self.db_session.add(validated_job)
-        self.db_session.commit()
-        self.db_session.refresh(validated_job)
-        return JobRead.model_validate(validated_job)
+    def save(self, job: Job) -> None:
+        upsert(
+            model=Job,
+            db_session=self.db_session,
+            constraint=JOB_UPSERT_CONSTRAINT,
+            data_iter=[job],
+            exclude_columns=JOB_UPSERT_EXCLUDE,
+        )
+        self.db_session.flush()
 
-    def set_true_remote(self, job: Job, flag_reason: str) -> JobRead:
-        job.true_remote = True
-        job.analysed = True
-        job.remote_flag_reason = flag_reason
-        self.db_session.add(job)
-        self.db_session.commit()
-        self.db_session.refresh(job)
-        return JobRead.model_validate(job)
+    def save_all(self, jobs: list[Job]) -> None:
+        if not jobs:
+            return
 
-    def set_positive_match(self, job: Job) -> JobRead:
-        job.positive_keyword_match = True
-        job.analysed = True
-        self.db_session.add(job)
-        self.db_session.commit()
-        self.db_session.refresh(job)
-        return JobRead.model_validate(job)
+        deduped: dict[tuple[str, str], Job] = {}
+        for job in jobs:
+            if not job.source or not job.source_url:
+                continue  # or raise; depends on your invariants
+            deduped[(job.source, job.source_url)] = job
 
-    def set_negative_match(self, job: Job) -> JobRead:
-        job.negative_keyword_match = True
-        job.analysed = True
-        self.db_session.add(job)
-        self.db_session.commit()
-        self.db_session.refresh(job)
-        return JobRead.model_validate(job)
-
-    def set_analysed(self, job: Job) -> JobRead:
-        job.analysed = True
-        self.db_session.add(job)
-        self.db_session.commit()
-        self.db_session.refresh(job)
-        return JobRead.model_validate(job)
+        upsert(
+            model=Job,
+            db_session=self.db_session,
+            constraint=JOB_UPSERT_CONSTRAINT,
+            data_iter=list(deduped.values()),
+            exclude_columns=JOB_UPSERT_EXCLUDE,
+        )
+        self.db_session.flush()

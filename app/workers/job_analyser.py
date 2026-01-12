@@ -7,6 +7,7 @@ from app.handlers.job import JobHandler
 from app.job_analysis import DescriptionExtractorFactory
 from app.job_scrapers.scraper import RemoteStatus
 from app.job_scrapers.utils import create_session
+from app.settings import config
 from app.utils.log_wrapper import LoggerFactory, LogLevels
 from config import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 
@@ -66,16 +67,18 @@ def _get_logger():
     return logger_singleton
 
 
-def _mark_true_remote_jobs(job_handler: JobHandler, jobs) -> None:
+def _mark_true_remote_jobs(jobs) -> list:
     logger = _get_logger()
+    updated_jobs = []
     for job in jobs:
         if job.country is not None and job.country.lower() in [
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
         ]:
-            job_handler.set_true_remote(job, "True Remote Location")
+            job.mark_true_remote("True Remote Location")
             logger.info(
                 f"Job {job.title} at {job.company} with country {job.country} is EU remote."
             )
+            updated_jobs.append(job)
             continue
 
         if (
@@ -83,16 +86,19 @@ def _mark_true_remote_jobs(job_handler: JobHandler, jobs) -> None:
             and "sweden" in job.country.lower()
             and job.listing_remote == RemoteStatus.REMOTE
         ):
-            job_handler.set_true_remote(job, "Sweden Remote")
+            job.mark_true_remote("Sweden Remote")
             logger.info(
                 f"Job {job.title} at {job.company} with country {job.country} is Sweden remote."
             )
+            updated_jobs.append(job)
+    return updated_jobs
 
 
 def _fetch_job_description(session, job) -> str | None:
+    logger = _get_logger()
     response = session.get(job.source_url)
     if response.status_code != 200:
-        _get_logger().warning(
+        logger.warning(
             f"Failed to fetch description for {job.source} job {job.id} "
             f"({job.source_url}): {response.status_code}"
         )
@@ -100,8 +106,7 @@ def _fetch_job_description(session, job) -> str | None:
     return response.text
 
 
-def _extract_job_description(job) -> str | None:
-    session = create_session(is_tls=False, has_retry=True, delay=15)
+def _extract_job_description(session, job) -> str | None:
     description_html = _fetch_job_description(session, job)
     if not description_html:
         return None
@@ -118,16 +123,16 @@ def _extract_job_description(job) -> str | None:
     return extractor.extract_description(soup) or ""
 
 
-def _apply_description_analysis(job_handler: JobHandler, job) -> None:
-    job_description_text = _extract_job_description(job)
+def _apply_description_analysis(job, session) -> None:
+    job_description_text = _extract_job_description(session, job)
     if job_description_text is None:
-        job_handler.set_analysed(job)
+        job.mark_analysed()
         return
 
     for pattern in REMOTE_REG_EX_PATTERNS:
         match = re.search(pattern, job_description_text, re.IGNORECASE)
         if match is not None:
-            job_handler.set_true_remote(job, pattern)
+            job.mark_true_remote(pattern)
             _get_logger().info(
                 f"Job {job.title} at {job.company} has match with {pattern} in job description text."
             )
@@ -136,26 +141,86 @@ def _apply_description_analysis(job_handler: JobHandler, job) -> None:
     for pattern in POSITIVE_MATCH_KEYWORDS:
         match = re.search(pattern, job_description_text, re.IGNORECASE)
         if match is not None:
-            job_handler.set_positive_match(job)
+            job.mark_positive_match()
             break
 
     for pattern in NEGATIVE_MATCH_KEYWORDS:
         match = re.search(pattern, job_description_text, re.IGNORECASE)
         if match is not None:
-            job_handler.set_negative_match(job)
+            job.mark_negative_match()
             break
 
-    job_handler.set_analysed(job)
+    job.mark_analysed()
+
+
+def _flush_pending_jobs(
+    db_session,
+    job_handler: JobHandler,
+    pending_jobs: list,
+    *,
+    batch_size: int,
+    force: bool = False,
+) -> list:
+    if not pending_jobs:
+        return []
+    if not force and len(pending_jobs) < batch_size:
+        return pending_jobs
+
+    logger = _get_logger()
+    try:
+        job_handler.save_all(pending_jobs)
+        db_session.commit()
+        return []
+    except Exception as exc:
+        db_session.rollback()
+        logger.warning(f"Failed to persist analysis batch: {exc}")
+        return []
 
 
 def main() -> int:
+    logger = _get_logger()
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
         jobs = job_handler.get_pending_analysis()
+        batch_size = config.DB_BATCH_SIZE
+        pending_jobs: list = []
+        jobs_processed = 0
+        jobs_saved = 0
 
-        _mark_true_remote_jobs(job_handler, jobs)
+        updated_jobs = _mark_true_remote_jobs(jobs)
+        if updated_jobs:
+            jobs_saved += len(updated_jobs)
+            pending_jobs.extend(updated_jobs)
+            pending_jobs = _flush_pending_jobs(
+                db_session,
+                job_handler,
+                pending_jobs,
+                batch_size=batch_size,
+            )
+
+        session = create_session(is_tls=False, has_retry=True, delay=15)
         for job in jobs:
-            _apply_description_analysis(job_handler, job)
+            jobs_processed += 1
+            _apply_description_analysis(job, session)
+            jobs_saved += 1
+            pending_jobs.append(job)
+            pending_jobs = _flush_pending_jobs(
+                db_session,
+                job_handler,
+                pending_jobs,
+                batch_size=batch_size,
+            )
+
+        _flush_pending_jobs(
+            db_session,
+            job_handler,
+            pending_jobs,
+            batch_size=batch_size,
+            force=True,
+        )
+        logger.info(
+            f"Analysis processed {jobs_processed} jobs, saved {jobs_saved} jobs."
+        )
 
     return 0
 

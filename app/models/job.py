@@ -36,6 +36,22 @@ class JobBase(BaseModel, table=False):  # type: ignore
 class Job(JobBase, table=True):  # type: ignore
     id: int = Field(default=None, primary_key=True)
 
+    def mark_true_remote(self, flag_reason: str) -> None:
+        self.true_remote = True
+        self.analysed = True
+        self.remote_flag_reason = flag_reason
+
+    def mark_positive_match(self) -> None:
+        self.positive_keyword_match = True
+        self.analysed = True
+
+    def mark_negative_match(self) -> None:
+        self.negative_keyword_match = True
+        self.analysed = True
+
+    def mark_analysed(self) -> None:
+        self.analysed = True
+
 
 class JobCreate(JobBase, table=False):  # type: ignore
     pass

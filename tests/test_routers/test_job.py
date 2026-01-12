@@ -23,8 +23,8 @@ def job(db_session: Session) -> JobRead:
         country="test country",
     )
 
-    job_instance = JobHandler(db_session).create(job=job_data)
-    return job_instance
+    JobHandler(db_session).save(job=job_data)
+    return JobRead.model_validate(job_data)
 
 
 def test_get_job(client: TestClient, job: JobRead, db_session: Session):

@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     DB_POOL_SIZE: int = Field(default=4)
     DB_MAX_OVERFLOW: int = Field(default=2)
+    DB_BATCH_SIZE: int = Field(default=500)
 
     BASE_URL: str = Field(default="0.0.0.0")
     PORT: int = Field(default=5005)
