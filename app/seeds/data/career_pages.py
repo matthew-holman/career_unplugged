@@ -127,7 +127,6 @@ CAREER_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "moog", "url": "https://careers.moog.com", "active": True},
-    {"company_name": "nshift", "url": "https://careers.nshift.com", "active": True},
     {"company_name": "payfit", "url": "https://careers.payfit.com", "active": True},
     {"company_name": "plano", "url": "https://careers.plano.gov", "active": True},
     {"company_name": "redfin", "url": "https://careers.redfin.com", "active": True},

@@ -56,6 +56,7 @@ def diff_seed_dicts(
     google_hosts = {normalize_host(d) for d in google_domains if normalize_host(d)}
 
     missing_hosts = sorted(google_hosts - seed_hosts)
+    # intersection = google_hosts.intersection(seed_hosts)
     return [host_to_seed_dict(host) for host in missing_hosts]
 
 
