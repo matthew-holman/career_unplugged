@@ -5,7 +5,7 @@ description = "basic template"
 authors = ["matthewh <mholman000@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10 <4.0"
+python = ">=3.11,<3.12"
 alembic = "^1.9.0"
 better-exceptions = "0.3.3"
 fastapi = "^0.115.0"
