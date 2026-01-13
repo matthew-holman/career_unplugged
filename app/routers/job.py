@@ -1,14 +1,12 @@
-from datetime import datetime, timedelta
-from http.client import HTTPException
-from typing import Optional, Sequence
+from typing import Annotated, List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from starlette import status
 
 from app.db.db import get_db
+from app.filters.job import JobFilter
 from app.handlers.job import JobHandler
-from app.job_scrapers.scraper import RemoteStatus, Source
 from app.models.job import Job, JobRead
 
 INTERFACE = "job"
@@ -42,50 +40,40 @@ def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=Sequence[Job],
+    response_model=List[Job],
 )
 def list_jobs(
-    title: Optional[str] = None,
-    company: Optional[str] = None,
-    country: Optional[str] = None,
-    city: Optional[str] = None,
-    applied: Optional[bool] = None,
-    positive_keyword_match: Optional[bool] = None,
-    negative_keyword_match: Optional[bool] = None,
-    true_remote: Optional[bool] = None,
-    analysed: Optional[bool] = None,
-    recent: Optional[bool] = None,
-    listing_remote: Optional[RemoteStatus] = None,
-    source: Optional[Source] = None,
+    filters: Annotated[JobFilter, Query()],
     db_session: Session = Depends(get_db),
-) -> Sequence[Job]:
+) -> List[Job]:
     query = select(Job)
 
-    if title is not None:
-        query = query.where(Job.title == title)
-    if company is not None:
-        query = query.where(Job.company == company)
-    if country is not None:
-        query = query.where(Job.country == country)
-    if city is not None:
-        query = query.where(Job.city == city)
-    if applied is not None:
-        query = query.where(Job.applied == applied)
-    if true_remote is not None:
-        query = query.where(Job.true_remote == true_remote)
-    if positive_keyword_match is not None:
-        query = query.where(Job.positive_keyword_match == positive_keyword_match)
-    if negative_keyword_match is not None:
-        query = query.where(Job.negative_keyword_match == negative_keyword_match)
-    if listing_remote is not None:
-        query = query.where(Job.listing_remote == listing_remote)
-    if source is not None:
-        query = query.where(Job.source == source)
-    if analysed is not None:
-        query = query.where(Job.analysed == analysed)
-    if recent:
-        twenty_four_hours_ago = datetime.now() - timedelta(hours=24)
-        query = query.where(Job.created_at >= twenty_four_hours_ago)
+    filter_fields = {
+        "title",
+        "company",
+        "country",
+        "city",
+        "applied",
+        "positive_keyword_match",
+        "negative_keyword_match",
+        "true_remote",
+        "analysed",
+        "listing_remote",
+        "source",
+    }
+
+    provided = filters.model_dump(exclude_none=True)
+
+    for field_name, value in provided.items():
+        if field_name in {"created_at_gte", "created_at_lte"}:
+            continue
+        if field_name in filter_fields:
+            query = query.where(getattr(Job, field_name) == value)
+
+    if filters.created_at_gte is not None:
+        query = query.where(Job.created_at >= filters.created_at_gte)
+    if filters.created_at_lte is not None:
+        query = query.where(Job.created_at <= filters.created_at_lte)
 
     results = db_session.exec(query).all()
     return results
