@@ -7,15 +7,15 @@ from sqlalchemy.sql.dml import ReturningInsert
 from sqlmodel import Session
 
 from app.db.orm_mixins import ColumnMappingMixIn
-from app.settings import config
+from app.settings import settings
 
 engine = create_engine(
     url=(
-        f"postgresql://{config.DB_USER}:{config.DB_PASSWORD}@"
-        f"{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}"
+        f"postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@"
+        f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
     ),
-    pool_size=config.DB_POOL_SIZE,
-    max_overflow=config.DB_MAX_OVERFLOW,
+    pool_size=settings.DB_POOL_SIZE,
+    max_overflow=settings.DB_MAX_OVERFLOW,
 )
 
 

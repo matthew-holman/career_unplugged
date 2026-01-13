@@ -3,6 +3,14 @@ from typing import List
 
 from app.job_scrapers.scraper import SearchLocation
 
+"""
+Default job search profile.
+
+These values represent default search behavior and filtering rules.
+They are not deployment settings and may become user-configurable in the future.
+"""
+
+
 # Job titles will form the core of the search string used by the
 # scraper in the form or '"title 1" OR "title 2"' etc etc
 # these job titles will also be used to ignore jobs that are returned

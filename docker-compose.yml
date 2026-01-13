@@ -7,9 +7,13 @@ services:
     container_name: fastapi_dev_db
     env_file:
       - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${FASTAPI_DB_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 8s
       timeout: 8s
       retries: 5
@@ -34,5 +38,5 @@ services:
     env_file:
       - .env
     environment:
-      - POSTGRES_HOST=db
+      - DB_HOST=db
     command: bash -c "make migrations && make main"

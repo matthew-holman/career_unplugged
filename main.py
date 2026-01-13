@@ -14,14 +14,14 @@ from app.log import Log
 from app.routers.career_pages import router as career_pages
 from app.routers.job import router as job
 from app.seeds.career_pages import CareerPageSeeder
-from app.settings import config
+from app.settings import settings
 
 
 def get_app():
     application = FastAPI(
         title="job scraper",
         description="help me get a job",
-        version=f"{config.API_VERSION}-{config.IMAGE_TAG}",
+        version=f"{settings.API_VERSION}-{settings.IMAGE_TAG}",
     )
 
     application.add_middleware(
@@ -94,9 +94,9 @@ if __name__ == "__main__":
 
     uvicorn.run(
         "main:application",
-        host=config.BASE_URL,
-        port=config.PORT,
-        workers=config.NUM_WORKERS,
+        host=settings.BASE_URL,
+        port=settings.PORT,
+        workers=settings.NUM_WORKERS,
         reload=True,
         proxy_headers=True,
         forwarded_allow_ips="*",

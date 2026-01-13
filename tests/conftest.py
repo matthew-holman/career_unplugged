@@ -8,12 +8,12 @@ from starlette.testclient import TestClient
 
 from app.db.db import get_db
 from app.log import Log
-from app.settings import config
+from app.settings import settings
 from main import get_app
 
 DATABASE_URL = (
-    f"postgresql://{config.DB_USER}:{config.DB_PASSWORD}@"
-    f"{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}_test"
+    f"postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@"
+    f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}_test"
 )
 
 
@@ -71,7 +71,7 @@ def prepare_tables_in_db(model, db_session=None):
         db_session = next(get_db())
     assert db_session.is_active
     # Add a guard to check environment type
-    if config.TARGET_ENV != "local-dev":
+    if settings.TARGET_ENV != "local-dev":
         raise Exception(
             "This test is destructive and " "only for testing in local development!"
         )

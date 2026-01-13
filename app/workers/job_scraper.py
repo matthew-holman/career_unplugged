@@ -15,16 +15,16 @@ from app.job_scrapers.scraper import (
     ScraperInput,
 )
 from app.models.job import Job, JobCreate
-from app.settings import config
-from app.utils.locations.europe_filter import EuropeFilter
-from app.utils.locations.remote_filter import RemoteFilter
-from app.utils.log_wrapper import LoggerFactory, LogLevels
-from config import (
+from app.search_profile import (
     COMPANIES_TO_IGNORE,
     JOB_LOCATIONS,
     JOB_TITLES,
     linkedin_search_string,
 )
+from app.settings import settings
+from app.utils.locations.europe_filter import EuropeFilter
+from app.utils.locations.remote_filter import RemoteFilter
+from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 logger_singleton = None
 
@@ -115,7 +115,7 @@ def _flush_pending_jobs(
 
 def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
     job_handler = JobHandler(db_session)
-    batch_size = config.DB_BATCH_SIZE
+    batch_size = settings.DB_BATCH_SIZE
     pending_jobs: list[Job] = []
     jobs_processed = 0
     jobs_saved = 0
@@ -170,7 +170,7 @@ def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
 
 def run_ats_scrapers(db_session: Session):
     job_handler = JobHandler(db_session)
-    batch_size = config.DB_BATCH_SIZE
+    batch_size = settings.DB_BATCH_SIZE
     pending_jobs: list[Job] = []
     jobs_processed = 0
     jobs_saved = 0
@@ -187,7 +187,7 @@ def run_ats_scrapers(db_session: Session):
             continue
 
         # I don't want to be blocked or limited.
-        sleep(0.2)
+        sleep(settings.ATS_SCRAPER_DELAY_SECONDS)
         response = ats_scraper.scrape()
         jobs_processed += len(response.jobs)
         jobs_to_save = build_jobs_to_save(response)

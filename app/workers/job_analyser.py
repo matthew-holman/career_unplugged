@@ -7,9 +7,9 @@ from app.handlers.job import JobHandler
 from app.job_analysis import DescriptionExtractorFactory
 from app.job_scrapers.scraper import RemoteStatus
 from app.job_scrapers.utils import create_session
-from app.settings import config
+from app.search_profile import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
+from app.settings import settings
 from app.utils.log_wrapper import LoggerFactory, LogLevels
-from config import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 
 REMOTE_REG_EX_PATTERNS = [
     r"\s(GMT|CET)\s",
@@ -182,7 +182,7 @@ def main() -> int:
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
         jobs = job_handler.get_pending_analysis()
-        batch_size = config.DB_BATCH_SIZE
+        batch_size = settings.DB_BATCH_SIZE
         pending_jobs: list = []
         jobs_processed = 0
         jobs_saved = 0

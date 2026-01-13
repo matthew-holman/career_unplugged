@@ -1,7 +1,7 @@
 env:
-  FASTAPI_DB_USER: postgres
-  FASTAPI_DB_PASSWORD: postgres
-  POSTGRES_DB: postgres
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_NAME: postgres
 
 name: CI/CD
 on: [push]
@@ -35,9 +35,9 @@ jobs:
       postgres:
         image: postgres:13.4-alpine
         env:
-          POSTGRES_USER: ${{ env.FASTAPI_DB_USER }}
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
-          POSTGRES_PASSWORD:  ${{ env.FASTAPI_DB_PASSWORD }}
+          POSTGRES_USER: ${{ env.DB_USER }}
+          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
         ports: ["6666:6666"]
         options: >-
           --health-cmd pg_isready
