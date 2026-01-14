@@ -28,6 +28,7 @@ tls-client = "1.0.1"
 markdownify = "1.1.0"
 psycopg2-binary = "^2.9.10"
 alembic-autogenerate-enums = "^0.1.2"
+dotenv = "^0.9.9"
 
 [tool.poetry.group.dev.dependencies]
 requests-mock = "^1.10.0"

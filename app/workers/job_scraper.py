@@ -1,5 +1,6 @@
 from time import sleep
 
+from dotenv import load_dotenv
 from sqlmodel import Session
 
 from app.db.db import get_db
@@ -192,8 +193,6 @@ def run_ats_scrapers(db_session: Session):
 
 
 def main() -> int:
-    from dotenv import load_dotenv
-
     load_dotenv()
     Log.setup()
     scraper = LinkedInScraper()
