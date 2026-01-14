@@ -16,7 +16,7 @@ SQLAlchemy = ">=2.0.0"
 sqlalchemy-stubs = "0.4"
 sqlalchemy-utils = "0.41.1"
 #  starlette = "0.19.1"  no need to explicitly install allow fastpai to handle dependecy
-uvicorn = {version = "0.20.0", extras = ["standard"]}
+uvicorn = {version = "^0.30.0", extras = ["standard"]}
 freezegun = "1.2.1"
 pre-commit = "^3.6.0"
 pytest = "7.2.0"
