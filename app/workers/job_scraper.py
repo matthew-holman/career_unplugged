@@ -14,6 +14,7 @@ from app.job_scrapers.scraper import (
     RemoteStatus,
     ScraperInput,
 )
+from app.log import Log
 from app.models.job import Job, JobCreate
 from app.search_profile import (
     COMPANIES_TO_IGNORE,
@@ -24,40 +25,24 @@ from app.search_profile import (
 from app.settings import settings
 from app.utils.locations.europe_filter import EuropeFilter
 from app.utils.locations.remote_filter import RemoteFilter
-from app.utils.log_wrapper import LoggerFactory, LogLevels
-
-logger_singleton = None
-
-
-def _get_logger():
-    global logger_singleton
-    if logger_singleton is None:
-        logger_singleton = LoggerFactory.get_logger(
-            "job scraper", log_level=LogLevels.DEBUG
-        )
-    return logger_singleton
 
 
 def should_save_job(job_post: JobPost) -> bool:
-    logger = _get_logger()
     for company in COMPANIES_TO_IGNORE:
         if job_post.company_name and company.lower() == job_post.company_name.lower():
-            logger.info(f"Ignoring job from {job_post.company_name}")
+            Log.info(f"Ignoring job from {job_post.company_name}")
             return False
 
     for job_title in JOB_TITLES:
         if job_title.lower() in job_post.title.lower():
-            logger.info(f"Adding job {job_post.title} from {job_post.company_name}")
+            Log.info(f"Adding job {job_post.title} from {job_post.company_name}")
             return True
 
-    logger.info(
-        f"Ignoring job with title {job_post.title} from {job_post.company_name}"
-    )
+    Log.info(f"Ignoring job with title {job_post.title} from {job_post.company_name}")
     return False
 
 
 def build_jobs_to_save(response: JobResponse) -> list[Job]:
-    logger = _get_logger()
     jobs: list[Job] = []
     for job_post in response.jobs:
         country = job_post.location.country if job_post.location else None
@@ -66,7 +51,7 @@ def build_jobs_to_save(response: JobResponse) -> list[Job]:
             if not (
                 EuropeFilter.is_european(country) or RemoteFilter.is_remote(country)
             ):
-                logger.info(
+                Log.info(
                     f"Skipping non-European job: "
                     f"{job_post.title} at {job_post.company_name} "
                     f"(country='{country}', source='{job_post.source}')"
@@ -102,14 +87,13 @@ def _flush_pending_jobs(
     if not force and len(pending_jobs) < batch_size:
         return pending_jobs
 
-    logger = _get_logger()
     try:
         job_handler.save_all(pending_jobs)
         db_session.commit()
         return []
     except Exception as exc:
         db_session.rollback()
-        logger.warning(f"Failed to persist jobs batch: {exc}")
+        Log.warning(f"Failed to persist jobs batch: {exc}")
         return []
 
 
@@ -121,16 +105,14 @@ def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
     jobs_saved = 0
 
     for job_location in JOB_LOCATIONS:
-        logger = _get_logger()
-        logger.info(f"Scraping jobs for {job_location.location}")
+        Log.info(f"Scraping jobs for {job_location.location}")
 
         remote_statuses = [RemoteStatus.ONSITE, RemoteStatus.HYBRID]
         if job_location.remote:
             remote_statuses = [RemoteStatus.REMOTE]
 
         for remote_status in remote_statuses:
-            logger = _get_logger()
-            logger.info(f"Scraping with remote status {remote_status.name}")
+            Log.info(f"Scraping with remote status {remote_status.name}")
 
             scraper_input = ScraperInput(
                 search_term=linkedin_search_string(),
@@ -162,8 +144,7 @@ def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
         batch_size=batch_size,
         force=True,
     )
-    logger = _get_logger()
-    logger.info(
+    Log.info(
         f"LinkedIn scrape processed {jobs_processed} jobs, " f"saved {jobs_saved} jobs."
     )
 
@@ -179,11 +160,10 @@ def run_ats_scrapers(db_session: Session):
     career_pages = page_handler.get_all()
 
     for page in career_pages:
-        logger = _get_logger()
-        logger.info(f"Processing {page.company_name or page.url}")
+        Log.info(f"Processing {page.company_name or page.url}")
         ats_scraper = AtsScraperFactory.get_ats_scraper(page)
         if not ats_scraper:
-            logger.warning(f"No supported ATS parser for {page.url}")
+            Log.warning(f"No supported ATS parser for {page.url}")
             continue
 
         # I don't want to be blocked or limited.
@@ -208,14 +188,14 @@ def run_ats_scrapers(db_session: Session):
         batch_size=batch_size,
         force=True,
     )
-    logger = _get_logger()
-    logger.info(f"ATS scrape processed {jobs_processed} jobs, saved {jobs_saved} jobs.")
+    Log.info(f"ATS scrape processed {jobs_processed} jobs, saved {jobs_saved} jobs.")
 
 
 def main() -> int:
     from dotenv import load_dotenv
 
     load_dotenv()
+    Log.setup()
     scraper = LinkedInScraper()
 
     with next(get_db()) as db_session:

@@ -1,47 +1,51 @@
 import logging
 import sys
 
-LOG_NAME = "liopard_logs"
+LOG_NAME = "career_unplugged"
+_CONFIGURED = False
 
 
 class Log:
     @staticmethod
-    def setup(application_name: str, log_name: str = LOG_NAME) -> logging.Logger:
+    def setup(application_name: str | None = None) -> logging.Logger:
+        global _CONFIGURED
+        if _CONFIGURED:
+            return logging.getLogger(LOG_NAME)
+
+        fmt = (
+            "%(name)s %(module)s %(funcName)s %(lineno)d - "
+            f"{application_name or LOG_NAME} - %(levelname)s - %(message)s"
+        )
         formatter = logging.Formatter(
-            fmt=f"%(name)s :: {application_name} - "
-            f"%(asctime)s - %(levelname)s - %(message)s",
+            fmt=fmt,
             datefmt="%Y-%m-%d %H:%M:%S(%Z)",
         )
 
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
 
-        logger = logging.getLogger(log_name)
+        logger = logging.getLogger(LOG_NAME)
         logger.setLevel(logging.DEBUG)
         logger.addHandler(handler)
+        _CONFIGURED = True
         return logger
 
     @staticmethod
-    def debug(message: str, log_name=LOG_NAME) -> None:
-        logger = logging.getLogger(log_name)
-        logger.debug(message)
+    def debug(message: str) -> None:
+        logging.getLogger(LOG_NAME).debug(message)
 
     @staticmethod
-    def info(message: str, log_name=LOG_NAME) -> None:
-        logger = logging.getLogger(log_name)
-        logger.info(message)
+    def info(message: str) -> None:
+        logging.getLogger(LOG_NAME).info(message)
 
     @staticmethod
-    def warning(message: str, log_name=LOG_NAME) -> None:
-        logger = logging.getLogger(log_name)
-        logger.warning(message)
+    def warning(message: str) -> None:
+        logging.getLogger(LOG_NAME).warning(message)
 
     @staticmethod
-    def error(message: str, log_name=LOG_NAME) -> None:
-        logger = logging.getLogger(log_name)
-        logger.error(message)
+    def error(message: str) -> None:
+        logging.getLogger(LOG_NAME).error(message)
 
     @staticmethod
-    def critical(message: str, log_name=LOG_NAME) -> None:
-        logger = logging.getLogger(log_name)
-        logger.critical(message)
+    def exception(message: str) -> None:
+        logging.getLogger(LOG_NAME).exception(message)

@@ -40,7 +40,7 @@ class TeamTailorScraper(AtsScraper):
         # We are looking for a Teamtailor page with a teamtailor job list,
         # other job lists are supported on Teamtailor pages.
         if "teamtailor" in html and 'id="jobs_list_container"' in html:
-            Log.debug(f"Detected Teamtailor page with Teamtailor jobs list on {url}")
+            Log.debug(f"Detected {cls.__name__} page with jobs list on {url}")
             return True
 
         return False

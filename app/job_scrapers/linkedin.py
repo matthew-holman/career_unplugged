@@ -26,9 +26,7 @@ from app.job_scrapers.utils import (
     get_enum_from_job_type,
     markdown_converter,
 )
-from app.utils.log_wrapper import LoggerFactory, LogLevels
-
-logger = LoggerFactory.get_logger("Linkedin scraper", log_level=LogLevels.DEBUG)
+from app.log import Log
 
 
 class LinkedInScraper(Scraper):
@@ -67,7 +65,7 @@ class LinkedInScraper(Scraper):
             lambda: len(job_list) < scraper_input.results_wanted and page < 1000
         )
         while continue_search():
-            logger.info(f"LinkedIn search page: {page // 25 + 1}")
+            Log.info(f"LinkedIn search page: {page // 25 + 1}")
             session = create_session(is_tls=False, has_retry=True, delay=15)
             params = {
                 "keywords": scraper_input.search_term,
@@ -116,13 +114,13 @@ class LinkedInScraper(Scraper):
                             f"LinkedIn response status code " f"{response.status_code}"
                         )
                         err += f" - {response.text}"
-                    logger.error(err)
+                    Log.error(err)
                     return JobResponse(jobs=job_list)
             except Exception as e:
                 if "Proxy responded with" in str(e):
-                    logger.error("LinkedIn: Bad proxy")
+                    Log.error("LinkedIn: Bad proxy")
                 else:
-                    logger.error(f"LinkedIn: {str(e)}")
+                    Log.error(f"LinkedIn: {str(e)}")
                 return JobResponse(jobs=job_list)
 
             soup = BeautifulSoup(response.text, "html.parser")
@@ -163,8 +161,6 @@ class LinkedInScraper(Scraper):
     def _process_job(
         self, job_card: Tag, job_url: str, full_descr: bool
     ) -> JobPost | None:
-        salary_tag = job_card.find("span", class_="job-search-card__salary-info")
-
         title_tag = job_card.find("span", class_="sr-only")
         title = title_tag.get_text(strip=True) if title_tag else "N/A"
 

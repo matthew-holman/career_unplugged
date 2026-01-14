@@ -7,9 +7,9 @@ from app.handlers.job import JobHandler
 from app.job_analysis import DescriptionExtractorFactory
 from app.job_scrapers.scraper import RemoteStatus
 from app.job_scrapers.utils import create_session
+from app.log import Log
 from app.search_profile import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 from app.settings import settings
-from app.utils.log_wrapper import LoggerFactory, LogLevels
 
 REMOTE_REG_EX_PATTERNS = [
     r"\s(GMT|CET)\s",
@@ -55,27 +55,15 @@ TRUE_REMOTE_COUNTRIES = [
     "Europe",
 ]
 
-logger_singleton = None
-
-
-def _get_logger():
-    global logger_singleton
-    if logger_singleton is None:
-        logger_singleton = LoggerFactory.get_logger(
-            "job scraper", log_level=LogLevels.DEBUG
-        )
-    return logger_singleton
-
 
 def _mark_true_remote_jobs(jobs) -> list:
-    logger = _get_logger()
     updated_jobs = []
     for job in jobs:
         if job.country is not None and job.country.lower() in [
             remote_country.lower() for remote_country in TRUE_REMOTE_COUNTRIES
         ]:
             job.mark_true_remote("True Remote Location")
-            logger.info(
+            Log.info(
                 f"Job {job.title} at {job.company} with country {job.country} is EU remote."
             )
             updated_jobs.append(job)
@@ -87,7 +75,7 @@ def _mark_true_remote_jobs(jobs) -> list:
             and job.listing_remote == RemoteStatus.REMOTE
         ):
             job.mark_true_remote("Sweden Remote")
-            logger.info(
+            Log.info(
                 f"Job {job.title} at {job.company} with country {job.country} is Sweden remote."
             )
             updated_jobs.append(job)
@@ -95,10 +83,9 @@ def _mark_true_remote_jobs(jobs) -> list:
 
 
 def _fetch_job_description(session, job) -> str | None:
-    logger = _get_logger()
     response = session.get(job.source_url)
     if response.status_code != 200:
-        logger.warning(
+        Log.warning(
             f"Failed to fetch description for {job.source} job {job.id} "
             f"({job.source_url}): {response.status_code}"
         )
@@ -115,7 +102,7 @@ def _extract_job_description(session, job) -> str | None:
 
     extractor = DescriptionExtractorFactory.get_for_source(job.source)
     if not extractor:
-        _get_logger().warning(
+        Log.warning(
             f"Failed to load description extractor for source:{job.source} and job:{job.id} "
         )
         return None
@@ -133,7 +120,7 @@ def _apply_description_analysis(job, session) -> None:
         match = re.search(pattern, job_description_text, re.IGNORECASE)
         if match is not None:
             job.mark_true_remote(pattern)
-            _get_logger().info(
+            Log.info(
                 f"Job {job.title} at {job.company} has match with {pattern} in job description text."
             )
             break
@@ -166,19 +153,17 @@ def _flush_pending_jobs(
     if not force and len(pending_jobs) < batch_size:
         return pending_jobs
 
-    logger = _get_logger()
     try:
         job_handler.save_all(pending_jobs)
         db_session.commit()
         return []
     except Exception as exc:
         db_session.rollback()
-        logger.warning(f"Failed to persist analysis batch: {exc}")
+        Log.warning(f"Failed to persist analysis batch: {exc}")
         return []
 
 
 def main() -> int:
-    logger = _get_logger()
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
         jobs = job_handler.get_pending_analysis()
@@ -218,12 +203,11 @@ def main() -> int:
             batch_size=batch_size,
             force=True,
         )
-        logger.info(
-            f"Analysis processed {jobs_processed} jobs, saved {jobs_saved} jobs."
-        )
+        Log.info(f"Analysis processed {jobs_processed} jobs, saved {jobs_saved} jobs.")
 
     return 0
 
 
 if __name__ == "__main__":
+    Log.setup()
     raise SystemExit(main())
