@@ -6,7 +6,7 @@ authors = ["matthewh <mholman000@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
-alembic = "^1.9.0"
+alembic = "^1.13.0"
 better-exceptions = "0.3.3"
 fastapi = "^0.115.0"
 pydantic = ">=2.3.0,<3.0.0"
@@ -22,7 +22,7 @@ pre-commit = "^3.6.0"
 pytest = "7.2.0"
 pytest-cov = "4.0.0"
 pytest-github-actions-annotate-failures = "^0.1.8"
-sqlmodel = "^0.0.16"
+sqlmodel = "^0.0.23"
 beautifulsoup4 = "4.12.3"
 tls-client = "1.0.1"
 markdownify = "1.1.0"

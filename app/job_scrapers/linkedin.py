@@ -61,66 +61,14 @@ class LinkedInScraper(Scraper):
         seconds_old = (
             scraper_input.hours_old * 3600 if scraper_input.hours_old else None
         )
-        continue_search = (
-            lambda: len(job_list) < scraper_input.results_wanted and page < 1000
-        )
-        while continue_search():
+        while self._should_continue(page, job_list, scraper_input):
             Log.info(f"LinkedIn search page: {page // 25 + 1}")
-            session = create_session(is_tls=False, has_retry=True, delay=15)
-            params = {
-                "keywords": scraper_input.search_term,
-                "location": scraper_input.location,
-                "distance": scraper_input.distance,
-                "f_WT": (
-                    scraper_input.remote_status.value
-                    if scraper_input.remote_status
-                    else None
-                ),
-                "f_JT": (
-                    self.job_type_code(scraper_input.job_type)
-                    if scraper_input.job_type
-                    else None
-                ),
-                "pageNum": 0,
-                "start": page + scraper_input.offset,
-                "f_AL": "true" if scraper_input.easy_apply else None,
-                "f_C": (
-                    ",".join(map(str, scraper_input.linkedin_company_ids))
-                    if scraper_input.linkedin_company_ids
-                    else None
-                ),
-            }
-            if seconds_old is not None:
-                params["f_TPR"] = f"r{seconds_old}"
-
-            params = {k: v for k, v in params.items() if v is not None}
-            try:
-                response = session.get(
-                    f"{self.base_url}/jobs-guest/jobs/api/seeMoreJobPostings/search?",  # noqa
-                    params=params,
-                    allow_redirects=True,
-                    proxies=self.proxy,
-                    headers=self.headers,
-                    timeout=10,
-                )
-                if response.status_code not in range(200, 400):
-                    if response.status_code == 429:
-                        err = (
-                            "429 Response - "
-                            "Blocked by LinkedIn for too many requests"
-                        )
-                    else:
-                        err = (
-                            f"LinkedIn response status code " f"{response.status_code}"
-                        )
-                        err += f" - {response.text}"
-                    Log.error(err)
-                    return JobResponse(jobs=job_list)
-            except Exception as e:
-                if "Proxy responded with" in str(e):
-                    Log.error("LinkedIn: Bad proxy")
-                else:
-                    Log.error(f"LinkedIn: {str(e)}")
+            response = self._fetch_search_results(
+                scraper_input,
+                page,
+                seconds_old,
+            )
+            if response is None:
                 return JobResponse(jobs=job_list)
 
             soup = BeautifulSoup(response.text, "html.parser")
@@ -129,29 +77,24 @@ class LinkedInScraper(Scraper):
                 return JobResponse(jobs=job_list)
 
             for job_card in job_cards:
-                job_url = None
-                href_tag = job_card.find("a", class_="base-card__full-link")
-                if href_tag and "href" in href_tag.attrs:
-                    href = href_tag.attrs["href"].split("?")[0]
-                    job_id = href.split("-")[-1]
-                    job_url = f"{self.base_url}/jobs/view/{job_id}"
+                job_url = self._extract_job_url(job_card)
+                if not job_url:
+                    continue
 
                 with url_lock:
                     if job_url in seen_urls:
                         continue
                     seen_urls.add(job_url)
-                try:
-                    fetch_desc = scraper_input.linkedin_fetch_description
-                    job_post = self._process_job(job_card, job_url, fetch_desc)
-                    if job_post:
-                        job_post.remote_status = scraper_input.remote_status
-                        job_list.append(job_post)
-                    if not continue_search():
-                        break
-                except Exception as e:
-                    raise Exception(str(e))  # noqa
 
-            if continue_search():
+                fetch_desc = scraper_input.linkedin_fetch_description
+                job_post = self._process_job(job_card, job_url, fetch_desc)
+                if job_post:
+                    job_post.remote_status = scraper_input.remote_status
+                    job_list.append(job_post)
+                if not self._should_continue(page, job_list, scraper_input):
+                    break
+
+            if self._should_continue(page, job_list, scraper_input):
                 time.sleep(random.uniform(self.delay, self.delay + self.band_delay))
                 page += self.jobs_per_page
 
@@ -212,12 +155,13 @@ class LinkedInScraper(Scraper):
 
     def _get_job_description(
         self, job_page_url: str
-    ) -> tuple[None, None] | tuple[str | None, tuple[str | None, JobType | None]]:
+    ) -> tuple[str | None, list[JobType] | None]:
         """
         Retrieves job description by going to the job page url
         :param job_page_url:
         :return: description or None
         """
+        assert self.scraper_input is not None
         try:
             session = create_session(is_tls=False, has_retry=True, delay=15)
             response = session.get(
@@ -300,7 +244,81 @@ class LinkedInScraper(Scraper):
                 employment_type = employment_type.lower()
                 employment_type = employment_type.replace("-", "")
 
-        return [get_enum_from_job_type(employment_type)] if employment_type else []
+        job_type = get_enum_from_job_type(employment_type) if employment_type else None
+        return [job_type] if job_type else []
+
+    @staticmethod
+    def _should_continue(
+        page: int, job_list: list[JobPost], scraper_input: ScraperInput
+    ) -> bool:
+        return len(job_list) < scraper_input.results_wanted and page < 1000
+
+    def _fetch_search_results(
+        self,
+        scraper_input: ScraperInput,
+        page: int,
+        seconds_old: int | None,
+    ):
+        session = create_session(is_tls=False, has_retry=True, delay=15)
+        params = {
+            "keywords": scraper_input.search_term,
+            "location": scraper_input.location,
+            "distance": scraper_input.distance,
+            "f_WT": (
+                scraper_input.remote_status.value
+                if scraper_input.remote_status
+                else None
+            ),
+            "f_JT": (
+                self.job_type_code(scraper_input.job_type)
+                if scraper_input.job_type
+                else None
+            ),
+            "pageNum": 0,
+            "start": page + scraper_input.offset,
+            "f_AL": "true" if scraper_input.easy_apply else None,
+            "f_C": (
+                ",".join(map(str, scraper_input.linkedin_company_ids))
+                if scraper_input.linkedin_company_ids
+                else None
+            ),
+        }
+        if seconds_old is not None:
+            params["f_TPR"] = f"r{seconds_old}"
+
+        params = {k: v for k, v in params.items() if v is not None}
+        try:
+            response = session.get(
+                f"{self.base_url}/jobs-guest/jobs/api/seeMoreJobPostings/search?",  # noqa
+                params=params,
+                allow_redirects=True,
+                proxies=self.proxy,
+                headers=self.headers,
+                timeout=10,
+            )
+            if response.status_code not in range(200, 400):
+                if response.status_code == 429:
+                    err = "429 Response - " "Blocked by LinkedIn for too many requests"
+                else:
+                    err = f"LinkedIn response status code {response.status_code}"
+                    err += f" - {response.text}"
+                Log.error(err)
+                return None
+            return response
+        except Exception as e:
+            if "Proxy responded with" in str(e):
+                Log.error("LinkedIn: Bad proxy")
+            else:
+                Log.error(f"LinkedIn: {str(e)}")
+            return None
+
+    def _extract_job_url(self, job_card: Tag) -> str | None:
+        href_tag = job_card.find("a", class_="base-card__full-link")
+        if not href_tag or "href" not in href_tag.attrs:
+            return None
+        href = href_tag.attrs["href"].split("?")[0]
+        job_id = href.split("-")[-1]
+        return f"{self.base_url}/jobs/view/{job_id}"
 
     @staticmethod
     def job_type_code(job_type_enum: JobType) -> str:
