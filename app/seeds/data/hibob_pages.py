@@ -1,0 +1,7 @@
+HIBOB_PAGE_SEEDS = [
+    {
+        "company_name": "ev energy",
+        "url": "https://evenergy.careers.hibob.com/",
+        "active": True,
+    },
+]
