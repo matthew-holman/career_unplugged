@@ -4000,4 +4000,5 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "totaljobs", "url": "https://www.totaljobs.com", "active": True},
+    {"company_name": "refined", "url": "https://career.refined.com/", "active": True},
 ]

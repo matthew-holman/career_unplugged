@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from random import choice
 
 import pytest
@@ -58,6 +59,9 @@ def test_list_jobs(client: TestClient, job: JobRead, db_session: Session):
 def test_list_jobs_filters(client: TestClient, db_session: Session):
 
     handler = JobHandler(db_session)
+    now = datetime.utcnow()
+    older = now - timedelta(days=5)
+
     jobs = [
         JobCreate(
             title="alpha",
@@ -65,6 +69,8 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
             source_url="https://example.com/a",
             country="SE",
             analysed=False,
+            created_at=older,
+            listing_date=older.date(),
         ),
         JobCreate(
             title="beta",
@@ -72,6 +78,8 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
             source_url="https://example.com/b",
             country="SE",
             analysed=True,
+            created_at=now,
+            listing_date=now.date(),
         ),
         JobCreate(
             title="gamma",
@@ -79,11 +87,15 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
             source_url="https://example.com/c",
             country="DE",
             analysed=False,
+            created_at=now,
+            listing_date=None,
         ),
     ]
     for job in jobs:
         handler.save(Job.model_validate(job))
     db_session.commit()
+    created_rows = db_session.exec(select(Job)).all()
+    assert created_rows
 
     response = client.get(f"/{JOB_INTERFACE}/", params={"company": "acme"})
     assert response.status_code == status.HTTP_200_OK
@@ -96,3 +108,25 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
     assert response.json()[0]["title"] == "alpha"
+
+    min_created_at = min(row.created_at for row in created_rows)
+    max_created_at = max(row.created_at for row in created_rows)
+    response = client.get(
+        f"/{JOB_INTERFACE}/",
+        params={
+            "created_at_gte": min_created_at.isoformat(),
+            "created_at_lte": max_created_at.isoformat(),
+        },
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) == 3
+
+    response = client.get(
+        f"/{JOB_INTERFACE}/",
+        params={
+            "listing_date_gte": older.date().isoformat(),
+            "listing_date_lte": now.date().isoformat(),
+        },
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) == 2

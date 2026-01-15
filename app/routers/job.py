@@ -1,7 +1,7 @@
 from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 from starlette import status
 
 from app.db.db import get_db
@@ -74,6 +74,10 @@ def list_jobs(
         query = query.where(Job.created_at >= filters.created_at_gte)
     if filters.created_at_lte is not None:
         query = query.where(Job.created_at <= filters.created_at_lte)
+    if filters.listing_date_gte is not None:
+        query = query.where(col(Job.listing_date) >= filters.listing_date_gte)
+    if filters.listing_date_lte is not None:
+        query = query.where(col(Job.listing_date) <= filters.listing_date_lte)
 
     results = db_session.exec(query).all()
     return results

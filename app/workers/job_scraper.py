@@ -66,7 +66,7 @@ def build_jobs_to_save(response: JobResponse) -> list[Job]:
                 country=job_post.location.country if job_post.location else None,
                 city=job_post.location.city if job_post.location else None,
                 source_url=job_post.job_url,
-                listing_date=job_post.date_posted,
+                listing_date=job_post.listing_date or job_post.date_posted,
                 listing_remote=job_post.remote_status,
                 source=job_post.source,
             )

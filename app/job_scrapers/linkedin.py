@@ -130,13 +130,13 @@ class LinkedInScraper(Scraper):
             if metadata_card
             else None
         )
-        date_posted = description = job_type = None
+        listing_date = description = job_type = None
         if datetime_tag and "datetime" in datetime_tag.attrs:
             datetime_str = datetime_tag["datetime"]
             try:
-                date_posted = datetime.strptime(datetime_str, "%Y-%m-%d")
+                listing_date = datetime.strptime(datetime_str, "%Y-%m-%d").date()
             except Exception:
-                date_posted = None
+                listing_date = None
         if full_descr:
             description, job_type = self._get_job_description(job_url)
 
@@ -145,11 +145,12 @@ class LinkedInScraper(Scraper):
             company_name=company,
             company_url=company_url,
             location=location,
-            date_posted=date_posted,
+            date_posted=listing_date,
             job_url=job_url,
             job_type=job_type,
             description=description,
             emails=extract_emails_from_text(description) if description else None,
+            listing_date=listing_date,
             source=self.source_name,
         )
 

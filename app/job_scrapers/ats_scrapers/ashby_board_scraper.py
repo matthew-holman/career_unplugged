@@ -1,6 +1,7 @@
 import json
 import re
 
+from datetime import date
 from typing import Iterable, Optional
 from urllib.parse import urlparse
 
@@ -68,9 +69,12 @@ class AshbyBoardScraper(AtsScraper):
         city, country = AtsScraper.parse_location(location_raw)
 
         published_date = job_card.get("publishedDate")
-        # Keep whatever your system expects; if JobPost.date_posted is a date,
-        # you likely normalize elsewhere. If not, set None.
-        date_posted = published_date if isinstance(published_date, str) else None
+        listing_date = None
+        if isinstance(published_date, str):
+            try:
+                listing_date = date.fromisoformat(published_date)
+            except ValueError:
+                listing_date = None
 
         job_url = None
         job_id = job_card.get("id")
@@ -87,10 +91,11 @@ class AshbyBoardScraper(AtsScraper):
             company_name=self.career_page.company_name,
             company_url=self.career_page.url,
             location=Location(city=city, country=country),
-            date_posted=date_posted,
+            date_posted=listing_date,
             job_url=job_url,
             job_type=[job_type],
             description=None,
             remote_status=remote_status,
+            listing_date=listing_date,
             source=self.source_name,
         )

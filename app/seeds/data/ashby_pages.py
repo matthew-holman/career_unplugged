@@ -290,4 +290,14 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/trunk-tools",
         "active": True,
     },
+    {
+        "company_name": "tem",
+        "url": "https://jobs.ashbyhq.com/tem",
+        "active": True,
+    },
+    {
+        "company_name": "nory",
+        "url": "https://jobs.ashbyhq.com/nory/",
+        "active": True,
+    },
 ]

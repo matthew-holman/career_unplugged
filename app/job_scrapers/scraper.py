@@ -100,6 +100,7 @@ class JobPost(BaseModel):
 
     job_type: list[JobType] | None = None
     date_posted: date | None = None
+    listing_date: date | None = None
     emails: list[str] | None = None
     remote_status: RemoteStatus | None = None
 

@@ -389,4 +389,9 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/autoproff",
         "active": True,
     },
+    {
+        "company_name": "energyhub",
+        "url": "https://job-boards.greenhouse.io/energyhub",
+        "active": True,
+    },
 ]

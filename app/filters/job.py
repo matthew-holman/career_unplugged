@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -19,3 +19,5 @@ class JobFilter(BaseModel):
     source: Source | None = None
     created_at_gte: datetime | None = None
     created_at_lte: datetime | None = None
+    listing_date_gte: date | None = None
+    listing_date_lte: date | None = None
