@@ -10,8 +10,7 @@ class EuropeFilter:
     """
 
     # ISO-style country names (common English forms)
-    EUROPEAN_COUNTRIES = {
-        # EU
+    EU_COUNTRIES = {
         "austria",
         "belgium",
         "bulgaria",
@@ -40,6 +39,9 @@ class EuropeFilter:
         "slovenia",
         "spain",
         "sweden",
+    }
+
+    EUROPEAN_COUNTRIES = EU_COUNTRIES | {
         # Non-EU Europe
         "united kingdom",
         "uk",

@@ -21,3 +21,5 @@ class JobFilter(BaseModel):
     created_at_lte: datetime | None = None
     listing_date_gte: date | None = None
     listing_date_lte: date | None = None
+    eu_remote: bool | None = None
+    recent_days: int | None = None

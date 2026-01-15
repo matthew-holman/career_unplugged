@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from datetime import date
-from enum import Enum, IntEnum
+from enum import Enum
 
 from pydantic import BaseModel
 
@@ -15,10 +15,10 @@ class JobType(Enum):
     TEMPORARY = "Temporary"
 
 
-class RemoteStatus(IntEnum):
-    ONSITE = 1
-    HYBRID = 3
-    REMOTE = 2
+class RemoteStatus(str, Enum):
+    ONSITE = "ONSITE"
+    HYBRID = "HYBRID"
+    REMOTE = "REMOTE"
 
 
 class Source(str, Enum):

@@ -16,6 +16,7 @@ from app.job_scrapers.scraper import (
     JobResponse,
     JobType,
     Location,
+    RemoteStatus,
     Scraper,
     ScraperInput,
     Source,
@@ -266,7 +267,7 @@ class LinkedInScraper(Scraper):
             "location": scraper_input.location,
             "distance": scraper_input.distance,
             "f_WT": (
-                scraper_input.remote_status.value
+                self._remote_status_code(scraper_input.remote_status)
                 if scraper_input.remote_status
                 else None
             ),
@@ -330,6 +331,14 @@ class LinkedInScraper(Scraper):
             JobType.CONTRACT: "C",
             JobType.TEMPORARY: "T",
         }.get(job_type_enum, "")
+
+    @staticmethod
+    def _remote_status_code(remote_status: RemoteStatus) -> int | None:
+        return {
+            RemoteStatus.ONSITE: 1,
+            RemoteStatus.REMOTE: 2,
+            RemoteStatus.HYBRID: 3,
+        }.get(remote_status)
 
     headers = {
         "authority": "www.linkedin.com",

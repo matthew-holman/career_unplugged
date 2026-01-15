@@ -13,6 +13,7 @@ from app.db.db import get_db
 from app.log import Log
 from app.routers.career_pages import router as career_pages
 from app.routers.job import router as job
+from app.routers.regions import router as regions
 from app.seeds.career_pages import CareerPageSeeder
 from app.settings import settings
 
@@ -34,6 +35,7 @@ def get_app():
 
     application.include_router(career_pages)
     application.include_router(job)
+    application.include_router(regions)
 
     @application.on_event("startup")
     def seed_career_pages() -> None:
@@ -90,7 +92,7 @@ async def docs_redirect():
 
 
 if __name__ == "__main__":
-    Log.setup(application_name="quack-api")
+    Log.setup(application_name="career_unplugged")
 
     uvicorn.run(
         "main:application",
