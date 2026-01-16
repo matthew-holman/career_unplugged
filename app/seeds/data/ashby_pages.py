@@ -300,4 +300,9 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/nory/",
         "active": True,
     },
+    {
+        "company_name": "synthesia",
+        "url": "https://jobs.ashbyhq.com/synthesia/",
+        "active": True,
+    },
 ]
