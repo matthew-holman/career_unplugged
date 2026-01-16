@@ -14,7 +14,6 @@ class JobBase(BaseModel, table=False):  # type: ignore
     company: str = Field(nullable=False, primary_key=False)
     country: str | None = Field(nullable=True, primary_key=False)
     city: str | None = Field(default=None)
-    applied: bool = Field(nullable=False, default=False)
     listing_remote: RemoteStatus | None = Field(
         nullable=True, primary_key=False, default=None
     )

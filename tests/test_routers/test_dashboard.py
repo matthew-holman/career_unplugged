@@ -17,7 +17,6 @@ def test_dashboard_jobs_summary(client: TestClient, db_session: Session):
             source_url="https://example.com/recent",
             country="Sweden",
             listing_remote=RemoteStatus.REMOTE,
-            applied=False,
             positive_keyword_match=True,
             source=Source.LINKEDIN,
         ),
@@ -27,7 +26,6 @@ def test_dashboard_jobs_summary(client: TestClient, db_session: Session):
             source_url="https://example.com/old",
             country="DE",
             listing_remote=RemoteStatus.ONSITE,
-            applied=True,
             source=Source.TEAMTAILOR,
         ),
     ]
@@ -45,7 +43,7 @@ def test_dashboard_jobs_summary(client: TestClient, db_session: Session):
     assert data["counts_by_country"]["DE"] == 1
     assert data["counts_by_remote_status"]["REMOTE"] == 1
     assert data["counts_by_remote_status"]["ONSITE"] == 1
-    assert data["to_review"] == 1
+    assert data["to_review"] == 2
     assert data["eu_remote"] == 1
     assert data["sweden"] == 1
     assert data["new7d"] == 2

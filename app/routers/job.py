@@ -57,7 +57,6 @@ def list_jobs(
         "company",
         "country",
         "city",
-        "applied",
         "positive_keyword_match",
         "negative_keyword_match",
         "true_remote",

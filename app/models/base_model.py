@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from pydantic import Extra
 from sqlalchemy import DateTime, func
@@ -12,7 +12,7 @@ def to_camel(string: str) -> str:
 
 def default_now() -> datetime:
     """Default value for created_at and updated_at columns."""
-    return datetime.utcnow()
+    return datetime.now(timezone.utc)
 
 
 class BaseModel(SQLModel):
@@ -32,8 +32,7 @@ class BaseModel(SQLModel):
     )
 
     def delete(self):
-        self.deleted = True
-        self.deleted_at = datetime.utcnow()
+        self.deleted_at = datetime.now(timezone.utc)
 
     class Config:
         alias_generator = to_camel
