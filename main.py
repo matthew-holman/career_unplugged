@@ -12,6 +12,7 @@ from starlette.responses import JSONResponse, RedirectResponse
 from app.db.db import get_db
 from app.log import Log
 from app.routers.career_pages import router as career_pages
+from app.routers.dashboard import router as dashboard
 from app.routers.job import router as job
 from app.routers.regions import router as regions
 from app.seeds.career_pages import CareerPageSeeder
@@ -34,6 +35,7 @@ def get_app():
     )
 
     application.include_router(career_pages)
+    application.include_router(dashboard)
     application.include_router(job)
     application.include_router(regions)
 
