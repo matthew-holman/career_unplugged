@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from random import choice
 
 import pytest
@@ -8,7 +8,7 @@ from starlette import status
 from starlette.testclient import TestClient
 
 from app.handlers.job import JobHandler
-from app.job_scrapers.scraper import RemoteStatus
+from app.job_scrapers.scraper import RemoteStatus, Source
 from app.models.job import Job, JobCreate, JobRead
 from app.routers.job import INTERFACE as JOB_INTERFACE
 
@@ -130,3 +130,51 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
     )
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 2
+
+
+def test_job_summary(client: TestClient, db_session: Session):
+    handler = JobHandler(db_session)
+    now = datetime.now(timezone.utc)
+
+    jobs = [
+        JobCreate(
+            title="recent",
+            company="acme",
+            source_url="https://example.com/recent",
+            country="Sweden",
+            listing_remote=RemoteStatus.REMOTE,
+            applied=False,
+            positive_keyword_match=True,
+            source=Source.LINKEDIN,
+            created_at=now,
+        ),
+        JobCreate(
+            title="old",
+            company="globex",
+            source_url="https://example.com/old",
+            country="DE",
+            listing_remote=RemoteStatus.ONSITE,
+            applied=True,
+            source=Source.TEAMTAILOR,
+            created_at=now - timedelta(days=10),
+        ),
+    ]
+    for job in jobs:
+        handler.save(Job.model_validate(job))
+    db_session.commit()
+
+    response = client.get(f"/{JOB_INTERFACE}/summary")
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+    assert data["counts_by_source"]["linkedin"] == 1
+    assert data["counts_by_source"]["teamtailor"] == 1
+    assert data["counts_by_country"]["Sweden"] == 1
+    assert data["counts_by_country"]["DE"] == 1
+    assert data["counts_by_remote_status"]["REMOTE"] == 1
+    assert data["counts_by_remote_status"]["ONSITE"] == 1
+    assert data["to_review"] == 1
+    assert data["eu_remote"] == 1
+    assert data["sweden"] == 1
+    assert data["new7d"] == 1
+    assert data["positive_matches"] == 1

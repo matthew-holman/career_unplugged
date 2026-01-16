@@ -7,6 +7,36 @@
 - `static/` contains icons and other static assets.
 - `migration/` includes legacy scripts/notes for database setup.
 
+## Layering & Ownership (Separation of Concerns)
+
+Keep a clear boundary between layers:
+
+- **Routers (`app/routers/`)**: HTTP concerns only.
+  - Parse/validate request inputs (Pydantic models, query params).
+  - Call handlers/services.
+  - Return response models.
+  - No raw SQL/`select()` construction in routers.
+  - No business logic beyond trivial wiring.
+
+- **Handlers (`app/handlers/`)**: database access and persistence.
+  - Own all `select()/where()/join()` query construction and DB writes.
+  - Provide `save()` / `save_all()` methods that perform upserts and `flush()` as needed.
+  - **Do not call `commit()` inside handlers.** Transaction boundaries are owned by the caller (workers/routers/services), which batch commits for performance and atomicity.
+  - Accept filter/pagination objects; return model instances or read DTOs.
+  - Do not import FastAPI objects.
+
+- **Models (`app/models/`)**: SQLModel/Pydantic schemas only.
+  - Domain fields, validation, small domain methods (state transitions).
+  - No DB session usage.
+
+- **Workers (`app/workers/`)**: orchestration.
+  - Batch processing, commit strategy, metrics/logging around jobs.
+  - Use handlers for DB operations.
+
+Response/request schemas:
+- Define shared API schemas under `app/schemas/` (or `app/routers/schemas/`) rather than inside routers.
+- Routers may declare lightweight local schemas only when truly single-use and sm
+
 ## Build, Test, and Development Commands
 - `make requirements`: install dependencies via Poetry for local dev.
 - `make start-db`: start the Postgres service via `docker-compose`.
