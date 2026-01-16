@@ -6,6 +6,8 @@ from sqlmodel import Session, col, select
 
 from app.job_scrapers.scraper import RemoteStatus
 from app.models.job import Job
+from app.models.user import User
+from app.models.user_job import UserJob
 from app.schemas.dashboard import JobSummary
 from app.utils.locations.europe_filter import EuropeFilter
 
@@ -14,7 +16,7 @@ from app.utils.locations.europe_filter import EuropeFilter
 class DashboardHandler:
     db_session: Session
 
-    def get_jobs_summary(self) -> JobSummary:
+    def get_jobs_summary(self, current_user: User) -> JobSummary:
         source_counts = self.db_session.exec(
             select(Job.source, func.count()).group_by(Job.source)
         ).all()
@@ -51,7 +53,10 @@ class DashboardHandler:
 
         to_review = self.db_session.exec(
             select(func.count()).where(
-                or_(col(Job.applied).is_(False), col(Job.applied).is_(None))
+                and_(
+                    col(UserJob.user_id) == current_user.id,
+                    col(UserJob.applied).is_(True),
+                )
             )
         ).one()
         eu_remote = self.db_session.exec(

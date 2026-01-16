@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from starlette import status
 
+from app.auth.current_user import CurrentUser, get_current_user
 from app.db.db import get_db
 from app.handlers.dashboard import DashboardHandler
 from app.schemas.dashboard import JobSummary
@@ -11,6 +12,7 @@ INTERFACE = "dashboard"
 router = APIRouter(
     prefix=f"/{INTERFACE}",
     tags=[INTERFACE.capitalize()],
+    dependencies=[Depends(get_current_user)],
     responses={
         400: {"detail": "Error details"},
         401: {"detail": "Access token was not provided"},
@@ -25,5 +27,8 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
     response_model=JobSummary,
 )
-def jobs_summary(db_session: Session = Depends(get_db)) -> JobSummary:
-    return DashboardHandler(db_session).get_jobs_summary()
+def jobs_summary(
+    current_user: CurrentUser,
+    db_session: Session = Depends(get_db),
+) -> JobSummary:
+    return DashboardHandler(db_session).get_jobs_summary(current_user)

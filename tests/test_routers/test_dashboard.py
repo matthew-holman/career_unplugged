@@ -1,13 +1,17 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 from starlette import status
 from starlette.testclient import TestClient
 
 from app.handlers.job import JobHandler
 from app.job_scrapers.scraper import RemoteStatus, Source
 from app.models.job import Job, JobCreate
+from app.models.user import User
+from app.models.user_job import UserJob
 
 
-def test_dashboard_jobs_summary(client: TestClient, db_session: Session):
+def test_dashboard_jobs_summary(
+    authed_client: TestClient, db_session: Session, test_user: User
+):
     handler = JobHandler(db_session)
 
     jobs = [
@@ -32,8 +36,19 @@ def test_dashboard_jobs_summary(client: TestClient, db_session: Session):
     for job in jobs:
         handler.save(Job.model_validate(job))
     db_session.commit()
+    created_jobs = db_session.exec(select(Job)).all()
+    assert created_jobs
+    db_session.add(
+        UserJob(
+            user_id=test_user.id,
+            job_id=created_jobs[0].id,
+            applied=True,
+            ignored=False,
+        )
+    )
+    db_session.commit()
 
-    response = client.get("/dashboard/jobs/summary")
+    response = authed_client.get("/dashboard/jobs/summary")
     assert response.status_code == status.HTTP_200_OK
 
     data = response.json()
@@ -43,7 +58,7 @@ def test_dashboard_jobs_summary(client: TestClient, db_session: Session):
     assert data["counts_by_country"]["DE"] == 1
     assert data["counts_by_remote_status"]["REMOTE"] == 1
     assert data["counts_by_remote_status"]["ONSITE"] == 1
-    assert data["to_review"] == 2
+    assert data["to_review"] == 1
     assert data["eu_remote"] == 1
     assert data["sweden"] == 1
     assert data["new7d"] == 2

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from random import choice
 
 import pytest
@@ -34,32 +34,32 @@ def job(db_session: Session) -> JobRead:
     return JobRead.model_validate(job_instance)
 
 
-def test_get_job(client: TestClient, job: JobRead, db_session: Session):
+def test_get_job(authed_client: TestClient, job: JobRead, db_session: Session):
     url = f"/{JOB_INTERFACE}/{job.id}"
-    response = client.get(url)
+    response = authed_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
 
 
-def test_list_jobs(client: TestClient, job: JobRead, db_session: Session):
+def test_list_jobs(authed_client: TestClient, job: JobRead, db_session: Session):
     url = f"/{JOB_INTERFACE}/?country={job.country}"
-    response = client.get(url)
+    response = authed_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
     assert job.listing_remote
 
     url = f"/{JOB_INTERFACE}/?listing_remote={job.listing_remote.value}"
-    response = client.get(url)
+    response = authed_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
 
 
-def test_list_jobs_filters(client: TestClient, db_session: Session):
+def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
 
     handler = JobHandler(db_session)
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     older = now - timedelta(days=5)
 
     jobs = [
@@ -97,11 +97,11 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
     created_rows = db_session.exec(select(Job)).all()
     assert created_rows
 
-    response = client.get(f"/{JOB_INTERFACE}/", params={"company": "acme"})
+    response = authed_client.get(f"/{JOB_INTERFACE}/", params={"company": "acme"})
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 2
 
-    response = client.get(
+    response = authed_client.get(
         f"/{JOB_INTERFACE}/",
         params={"company": "acme", "analysed": False},
     )
@@ -111,7 +111,7 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
 
     min_created_at = min(row.created_at for row in created_rows)
     max_created_at = max(row.created_at for row in created_rows)
-    response = client.get(
+    response = authed_client.get(
         f"/{JOB_INTERFACE}/",
         params={
             "created_at_gte": min_created_at.isoformat(),
@@ -121,7 +121,7 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 3
 
-    response = client.get(
+    response = authed_client.get(
         f"/{JOB_INTERFACE}/",
         params={
             "listing_date_gte": older.date().isoformat(),
@@ -130,3 +130,18 @@ def test_list_jobs_filters(client: TestClient, db_session: Session):
     )
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 2
+
+
+def test_job_routes_require_user_header(client: TestClient):
+    response = client.get(f"/{JOB_INTERFACE}/")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_job_routes_reject_invalid_user(client: TestClient):
+    response = client.get(f"/{JOB_INTERFACE}/", headers={"X-User-Id": "999999"})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_job_routes_accept_valid_user(authed_client: TestClient):
+    response = authed_client.get(f"/{JOB_INTERFACE}/")
+    assert response.status_code == status.HTTP_200_OK

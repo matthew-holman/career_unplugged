@@ -6,6 +6,7 @@ from sqlalchemy import and_, func, or_
 from sqlmodel import Session, col, select
 from starlette import status
 
+from app.auth.current_user import get_current_user
 from app.db.db import get_db
 from app.filters.job import JobFilter
 from app.handlers.job import JobHandler
@@ -18,6 +19,7 @@ INTERFACE = "job"
 router = APIRouter(
     prefix=f"/{INTERFACE}",
     tags=[INTERFACE.capitalize()],
+    dependencies=[Depends(get_current_user)],
     responses={
         400: {"detail": "Error details"},
         401: {"detail": "Access token was not provided"},

@@ -8,6 +8,7 @@ from starlette.testclient import TestClient
 
 from app.db.db import get_db
 from app.log import Log
+from app.models.user import User
 from app.settings import settings
 from main import get_app
 
@@ -100,6 +101,35 @@ def client(
     app.dependency_overrides[get_db] = get_fake_db
 
     with TestClient(app) as test_client:
+        yield test_client
+
+
+@pytest.fixture()
+def test_user(db_session: Session) -> User:
+    user = User(name="Test User", email="test-user@example.com")
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture()
+def auth_headers(test_user: User) -> dict[str, str]:
+    return {"X-User-Id": str(test_user.id)}
+
+
+@pytest.fixture()
+def authed_client(
+    db_session: Session, auth_headers: dict[str, str]
+) -> Generator[TestClient, None, None]:
+    app = get_app()
+
+    def get_fake_db() -> Session:
+        return db_session
+
+    app.dependency_overrides[get_db] = get_fake_db
+
+    with TestClient(app, headers=auth_headers) as test_client:
         yield test_client
 
 
