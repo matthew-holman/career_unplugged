@@ -10,6 +10,8 @@ class JobFilter(BaseModel):
     company: str | None = None
     country: str | None = None
     city: str | None = None
+    applied: bool | None = None
+    ignored: bool | None = None
     positive_keyword_match: bool | None = None
     negative_keyword_match: bool | None = None
     true_remote: bool | None = None

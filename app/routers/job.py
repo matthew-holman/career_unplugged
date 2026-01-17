@@ -1,18 +1,18 @@
-from datetime import datetime, timedelta
 from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import and_, func, or_
-from sqlmodel import Session, col, select
+from sqlmodel import Session
 from starlette import status
 
-from app.auth.current_user import get_current_user
+from app.auth.current_user import CurrentUser, get_current_user
 from app.db.db import get_db
 from app.filters.job import JobFilter
 from app.handlers.job import JobHandler
-from app.job_scrapers.scraper import RemoteStatus
-from app.models.job import Job, JobRead
-from app.utils.locations.europe_filter import EuropeFilter
+from app.schemas.job import (
+    JobWithUserStateRead,
+    UserJobStateRead,
+    UserJobStateUpdate,
+)
 
 INTERFACE = "job"
 
@@ -32,11 +32,15 @@ router = APIRouter(
 @router.get(
     "/{job_id}",
     status_code=status.HTTP_200_OK,
-    response_model=JobRead,
+    response_model=JobWithUserStateRead,
 )
-def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
+def get_job(
+    job_id: int,
+    current_user: CurrentUser,
+    db_session: Session = Depends(get_db),
+) -> JobWithUserStateRead:
     job_handler = JobHandler(db_session)
-    job = job_handler.get(job_id=job_id)
+    job = job_handler.get_for_user(job_id=job_id, user_id=current_user.id)
     if job:
         return job
     else:
@@ -46,61 +50,31 @@ def get_job(job_id: int, db_session: Session = Depends(get_db)) -> JobRead:
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=List[Job],
+    response_model=List[JobWithUserStateRead],
 )
 def list_jobs(
     filters: Annotated[JobFilter, Query()],
+    current_user: CurrentUser,
     db_session: Session = Depends(get_db),
-) -> List[Job]:
-    query = select(Job)
+) -> List[JobWithUserStateRead]:
+    job_handler = JobHandler(db_session)
+    return job_handler.list_for_user(filters=filters, user_id=current_user.id)
 
-    filter_fields = {
-        "title",
-        "company",
-        "country",
-        "city",
-        "positive_keyword_match",
-        "negative_keyword_match",
-        "true_remote",
-        "analysed",
-        "listing_remote",
-        "source",
-    }
 
-    provided = filters.model_dump(exclude_none=True)
-
-    for field_name, value in provided.items():
-        if field_name in {
-            "created_at_gte",
-            "created_at_lte",
-            "listing_date_gte",
-            "listing_date_lte",
-            "recent_days",
-            "eu_remote",
-        }:
-            continue
-        if field_name in filter_fields:
-            query = query.where(getattr(Job, field_name) == value)
-
-    if filters.created_at_gte is not None:
-        query = query.where(Job.created_at >= filters.created_at_gte)
-    if filters.created_at_lte is not None:
-        query = query.where(Job.created_at <= filters.created_at_lte)
-    if filters.listing_date_gte is not None:
-        query = query.where(col(Job.listing_date) >= filters.listing_date_gte)
-    if filters.listing_date_lte is not None:
-        query = query.where(col(Job.listing_date) <= filters.listing_date_lte)
-    if filters.recent_days is not None:
-        cutoff = datetime.utcnow() - timedelta(days=filters.recent_days)
-        query = query.where(Job.created_at >= cutoff)
-    if filters.eu_remote is True:
-        eu_countries = sorted(EuropeFilter.EU_COUNTRIES)
-        eu_match = func.lower(col(Job.country)).in_(eu_countries)
-        eu_remote = or_(
-            col(Job.true_remote).is_(True),
-            and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
-        )
-        query = query.where(eu_remote)
-
-    results = db_session.exec(query).all()
-    return results
+@router.put(
+    "/{job_id}/state",
+    status_code=status.HTTP_200_OK,
+    response_model=UserJobStateRead,
+)
+def upsert_job_state(
+    job_id: int,
+    state: UserJobStateUpdate,
+    current_user: CurrentUser,
+    db_session: Session = Depends(get_db),
+) -> UserJobStateRead:
+    job_handler = JobHandler(db_session)
+    return job_handler.upsert_user_job_state(
+        user_id=current_user.id,
+        job_id=job_id,
+        state=state,
+    )
