@@ -82,7 +82,7 @@ def _mark_true_remote_jobs(jobs) -> list:
     return updated_jobs
 
 
-def _fetch_job_description(session, job) -> str | None:
+def _fetch_job_page(session, job) -> str | None:
     response = session.get(job.source_url)
     if response.status_code != 200:
         Log.warning(
@@ -94,7 +94,8 @@ def _fetch_job_description(session, job) -> str | None:
 
 
 def _extract_job_description(session, job) -> str | None:
-    description_html = _fetch_job_description(session, job)
+    description_html = _fetch_job_page(session, job)
+
     if not description_html:
         return None
 
