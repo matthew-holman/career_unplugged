@@ -492,4 +492,175 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/xbowcareers",
         "active": True,
     },
+    {
+        "company_name": "agreena",
+        "url": "https://jobs.ashbyhq.com/agreena",
+        "active": True,
+    },
+    {
+        "company_name": "airwallex",
+        "url": "https://jobs.ashbyhq.com/airwallex",
+        "active": True,
+    },
+    {
+        "company_name": "almedia",
+        "url": "https://jobs.ashbyhq.com/almedia",
+        "active": True,
+    },
+    {
+        "company_name": "authzed",
+        "url": "https://jobs.ashbyhq.com/authzed",
+        "active": True,
+    },
+    {
+        "company_name": "axiom-co",
+        "url": "https://jobs.ashbyhq.com/axiom-co",
+        "active": True,
+    },
+    {"company_name": "bunch", "url": "https://jobs.ashbyhq.com/bunch", "active": True},
+    {
+        "company_name": "clipboard",
+        "url": "https://jobs.ashbyhq.com/clipboard",
+        "active": True,
+    },
+    {
+        "company_name": "devsavant",
+        "url": "https://jobs.ashbyhq.com/devsavant",
+        "active": True,
+    },
+    {
+        "company_name": "ekumenlabs",
+        "url": "https://jobs.ashbyhq.com/ekumenlabs",
+        "active": True,
+    },
+    {
+        "company_name": "everfield",
+        "url": "https://jobs.ashbyhq.com/everfield",
+        "active": True,
+    },
+    {
+        "company_name": "feldera",
+        "url": "https://jobs.ashbyhq.com/feldera",
+        "active": True,
+    },
+    {
+        "company_name": "finary",
+        "url": "https://jobs.ashbyhq.com/finary",
+        "active": True,
+    },
+    {
+        "company_name": "frontcareers",
+        "url": "https://jobs.ashbyhq.com/frontcareers",
+        "active": True,
+    },
+    {
+        "company_name": "fullstory",
+        "url": "https://jobs.ashbyhq.com/fullstory",
+        "active": True,
+    },
+    {"company_name": "g2", "url": "https://jobs.ashbyhq.com/g2", "active": True},
+    {
+        "company_name": "iverify",
+        "url": "https://jobs.ashbyhq.com/iverify",
+        "active": True,
+    },
+    {
+        "company_name": "jigsaw",
+        "url": "https://jobs.ashbyhq.com/jigsaw",
+        "active": True,
+    },
+    {
+        "company_name": "lemlist",
+        "url": "https://jobs.ashbyhq.com/lemlist",
+        "active": True,
+    },
+    {
+        "company_name": "mentis",
+        "url": "https://jobs.ashbyhq.com/mentis",
+        "active": True,
+    },
+    {
+        "company_name": "playson",
+        "url": "https://jobs.ashbyhq.com/playson",
+        "active": True,
+    },
+    {
+        "company_name": "qed-ai",
+        "url": "https://jobs.ashbyhq.com/qed-ai",
+        "active": True,
+    },
+    {
+        "company_name": "recraft",
+        "url": "https://jobs.ashbyhq.com/recraft",
+        "active": True,
+    },
+    {
+        "company_name": "ruby-labs",
+        "url": "https://jobs.ashbyhq.com/ruby-labs",
+        "active": True,
+    },
+    {"company_name": "seon", "url": "https://jobs.ashbyhq.com/seon", "active": True},
+    {
+        "company_name": "sofarocean",
+        "url": "https://jobs.ashbyhq.com/sofarocean",
+        "active": True,
+    },
+    {
+        "company_name": "sosafe",
+        "url": "https://jobs.ashbyhq.com/sosafe",
+        "active": True,
+    },
+    {
+        "company_name": "space44",
+        "url": "https://jobs.ashbyhq.com/space44",
+        "active": True,
+    },
+    {
+        "company_name": "spatialsupport",
+        "url": "https://jobs.ashbyhq.com/spatialsupport",
+        "active": True,
+    },
+    {
+        "company_name": "the-exploration-company",
+        "url": "https://jobs.ashbyhq.com/the-exploration-company",
+        "active": True,
+    },
+    {
+        "company_name": "thrill-labs",
+        "url": "https://jobs.ashbyhq.com/thrill-labs",
+        "active": True,
+    },
+    {"company_name": "tilla", "url": "https://jobs.ashbyhq.com/tilla", "active": True},
+    {
+        "company_name": "tools%20for%20humanity",
+        "url": "https://jobs.ashbyhq.com/tools%20for%20humanity",
+        "active": True,
+    },
+    {
+        "company_name": "wincent",
+        "url": "https://jobs.ashbyhq.com/wincent",
+        "active": True,
+    },
+    {"company_name": "zoe", "url": "https://jobs.ashbyhq.com/zoe", "active": True},
+    {
+        "company_name": "granular-energy",
+        "url": "https://jobs.ashbyhq.com/granular-energy.com",
+        "active": True,
+    },
+    {
+        "company_name": "granular-energy",
+        "url": "https://jobs.ashbyhq.com/enode/",
+        "active": True,
+    },
+    {
+        "company_name": "theydo",
+        "url": "https://jobs.ashbyhq.com/theydo",
+        "active": True,
+    },
+    {"company_name": "ditto", "url": "https://jobs.ashbyhq.com/ditto", "active": True},
+    {
+        "company_name": "roompricegenie",
+        "url": "https://jobs.ashbyhq.com/roompricegenie",
+        "active": True,
+    },
 ]

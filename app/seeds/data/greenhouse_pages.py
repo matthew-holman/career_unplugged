@@ -619,4 +619,34 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/sothebys",
         "active": True,
     },
+    {
+        "company_name": "invisibletech",
+        "url": "https://job-boards.eu.greenhouse.io/invisibletech",
+        "active": True,
+    },
+    {
+        "company_name": "wunderflats",
+        "url": "https://job-boards.eu.greenhouse.io/wunderflats",
+        "active": True,
+    },
+    {
+        "company_name": "awin",
+        "url": "https://job-boards.greenhouse.io/awin",
+        "active": True,
+    },
+    {
+        "company_name": "stacklok",
+        "url": "https://job-boards.greenhouse.io/stacklok",
+        "active": True,
+    },
+    {
+        "company_name": "flowfuse",
+        "url": "https://job-boards.greenhouse.io/flowfuse",
+        "active": True,
+    },
+    {
+        "company_name": "protonai",
+        "url": "https://job-boards.greenhouse.io/protonai",
+        "active": True,
+    },
 ]

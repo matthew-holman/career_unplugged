@@ -301,4 +301,24 @@ LEVER_PAGE_SEEDS = [
         "url": "https://jobs.lever.co/wepclinical",
         "active": True,
     },
+    {
+        "company_name": "Zowie",
+        "url": "https://jobs.lever.co/Zowie",
+        "active": True,
+    },
+    {
+        "company_name": "aircall",
+        "url": "https://jobs.lever.co/aircall",
+        "active": True,
+    },
+    {
+        "company_name": "xentral",
+        "url": "https://jobs.eu.lever.co/xentral",
+        "active": True,
+    },
+    {
+        "company_name": "kraken123",
+        "url": "https://jobs.lever.co/kraken123/",
+        "active": True,
+    },
 ]

@@ -40,8 +40,8 @@ def host_to_seed_dict(host: str) -> dict:
     if not host:
         raise ValueError("Empty host")
 
-    company_name = host.split("/", 1)[1]
-    # company_name = host.split(".", 1)[0]  # left-most label only
+    # company_name = host.split("/", 1)[1]
+    company_name = host.split(".", 1)[0]  # left-most label only
     return {
         "company_name": company_name,
         "url": f"https://{host}",
@@ -62,42 +62,113 @@ def diff_seed_dicts(
 
 
 google_domains_text = """\
-job-boards.greenhouse.io/akuity
-job-boards.greenhouse.io/algoquant
-job-boards.greenhouse.io/alpaca
-job-boards.greenhouse.io/amenitiz
-job-boards.greenhouse.io/bioptimus8
-job-boards.greenhouse.io/bitmex
-job-boards.greenhouse.io/bitwarden
-job-boards.greenhouse.io/canonicaljobs
-job-boards.greenhouse.io/coinbase
-job-boards.greenhouse.io/connectwise
-job-boards.greenhouse.io/consensys
-job-boards.greenhouse.io/correlationone
-job-boards.greenhouse.io/doitintl
-job-boards.greenhouse.io/echodynecorp
-job-boards.greenhouse.io/elementbiosciences
-job-boards.greenhouse.io/gitlab
-job-boards.greenhouse.io/ketryx
-job-boards.greenhouse.io/nansen
-job-boards.greenhouse.io/neo4j
-job-boards.greenhouse.io/offensivesecurity
-job-boards.greenhouse.io/onapsis
-job-boards.greenhouse.io/planetscale
-job-boards.greenhouse.io/qualio
-job-boards.greenhouse.io/quanthealth
-job-boards.greenhouse.io/realchemistry
-job-boards.greenhouse.io/realtimeboardglobal
-job-boards.greenhouse.io/remotecom
-job-boards.greenhouse.io/remotereferralboardinternaluseonly
-job-boards.greenhouse.io/storyblok
-job-boards.greenhouse.io/sustainabletalent
-job-boards.greenhouse.io/taboola
-job-boards.greenhouse.io/thrivecart
-job-boards.greenhouse.io/vaayutech
-job-boards.greenhouse.io/veza
-job-boards.greenhouse.io/wakam
-job-boards.greenhouse.io/yld
+adveez.teamtailor.com
+aebr.teamtailor.com
+again.teamtailor.com
+alvalabs.teamtailor.com
+arespartners.teamtailor.com
+aulaenergy.na.teamtailor.com
+autolivbrazil.teamtailor.com
+autolivchina.teamtailor.com
+autolivestonia.teamtailor.com
+autolivfrance.teamtailor.com
+autolivgroup.teamtailor.com
+autolivheadoffice.teamtailor.com
+autolivhungary.teamtailor.com
+autolivindia.teamtailor.com
+autolivspain.teamtailor.com
+autolivsweden.teamtailor.com
+autolivtaiwan.teamtailor.com
+autolivthailand.teamtailor.com
+autolivturkey.teamtailor.com
+autolivunitedstates.teamtailor.com
+blueair.teamtailor.com
+bobw.teamtailor.com
+brunswickrealestate.teamtailor.com
+bryter.teamtailor.com
+c3creativecodeandcontent.teamtailor.com
+cappelendamm-amby.teamtailor.com
+cdpglobal.teamtailor.com
+celfocus.teamtailor.com
+deepki.teamtailor.com
+dfdspoland.teamtailor.com
+dolead.teamtailor.com
+ecobio.teamtailor.com
+eitrawmaterialsgmbh.teamtailor.com
+entail-amby.teamtailor.com
+eoliann-1670252117.teamtailor.com
+esadefaculty.teamtailor.com
+eurobioimaging.teamtailor.com
+fnality.teamtailor.com
+fortrayglobalservices.teamtailor.com
+friendsofeurope-1721722951.teamtailor.com
+greenspherecapital-1743167981-source-certain.teamtailor.com
+griegphilippines-1734015786.teamtailor.com
+henryscheinone.teamtailor.com
+holvi.teamtailor.com
+huawei.teamtailor.com
+huaweidenmark.teamtailor.com
+huaweidusseldorf-1719303222.teamtailor.com
+huaweifinland.teamtailor.com
+huaweifinlandrnd.teamtailor.com
+huaweiresearchcentergermanyaustria.teamtailor.com
+huaweisweden.teamtailor.com
+huaweitechnologiesitalia.teamtailor.com
+huaweiuk.teamtailor.com
+impetus.teamtailor.com
+interruptlabs.teamtailor.com
+italentplus.teamtailor.com
+k3capitalgroup-1747925234-kbs-corporate.teamtailor.com
+keyrusbelgium.teamtailor.com
+keyrusmea.teamtailor.com
+keyrusuk.teamtailor.com
+knaufsemea.teamtailor.com
+knaufsweden.teamtailor.com
+lofavor-amby.teamtailor.com
+lotuscars.teamtailor.com
+lotuscarseurope.teamtailor.com
+lotusuk.teamtailor.com
+lotusukmanufacturing.teamtailor.com
+macmillan.teamtailor.com
+metizoft-amby.teamtailor.com
+mintos.teamtailor.com
+monese.teamtailor.com
+montel.teamtailor.com
+moonraillimited-1696577088.teamtailor.com
+multiversecomputing.teamtailor.com
+newseccom.teamtailor.com
+noteless-amby.teamtailor.com
+optiveumspzoo.teamtailor.com
+panmacmillan.teamtailor.com
+payex.teamtailor.com
+pfx.teamtailor.com
+prepaypower.teamtailor.com
+pridelondon.teamtailor.com
+ravenpack.teamtailor.com
+rcseng.teamtailor.com
+renoirconsulting.teamtailor.com
+rootz.teamtailor.com
+sallyqab.teamtailor.com
+scoro-1669049295.teamtailor.com
+senewsec.teamtailor.com
+sicra-amby.teamtailor.com
+silenteight.teamtailor.com
+sipearl.teamtailor.com
+sixsensesibiza.teamtailor.com
+superawesome.teamtailor.com
+support.teamtailor.com
+swedbankpay.teamtailor.com
+sybo.teamtailor.com
+theworkshop.teamtailor.com
+toppansecurity.teamtailor.com
+tripletex-amby.teamtailor.com
+upcloud.teamtailor.com
+vento.teamtailor.com
+vetmigo.teamtailor.com
+vindai-amby.teamtailor.com
+vividgamessa.teamtailor.com
+yunoenergy.teamtailor.com
+zapp-1672737080.teamtailor.com
 """
 
 
