@@ -9,13 +9,11 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, RedirectResponse
 
-from app.db.db import get_db
 from app.log import Log
 from app.routers.career_pages import router as career_pages
 from app.routers.dashboard import router as dashboard
 from app.routers.job import router as job
 from app.routers.regions import router as regions
-from app.seeds.career_pages import CareerPageSeeder
 from app.settings import settings
 
 
@@ -38,11 +36,6 @@ def get_app():
     application.include_router(dashboard)
     application.include_router(job)
     application.include_router(regions)
-
-    @application.on_event("startup")
-    def seed_career_pages() -> None:
-        with next(get_db()) as session:
-            CareerPageSeeder(session).run()
 
     @application.exception_handler(HTTPException)
     async def http_exception_handler(request: Request, exc: HTTPException):

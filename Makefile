@@ -45,4 +45,7 @@ analyse:
 create-user:
 	poetry run python3 -m app.workers.create_user --name "$(name)" --email "$(email)"
 
+seed-career-pages:
+	poetry run python3 -m app.workers.seed_career_pages
+
 start: requirements start-db migrations main
