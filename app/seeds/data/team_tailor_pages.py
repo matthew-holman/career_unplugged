@@ -4001,4 +4001,11 @@ TEAM_TAILOR_PAGE_SEEDS = [
     },
     {"company_name": "totaljobs", "url": "https://www.totaljobs.com", "active": True},
     {"company_name": "refined", "url": "https://career.refined.com/", "active": True},
+    {"company_name": "wrk nest", "url": "https://careers.wrknest.se/", "active": True},
+    {
+        "company_name": "doccla-1743410889",
+        "url": "https://doccla-1743410889.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "ilpvfx", "url": "https://ilpvfx.teamtailor.com", "active": True},
 ]

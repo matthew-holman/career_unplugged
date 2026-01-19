@@ -258,4 +258,47 @@ LEVER_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "zoox", "url": "https://jobs.lever.co/zoox", "active": True},
+    {
+        "company_name": "accesssoftek",
+        "url": "https://jobs.lever.co/accesssoftek",
+        "active": True,
+    },
+    {"company_name": "belkins", "url": "https://jobs.lever.co/belkins", "active": True},
+    {
+        "company_name": "canarytechnologies",
+        "url": "https://jobs.lever.co/canarytechnologies",
+        "active": True,
+    },
+    {"company_name": "finn", "url": "https://jobs.lever.co/finn", "active": True},
+    {
+        "company_name": "gurobioptimization",
+        "url": "https://jobs.lever.co/gurobioptimization",
+        "active": True,
+    },
+    {
+        "company_name": "loftorbital",
+        "url": "https://jobs.lever.co/loftorbital",
+        "active": True,
+    },
+    {
+        "company_name": "metabase",
+        "url": "https://jobs.lever.co/metabase",
+        "active": True,
+    },
+    {"company_name": "mistral", "url": "https://jobs.lever.co/mistral", "active": True},
+    {
+        "company_name": "softworld",
+        "url": "https://jobs.lever.co/softworld",
+        "active": True,
+    },
+    {
+        "company_name": "websummit",
+        "url": "https://jobs.lever.co/websummit",
+        "active": True,
+    },
+    {
+        "company_name": "wepclinical",
+        "url": "https://jobs.lever.co/wepclinical",
+        "active": True,
+    },
 ]

@@ -568,4 +568,14 @@ CAREER_PAGE_SEEDS = [
         "url": "https://eyeo.com/careers",
         "active": True,
     },
+    {
+        "company_name": "climate view",
+        "url": "https://www.climateview.global/en/career",
+        "active": True,
+    },
+    {
+        "company_name": "hygraph",
+        "url": "https://jobs.hygraph.com/",
+        "active": True,
+    },
 ]

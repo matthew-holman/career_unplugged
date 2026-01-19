@@ -305,4 +305,191 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/synthesia/",
         "active": True,
     },
+    {
+        "company_name": "checkly",
+        "url": "https://jobs.ashbyhq.com/checkly",
+        "active": True,
+    },
+    {
+        "company_name": "sanity",
+        "url": "https://jobs.ashbyhq.com/sanity/",
+        "active": True,
+    },
+    {
+        "company_name": "adthena",
+        "url": "https://jobs.ashbyhq.com/adthena",
+        "active": True,
+    },
+    {
+        "company_name": "asymmetric.re",
+        "url": "https://jobs.ashbyhq.com/asymmetric.re",
+        "active": True,
+    },
+    {
+        "company_name": "axelera",
+        "url": "https://jobs.ashbyhq.com/axelera",
+        "active": True,
+    },
+    {
+        "company_name": "camunda",
+        "url": "https://jobs.ashbyhq.com/camunda",
+        "active": True,
+    },
+    {
+        "company_name": "cargo-one",
+        "url": "https://jobs.ashbyhq.com/cargo-one",
+        "active": True,
+    },
+    {
+        "company_name": "clarify",
+        "url": "https://jobs.ashbyhq.com/clarify",
+        "active": True,
+    },
+    {
+        "company_name": "clipboard",
+        "url": "https://jobs.ashbyhq.com/clipboard",
+        "active": True,
+    },
+    {"company_name": "dash0", "url": "https://jobs.ashbyhq.com/dash0", "active": True},
+    {"company_name": "datum", "url": "https://jobs.ashbyhq.com/datum", "active": True},
+    {"company_name": "drata", "url": "https://jobs.ashbyhq.com/drata", "active": True},
+    {
+        "company_name": "everai",
+        "url": "https://jobs.ashbyhq.com/everai",
+        "active": True,
+    },
+    {"company_name": "fonoa", "url": "https://jobs.ashbyhq.com/fonoa", "active": True},
+    {
+        "company_name": "foxelligroup",
+        "url": "https://jobs.ashbyhq.com/foxelligroup",
+        "active": True,
+    },
+    {
+        "company_name": "frontcareers",
+        "url": "https://jobs.ashbyhq.com/frontcareers",
+        "active": True,
+    },
+    {
+        "company_name": "growthx%20ai",
+        "url": "https://jobs.ashbyhq.com/growthx%20ai",
+        "active": True,
+    },
+    {
+        "company_name": "kilocode",
+        "url": "https://jobs.ashbyhq.com/kilocode",
+        "active": True,
+    },
+    {
+        "company_name": "lakera.ai",
+        "url": "https://jobs.ashbyhq.com/lakera.ai",
+        "active": True,
+    },
+    {"company_name": "li.fi", "url": "https://jobs.ashbyhq.com/li.fi", "active": True},
+    {
+        "company_name": "myedspacecareers",
+        "url": "https://jobs.ashbyhq.com/myedspacecareers",
+        "active": True,
+    },
+    {"company_name": "n8n", "url": "https://jobs.ashbyhq.com/n8n", "active": True},
+    {
+        "company_name": "nomic.foundation",
+        "url": "https://jobs.ashbyhq.com/nomic.foundation",
+        "active": True,
+    },
+    {"company_name": "omni", "url": "https://jobs.ashbyhq.com/omni", "active": True},
+    {
+        "company_name": "opal-os",
+        "url": "https://jobs.ashbyhq.com/opal-os",
+        "active": True,
+    },
+    {
+        "company_name": "opensea",
+        "url": "https://jobs.ashbyhq.com/opensea",
+        "active": True,
+    },
+    {
+        "company_name": "p2p.org",
+        "url": "https://jobs.ashbyhq.com/p2p.org",
+        "active": True,
+    },
+    {
+        "company_name": "pandektes",
+        "url": "https://jobs.ashbyhq.com/pandektes",
+        "active": True,
+    },
+    {
+        "company_name": "playson",
+        "url": "https://jobs.ashbyhq.com/playson",
+        "active": True,
+    },
+    {
+        "company_name": "poolside",
+        "url": "https://jobs.ashbyhq.com/poolside",
+        "active": True,
+    },
+    {
+        "company_name": "posthog",
+        "url": "https://jobs.ashbyhq.com/posthog",
+        "active": True,
+    },
+    {
+        "company_name": "pragmatike",
+        "url": "https://jobs.ashbyhq.com/pragmatike",
+        "active": True,
+    },
+    {
+        "company_name": "redlygames",
+        "url": "https://jobs.ashbyhq.com/redlygames",
+        "active": True,
+    },
+    {
+        "company_name": "sentient",
+        "url": "https://jobs.ashbyhq.com/sentient",
+        "active": True,
+    },
+    {
+        "company_name": "speckle",
+        "url": "https://jobs.ashbyhq.com/speckle",
+        "active": True,
+    },
+    {
+        "company_name": "stream",
+        "url": "https://jobs.ashbyhq.com/stream",
+        "active": True,
+    },
+    {
+        "company_name": "sui%20foundation",
+        "url": "https://jobs.ashbyhq.com/sui%20foundation",
+        "active": True,
+    },
+    {
+        "company_name": "thirstysprout",
+        "url": "https://jobs.ashbyhq.com/thirstysprout",
+        "active": True,
+    },
+    {
+        "company_name": "tigerdata",
+        "url": "https://jobs.ashbyhq.com/tigerdata",
+        "active": True,
+    },
+    {
+        "company_name": "tilthq",
+        "url": "https://jobs.ashbyhq.com/tilthq",
+        "active": True,
+    },
+    {
+        "company_name": "windranger",
+        "url": "https://jobs.ashbyhq.com/windranger",
+        "active": True,
+    },
+    {
+        "company_name": "wundergraph",
+        "url": "https://jobs.ashbyhq.com/wundergraph",
+        "active": True,
+    },
+    {
+        "company_name": "xbowcareers",
+        "url": "https://jobs.ashbyhq.com/xbowcareers",
+        "active": True,
+    },
 ]

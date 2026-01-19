@@ -394,4 +394,229 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/energyhub",
         "active": True,
     },
+    {
+        "company_name": "speechify",
+        "url": "https://job-boards.greenhouse.io/speechify",
+        "active": True,
+    },
+    {
+        "company_name": "distrokid",
+        "url": "https://job-boards.greenhouse.io/distrokid",
+        "active": True,
+    },
+    {
+        "company_name": "wave",
+        "url": "https://job-boards.greenhouse.io/wavemm1",
+        "active": True,
+    },
+    {
+        "company_name": "alpaca",
+        "url": "https://job-boards.greenhouse.io/alpaca",
+        "active": True,
+    },
+    {
+        "company_name": "thrivecart",
+        "url": "https://job-boards.greenhouse.io/thrivecart",
+        "active": True,
+    },
+    {
+        "company_name": "whippy",
+        "url": "https://jobs.ashbyhq.com/whippy",
+        "active": True,
+    },
+    {
+        "company_name": "nomic.foundation",
+        "url": "https://jobs.ashbyhq.com/nomic.foundation",
+        "active": True,
+    },
+    {
+        "company_name": "thrill-labs",
+        "url": "https://jobs.ashbyhq.com/thrill-labs",
+        "active": True,
+    },
+    {
+        "company_name": "akuity",
+        "url": "https://job-boards.greenhouse.io/akuity",
+        "active": True,
+    },
+    {
+        "company_name": "algoquant",
+        "url": "https://job-boards.greenhouse.io/algoquant",
+        "active": True,
+    },
+    {
+        "company_name": "alpaca",
+        "url": "https://job-boards.greenhouse.io/alpaca",
+        "active": True,
+    },
+    {
+        "company_name": "amenitiz",
+        "url": "https://job-boards.greenhouse.io/amenitiz",
+        "active": True,
+    },
+    {
+        "company_name": "bioptimus8",
+        "url": "https://job-boards.greenhouse.io/bioptimus8",
+        "active": True,
+    },
+    {
+        "company_name": "bitmex",
+        "url": "https://job-boards.greenhouse.io/bitmex",
+        "active": True,
+    },
+    {
+        "company_name": "bitwarden",
+        "url": "https://job-boards.greenhouse.io/bitwarden",
+        "active": True,
+    },
+    {
+        "company_name": "canonicaljobs",
+        "url": "https://job-boards.greenhouse.io/canonicaljobs",
+        "active": True,
+    },
+    {
+        "company_name": "coinbase",
+        "url": "https://job-boards.greenhouse.io/coinbase",
+        "active": True,
+    },
+    {
+        "company_name": "connectwise",
+        "url": "https://job-boards.greenhouse.io/connectwise",
+        "active": True,
+    },
+    {
+        "company_name": "consensys",
+        "url": "https://job-boards.greenhouse.io/consensys",
+        "active": True,
+    },
+    {
+        "company_name": "correlationone",
+        "url": "https://job-boards.greenhouse.io/correlationone",
+        "active": True,
+    },
+    {
+        "company_name": "doitintl",
+        "url": "https://job-boards.greenhouse.io/doitintl",
+        "active": True,
+    },
+    {
+        "company_name": "echodynecorp",
+        "url": "https://job-boards.greenhouse.io/echodynecorp",
+        "active": True,
+    },
+    {
+        "company_name": "elementbiosciences",
+        "url": "https://job-boards.greenhouse.io/elementbiosciences",
+        "active": True,
+    },
+    {
+        "company_name": "gitlab",
+        "url": "https://job-boards.greenhouse.io/gitlab",
+        "active": True,
+    },
+    {
+        "company_name": "ketryx",
+        "url": "https://job-boards.greenhouse.io/ketryx",
+        "active": True,
+    },
+    {
+        "company_name": "nansen",
+        "url": "https://job-boards.greenhouse.io/nansen",
+        "active": True,
+    },
+    {
+        "company_name": "neo4j",
+        "url": "https://job-boards.greenhouse.io/neo4j",
+        "active": True,
+    },
+    {
+        "company_name": "offensivesecurity",
+        "url": "https://job-boards.greenhouse.io/offensivesecurity",
+        "active": True,
+    },
+    {
+        "company_name": "onapsis",
+        "url": "https://job-boards.greenhouse.io/onapsis",
+        "active": True,
+    },
+    {
+        "company_name": "planetscale",
+        "url": "https://job-boards.greenhouse.io/planetscale",
+        "active": True,
+    },
+    {
+        "company_name": "qualio",
+        "url": "https://job-boards.greenhouse.io/qualio",
+        "active": True,
+    },
+    {
+        "company_name": "quanthealth",
+        "url": "https://job-boards.greenhouse.io/quanthealth",
+        "active": True,
+    },
+    {
+        "company_name": "realchemistry",
+        "url": "https://job-boards.greenhouse.io/realchemistry",
+        "active": True,
+    },
+    {
+        "company_name": "realtimeboardglobal",
+        "url": "https://job-boards.greenhouse.io/realtimeboardglobal",
+        "active": True,
+    },
+    {
+        "company_name": "remotecom",
+        "url": "https://job-boards.greenhouse.io/remotecom",
+        "active": True,
+    },
+    {
+        "company_name": "remotereferralboardinternaluseonly",
+        "url": "https://job-boards.greenhouse.io/remotereferralboardinternaluseonly",
+        "active": True,
+    },
+    {
+        "company_name": "storyblok",
+        "url": "https://job-boards.greenhouse.io/storyblok",
+        "active": True,
+    },
+    {
+        "company_name": "sustainabletalent",
+        "url": "https://job-boards.greenhouse.io/sustainabletalent",
+        "active": True,
+    },
+    {
+        "company_name": "taboola",
+        "url": "https://job-boards.greenhouse.io/taboola",
+        "active": True,
+    },
+    {
+        "company_name": "thrivecart",
+        "url": "https://job-boards.greenhouse.io/thrivecart",
+        "active": True,
+    },
+    {
+        "company_name": "vaayutech",
+        "url": "https://job-boards.greenhouse.io/vaayutech",
+        "active": True,
+    },
+    {
+        "company_name": "veza",
+        "url": "https://job-boards.greenhouse.io/veza",
+        "active": True,
+    },
+    {
+        "company_name": "wakam",
+        "url": "https://job-boards.greenhouse.io/wakam",
+        "active": True,
+    },
+    {
+        "company_name": "yld",
+        "url": "https://job-boards.greenhouse.io/yld",
+        "active": True,
+    },
+    {
+        "company_name": "sothebys",
+        "url": "https://job-boards.greenhouse.io/sothebys",
+        "active": True,
+    },
 ]
