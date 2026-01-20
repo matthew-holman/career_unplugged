@@ -290,16 +290,8 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/trunk-tools",
         "active": True,
     },
-    {
-        "company_name": "tem",
-        "url": "https://jobs.ashbyhq.com/tem",
-        "active": True,
-    },
-    {
-        "company_name": "nory",
-        "url": "https://jobs.ashbyhq.com/nory/",
-        "active": True,
-    },
+    {"company_name": "tem", "url": "https://jobs.ashbyhq.com/tem", "active": True},
+    {"company_name": "nory", "url": "https://jobs.ashbyhq.com/nory/", "active": True},
     {
         "company_name": "synthesia",
         "url": "https://jobs.ashbyhq.com/synthesia/",
@@ -468,11 +460,6 @@ ASHBY_PAGE_SEEDS = [
         "active": True,
     },
     {
-        "company_name": "tigerdata",
-        "url": "https://jobs.ashbyhq.com/tigerdata",
-        "active": True,
-    },
-    {
         "company_name": "tilthq",
         "url": "https://jobs.ashbyhq.com/tilthq",
         "active": True,
@@ -519,11 +506,6 @@ ASHBY_PAGE_SEEDS = [
     },
     {"company_name": "bunch", "url": "https://jobs.ashbyhq.com/bunch", "active": True},
     {
-        "company_name": "clipboard",
-        "url": "https://jobs.ashbyhq.com/clipboard",
-        "active": True,
-    },
-    {
         "company_name": "devsavant",
         "url": "https://jobs.ashbyhq.com/devsavant",
         "active": True,
@@ -546,11 +528,6 @@ ASHBY_PAGE_SEEDS = [
     {
         "company_name": "finary",
         "url": "https://jobs.ashbyhq.com/finary",
-        "active": True,
-    },
-    {
-        "company_name": "frontcareers",
-        "url": "https://jobs.ashbyhq.com/frontcareers",
         "active": True,
     },
     {
@@ -577,11 +554,6 @@ ASHBY_PAGE_SEEDS = [
     {
         "company_name": "mentis",
         "url": "https://jobs.ashbyhq.com/mentis",
-        "active": True,
-    },
-    {
-        "company_name": "playson",
-        "url": "https://jobs.ashbyhq.com/playson",
         "active": True,
     },
     {
