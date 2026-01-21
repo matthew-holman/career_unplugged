@@ -14,6 +14,7 @@ from app.seeds.data.recruitee_pages import RECRUITEE_PAGE_SEEDS
 from app.seeds.data.rippling_pages import RIPPLING_PAGE_SEEDS
 from app.seeds.data.sloneek_pages import SLONEEK_PAGE_SEEDS
 from app.seeds.data.team_tailor_pages import TEAM_TAILOR_PAGE_SEEDS
+from app.seeds.data.workable_pages import WORKABLE_PAGE_SEEDS
 
 SEED_LISTS = [
     ASHBY_PAGE_SEEDS,
@@ -26,6 +27,7 @@ SEED_LISTS = [
     RIPPLING_PAGE_SEEDS,
     SLONEEK_PAGE_SEEDS,
     TEAM_TAILOR_PAGE_SEEDS,
+    WORKABLE_PAGE_SEEDS,
 ]
 
 

@@ -4370,4 +4370,15 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://zapp-1672737080.teamtailor.com",
         "active": True,
     },
+    {
+        "company_name": "huaweinorway",
+        "url": "https://huaweinorway.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "spacelift",
+        "url": "https://careers.spacelift.io/",
+        "active": True,
+    },
+    {"company_name": "incluso", "url": "https://openings.incluso.se/", "active": True},
 ]
