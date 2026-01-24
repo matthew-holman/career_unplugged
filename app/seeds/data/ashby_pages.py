@@ -620,7 +620,7 @@ ASHBY_PAGE_SEEDS = [
         "active": True,
     },
     {
-        "company_name": "granular-energy",
+        "company_name": "enode",
         "url": "https://jobs.ashbyhq.com/enode/",
         "active": True,
     },

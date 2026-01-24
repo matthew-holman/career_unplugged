@@ -4381,4 +4381,11 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "incluso", "url": "https://openings.incluso.se/", "active": True},
+    {"company_name": "xenit", "url": "https://vi.xenit.se/", "active": True},
+    {"company_name": "phorest", "url": "https://careers.phorest.com/", "active": True},
+    {
+        "company_name": "enfuce",
+        "url": "https://enfuceoy.teamtailor.com/",
+        "active": True,
+    },
 ]

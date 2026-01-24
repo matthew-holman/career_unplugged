@@ -14,4 +14,9 @@ PERSONIO_PAGE_SEEDS = [
         "url": "https://deskbird.jobs.personio.com/",
         "active": True,
     },
+    {
+        "company_name": "terralayr",
+        "url": "https://terralayr.jobs.personio.com/",
+        "active": True,
+    },
 ]
