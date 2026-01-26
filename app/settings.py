@@ -34,5 +34,7 @@ class Settings(BaseSettings):
     API_VERSION: str = Field(default="0.1.0")
     IMAGE_TAG: str = Field(default="local-latest")
 
+    RUN_NETWORK_TESTS: str = Field(default="true")
+
 
 settings = Settings()

@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.models import CareerPage
+from app.settings import settings
 
 
 @dataclass(frozen=True)
@@ -35,11 +36,10 @@ def run_ats_scraper_test(
     Usage:
       run_ats_scraper_smoke_test(scraper_cls=GreenHouseBoardScraper, career_page=...)
     """
-    import os
 
     import pytest
 
-    if os.getenv("RUN_NETWORK_TESTS", "").lower() not in {"1", "true", "yes"}:
+    if settings.RUN_NETWORK_TESTS.lower() not in {"1", "true", "yes"}:
         pytest.skip("Network ATS tests are disabled by default.")
 
     supports = scraper_cls.supports(career_page.url)

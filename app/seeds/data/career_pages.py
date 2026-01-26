@@ -121,11 +121,6 @@ CAREER_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "lilly", "url": "https://careers.lilly.com", "active": True},
-    {
-        "company_name": "llinformatics",
-        "url": "https://careers.llinformatics.com",
-        "active": True,
-    },
     {"company_name": "moog", "url": "https://careers.moog.com", "active": True},
     {"company_name": "payfit", "url": "https://careers.payfit.com", "active": True},
     {"company_name": "plano", "url": "https://careers.plano.gov", "active": True},

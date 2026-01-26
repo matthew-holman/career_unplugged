@@ -72,8 +72,14 @@ JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="Sweden", remote=False),
     SearchLocation(location="Gothenburg, Västra Götaland County, Sweden", remote=False),
     SearchLocation(location="Gothenburg, Västra Götaland County, Sweden", remote=True),
+    SearchLocation(location="Malmo, Skåne County, Sweden", remote=False),
+    SearchLocation(location="Malmo, Skåne County, Sweden", remote=True),
+    SearchLocation(location="Stockholm, Stockholm County, Sweden", remote=False),
+    SearchLocation(location="Stockholm, Stockholm County, Sweden", remote=True),
     SearchLocation(location="Sweden", remote=True),
     SearchLocation(location="European Union", remote=True),
+    SearchLocation(location="Finland", remote=True),
+    SearchLocation(location="Helsinki Metropolitan Area", remote=True),
     SearchLocation(location="EMEA", remote=True),
 ]
 
