@@ -635,4 +635,9 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/roompricegenie",
         "active": True,
     },
+    {
+        "company_name": "percona",
+        "url": "https://jobs.ashbyhq.com/percona",
+        "active": True,
+    },
 ]

@@ -21,7 +21,7 @@ class AtsScraper:
     """
     Base interface for all ATS scrapers.
     Each subclass must implement:
-      - supports(url: str) -> bool
+      - supports(soup: BeautifulSoup) -> bool
       - scrape(scraper_input: Optional[ScraperInput]) -> JobResponse
     """
 
@@ -36,8 +36,8 @@ class AtsScraper:
 
     @classmethod
     @abstractmethod
-    def supports(cls, url: str) -> bool:
-        """Return True if this scraper can handle the given URL."""
+    def supports(cls, soup: BeautifulSoup) -> bool:
+        """Return True if this scraper can handle the given page soup."""
         raise NotImplementedError
 
     @abstractmethod

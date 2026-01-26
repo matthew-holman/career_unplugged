@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Iterable, Optional, cast
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, Tag
 
@@ -23,25 +23,10 @@ class LeverScraper(AtsScraper):
         return Source.LEVER
 
     @classmethod
-    def supports(cls, url: str) -> bool:
-        try:
-            host = urlparse(url.strip()).netloc.lower()
-        except ValueError:
-            return False
-
-        if host == "jobs.lever.co":
+    def supports(cls, soup: BeautifulSoup) -> bool:
+        html = str(soup).lower()
+        if "lever-jobs-embed" in html or "lever.co" in html:
             return True
-
-        response = cls._fetch_page(url)
-        if not response:
-            return False
-
-        html = response.text.lower()
-        if "lever-jobs-embed" in html:
-            return True
-        if "jobs.lever.co" in html and "lever" in html:
-            return True
-
         return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:

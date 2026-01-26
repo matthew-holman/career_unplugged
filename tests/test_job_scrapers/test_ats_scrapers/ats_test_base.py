@@ -42,7 +42,12 @@ def run_ats_scraper_test(
     if settings.RUN_NETWORK_TESTS.lower() not in {"1", "true", "yes"}:
         pytest.skip("Network ATS tests are disabled by default.")
 
-    supports = scraper_cls.supports(career_page.url)
+    response = AtsScraper._fetch_page(career_page.url)
+    assert response is not None, "fetch returned None"
+
+    html = response.text or response.content
+    soup = BeautifulSoup(html, "html.parser")
+    supports = scraper_cls.supports(soup)
     assert supports is True, f"{scraper_cls.__name__}.supports() returned False"
 
     scraper = scraper_cls(career_page)

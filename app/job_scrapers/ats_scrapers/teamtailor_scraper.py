@@ -23,24 +23,16 @@ class TeamTailorScraper(AtsScraper):
         return Source.TEAMTAILOR
 
     @classmethod
-    def supports(cls, url: str) -> bool:
+    def supports(cls, soup: BeautifulSoup) -> bool:
         """
-        Return True if the given URL belongs to a Teamtailor-powered site.
+        Return True if the given page soup belongs to a Teamtailor-powered site.
         """
-        try:
-            response = TeamTailorScraper._fetch_page(url)
-            if response:
-                html = response.text.lower()
-            else:
-                return False
-        except Exception as e:
-            Log.warning(f"Failed to fetch {url} for ATS detection: {e}")
-            return False
+        if soup.select_one("ul#jobs_list_container"):
+            return True
 
-        # We are looking for a Teamtailor page with a teamtailor job list,
-        # other job lists are supported on Teamtailor pages.
-        if "teamtailor" in html and 'id="jobs_list_container"' in html:
-            Log.debug(f"Detected {cls.__name__} page with jobs list on {url}")
+        html = str(soup).lower()
+        if "teamtailor" in html and soup.select_one("ul#jobs_list_container"):
+            Log.debug(f"Detected {cls.__name__} page with jobs list")
             return True
 
         return False

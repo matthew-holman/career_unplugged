@@ -3,7 +3,6 @@ import re
 
 from datetime import date
 from typing import Iterable, Optional
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, Tag
 
@@ -22,12 +21,11 @@ class AshbyBoardScraper(AtsScraper):
         return Source.ASHBY
 
     @classmethod
-    def supports(cls, url: str) -> bool:
-        try:
-            host = urlparse(url.strip()).netloc.lower()
-        except ValueError:
-            return False
-        return host == "jobs.ashbyhq.com"
+    def supports(cls, soup: BeautifulSoup) -> bool:
+        for script in soup.select("script"):
+            if JSON_DATA_VAR in script.text and JSON_JOB_BOARD_KEY in script.text:
+                return True
+        return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
         script_tags = soup.select("script")

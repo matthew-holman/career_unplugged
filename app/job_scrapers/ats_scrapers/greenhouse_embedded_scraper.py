@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Iterable, Optional
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, Tag
 
@@ -30,31 +29,27 @@ class GreenHouseEmbedScraper(AtsScraper):
         return Source.GREENHOUSE_EMBEDDED
 
     @classmethod
-    def supports(cls, url: str) -> bool:
-        # Exclude greenhouse board host; that’s GREENHOUSE_BOARD
-        try:
-            host = urlparse(url.strip()).netloc.lower()
-        except ValueError:
-            return False
-
-        # this is for greenhouse job board scraper
-        if host == "job-boards.greenhouse.io":
-            return False
-
-        response = cls._fetch_page(url)
-        if not response:
-            return False
-
-        html = response.text.lower()
-
-        # greenhouse-job-board
-        # Variant A: official greenhouse embed widget
+    def supports(cls, soup: BeautifulSoup) -> bool:
+        html = str(soup).lower()
         if "greenhouse-job-board" in html or "greenhouse-board" in html:
             return True
 
+        if soup.select_one("div.js-greenhouse-board"):
+            return True
+
+        if soup.select_one("li.cx-gh-open-position"):
+            return True
+
+        if soup.select_one('a[href*="gh_jid="]'):
+            return True
+
+        if soup.select_one('a[href*="job-boards.greenhouse.io"]'):
+            return False
+
         if "greenhouse" in html:
             Log.warning(
-                f"This might be a Greenhouse page even though it's not been detected by this scraper url:{url}."
+                "This might be a Greenhouse page even though it's not been detected "
+                "by this scraper."
             )
         return False
 

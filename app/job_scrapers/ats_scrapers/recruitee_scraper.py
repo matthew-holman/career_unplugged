@@ -22,15 +22,9 @@ class RecruiteeScraper(AtsScraper):
         return Source.RECRUITEE
 
     @classmethod
-    def supports(cls, url: str) -> bool:
-        response = cls._fetch_page(url)
-        if response:
-            html = response.text.lower()
-        else:
-            return False
-
+    def supports(cls, soup: BeautifulSoup) -> bool:
+        html = str(soup).lower()
         if "recruiteecdn" in html and 'data-testid="offer-list-grid"' in html:
-            Log.debug(f"Detected {cls.__name__} page with jobs list on {url}")
             return True
 
         return False

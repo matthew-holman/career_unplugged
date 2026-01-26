@@ -5,15 +5,24 @@ from tests.test_job_scrapers.test_ats_scrapers.ats_test_base import run_ats_scra
 
 
 def test_lever_supports_positive() -> None:
+    from bs4 import BeautifulSoup
+
     from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 
-    assert LeverScraper.supports("https://jobs.eu.lever.co/tomtom") is True
+    html = '<div class="lever-jobs-container"></div>'
+    soup = BeautifulSoup(html, "html.parser")
+
+    assert LeverScraper.supports(soup) is True
 
 
 def test_lever_supports_negative() -> None:
+    from bs4 import BeautifulSoup
+
     from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 
-    assert LeverScraper.supports("not-a-url") is False
+    soup = BeautifulSoup("<html></html>", "html.parser")
+
+    assert LeverScraper.supports(soup) is False
 
 
 @pytest.mark.integration

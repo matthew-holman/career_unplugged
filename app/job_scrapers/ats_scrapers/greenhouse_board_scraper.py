@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Iterable, Optional, cast
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, Tag
 
@@ -25,12 +24,12 @@ class GreenHouseBoardScraper(AtsScraper):
         return Source.GREENHOUSE_BOARD
 
     @classmethod
-    def supports(cls, url: str) -> bool:
-        try:
-            host = urlparse(url.strip()).netloc.lower()
-        except ValueError:
-            return False
-        return host == "job-boards.greenhouse.io"
+    def supports(cls, soup: BeautifulSoup) -> bool:
+        if soup.select_one("div.job-posts"):
+            return True
+        if soup.select_one('a[href*="job-boards.greenhouse.io"]'):
+            return True
+        return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
         job_posts_container = soup.select_one("div.job-posts")
