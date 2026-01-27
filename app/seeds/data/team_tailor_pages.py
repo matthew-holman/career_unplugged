@@ -2228,7 +2228,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {
-        "company_name": "junijuni",
+        "company_name": "juni",
         "url": "https://junijuni.teamtailor.com",
         "active": True,
     },
@@ -4386,6 +4386,36 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "enfuce",
         "url": "https://enfuceoy.teamtailor.com/",
+        "active": True,
+    },
+    {
+        "company_name": "taigatech",
+        "url": "https://jobs.taigatech.se/",
+        "active": True,
+    },
+    {
+        "company_name": "embedl",
+        "url": "https://career.embedl.ai/",
+        "active": True,
+    },
+    {
+        "company_name": "liquidwind",
+        "url": "https://careers.liquidwind.com/",
+        "active": True,
+    },
+    {
+        "company_name": "polestar",
+        "url": "https://polestar.teamtailor.com/",
+        "active": True,
+    },
+    {
+        "company_name": "maurten",
+        "url": "https://careers.maurten.com/",
+        "active": True,
+    },
+    {
+        "company_name": "meela health",
+        "url": "https://careers.meelahealth.com/",
         "active": True,
     },
 ]

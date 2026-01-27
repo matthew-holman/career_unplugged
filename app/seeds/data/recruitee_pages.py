@@ -330,4 +330,9 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://zeelandialtd.recruitee.com",
         "active": True,
     },
+    {
+        "company_name": "melt and marble",
+        "url": "https://meltandmarble.recruitee.com/",
+        "active": True,
+    },
 ]

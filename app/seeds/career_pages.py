@@ -10,6 +10,7 @@ from app.seeds.data.career_pages import CAREER_PAGE_SEEDS
 from app.seeds.data.dover_pages import DOVER_PAGE_SEEDS
 from app.seeds.data.greenhouse_pages import GREENHOUSE_PAGE_SEEDS
 from app.seeds.data.hibob_pages import HIBOB_PAGE_SEEDS
+from app.seeds.data.jobylon_pages import JOBYLON_PAGE_SEEDS
 from app.seeds.data.lever_pages import LEVER_PAGE_SEEDS
 from app.seeds.data.people_force_pages import PEOPLE_FORCE_PAGE_SEEDS
 from app.seeds.data.personio_pages import PERSONIO_PAGE_SEEDS
@@ -26,6 +27,7 @@ SEED_LISTS = [
     DOVER_PAGE_SEEDS,
     GREENHOUSE_PAGE_SEEDS,
     HIBOB_PAGE_SEEDS,
+    JOBYLON_PAGE_SEEDS,
     LEVER_PAGE_SEEDS,
     PEOPLE_FORCE_PAGE_SEEDS,
     PERSONIO_PAGE_SEEDS,
