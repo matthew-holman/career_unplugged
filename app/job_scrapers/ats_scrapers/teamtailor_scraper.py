@@ -24,14 +24,8 @@ class TeamTailorScraper(AtsScraper):
 
     @classmethod
     def supports(cls, soup: BeautifulSoup) -> bool:
-        """
-        Return True if the given page soup belongs to a Teamtailor-powered site.
-        """
-        if soup.select_one("ul#jobs_list_container"):
-            return True
-
         html = str(soup).lower()
-        if "teamtailor" in html and soup.select_one("ul#jobs_list_container"):
+        if "teamtailor-cdn" in html:
             Log.debug(f"Detected {cls.__name__} page with jobs list")
             return True
 
