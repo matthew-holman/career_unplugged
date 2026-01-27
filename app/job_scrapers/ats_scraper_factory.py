@@ -11,6 +11,7 @@ from app.job_scrapers.ats_scrapers.greenhouse_embedded_scraper import (
     GreenHouseEmbedScraper,
 )
 from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
+from app.job_scrapers.ats_scrapers.personio_scraper import PersonioScraper
 from app.job_scrapers.ats_scrapers.recruitee_scraper import RecruiteeScraper
 from app.job_scrapers.ats_scrapers.teamtailor_scraper import TeamTailorScraper
 from app.log import Log
@@ -23,6 +24,7 @@ class AtsScraperFactory:
         GreenHouseBoardScraper,
         GreenHouseEmbedScraper,
         LeverScraper,
+        PersonioScraper,
         RecruiteeScraper,
         TeamTailorScraper,
     ]

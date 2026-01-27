@@ -30,6 +30,7 @@ class Source(str, Enum):
     LEVER = "lever"
     RECRUITEE = "recruitee"
     RIPPLING = "rippling"
+    PERSONIO = "personio"
 
 
 class DescriptionFormat(Enum):

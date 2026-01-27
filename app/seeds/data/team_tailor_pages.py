@@ -11111,4 +11111,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {"company_name": "zoey", "url": "https://zoey.teamtailor.com", "active": True},
     {"company_name": "zoner", "url": "https://zoner.teamtailor.com", "active": True},
     {"company_name": "zzoomm", "url": "https://zzoomm.teamtailor.com", "active": True},
+    {
+        "company_name": "simployer",
+        "url": "https://careers.simployer.com",
+        "active": True,
+    },
 ]

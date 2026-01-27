@@ -48,4 +48,7 @@ create-user:
 seed-career-pages:
 	poetry run python3 -m app.workers.seed_career_pages
 
+urlscan-first-level:
+	poetry run python3 -m app.seeds.url_scan_client $(domain)
+
 start: requirements start-db migrations main

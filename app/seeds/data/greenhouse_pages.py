@@ -920,4 +920,119 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/chainguard",
         "active": True,
     },
+    {
+        "company_name": "wikimedia",
+        "url": "https://job-boards.greenhouse.io/wikimedia",
+        "active": True,
+    },
+    {
+        "company_name": "agency",
+        "url": "https://job-boards.eu.greenhouse.io/agency",
+        "active": True,
+    },
+    {
+        "company_name": "biospan",
+        "url": "https://job-boards.eu.greenhouse.io/biospan",
+        "active": True,
+    },
+    {
+        "company_name": "bvnk",
+        "url": "https://job-boards.eu.greenhouse.io/bvnk",
+        "active": True,
+    },
+    {
+        "company_name": "eqtpartners",
+        "url": "https://job-boards.eu.greenhouse.io/eqtpartners",
+        "active": True,
+    },
+    {
+        "company_name": "gofibre",
+        "url": "https://job-boards.eu.greenhouse.io/gofibre",
+        "active": True,
+    },
+    {
+        "company_name": "gr8tech",
+        "url": "https://job-boards.eu.greenhouse.io/gr8tech",
+        "active": True,
+    },
+    {
+        "company_name": "growe",
+        "url": "https://job-boards.eu.greenhouse.io/growe",
+        "active": True,
+    },
+    {
+        "company_name": "imc",
+        "url": "https://job-boards.eu.greenhouse.io/imc",
+        "active": True,
+    },
+    {
+        "company_name": "justmarkets",
+        "url": "https://job-boards.eu.greenhouse.io/justmarkets",
+        "active": True,
+    },
+    {
+        "company_name": "mindsquareag",
+        "url": "https://job-boards.eu.greenhouse.io/mindsquareag",
+        "active": True,
+    },
+    {
+        "company_name": "nice",
+        "url": "https://job-boards.eu.greenhouse.io/nice",
+        "active": True,
+    },
+    {
+        "company_name": "nice%20",
+        "url": "https://job-boards.eu.greenhouse.io/nice%20",
+        "active": True,
+    },
+    {
+        "company_name": "policyexpert",
+        "url": "https://job-boards.eu.greenhouse.io/policyexpert",
+        "active": True,
+    },
+    {
+        "company_name": "prolific",
+        "url": "https://job-boards.eu.greenhouse.io/prolific",
+        "active": True,
+    },
+    {
+        "company_name": "send",
+        "url": "https://job-boards.eu.greenhouse.io/send",
+        "active": True,
+    },
+    {
+        "company_name": "sprintersportses",
+        "url": "https://job-boards.eu.greenhouse.io/sprintersportses",
+        "active": True,
+    },
+    {
+        "company_name": "strato",
+        "url": "https://job-boards.eu.greenhouse.io/strato",
+        "active": True,
+    },
+    {
+        "company_name": "superbet",
+        "url": "https://job-boards.eu.greenhouse.io/superbet",
+        "active": True,
+    },
+    {
+        "company_name": "systemiq",
+        "url": "https://job-boards.eu.greenhouse.io/systemiq",
+        "active": True,
+    },
+    {
+        "company_name": "tlgglencorebaar",
+        "url": "https://job-boards.eu.greenhouse.io/tlgglencorebaar",
+        "active": True,
+    },
+    {
+        "company_name": "veeamsoftware",
+        "url": "https://job-boards.eu.greenhouse.io/veeamsoftware",
+        "active": True,
+    },
+    {
+        "company_name": "whitetech",
+        "url": "https://job-boards.eu.greenhouse.io/whitetech",
+        "active": True,
+    },
 ]
