@@ -910,4 +910,14 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/zwift",
         "active": True,
     },
+    {
+        "company_name": "grafana labs",
+        "url": "https://job-boards.greenhouse.io/grafanalabs",
+        "active": True,
+    },
+    {
+        "company_name": "chainguard",
+        "url": "https://job-boards.greenhouse.io/chainguard",
+        "active": True,
+    },
 ]

@@ -302,4 +302,9 @@ LEVER_PAGE_SEEDS = [
         "url": "https://jobs.eu.lever.co/xentral",
         "active": True,
     },
+    {
+        "company_name": "neko health",
+        "url": "https://jobs.lever.co/nekohealth",
+        "active": True,
+    },
 ]

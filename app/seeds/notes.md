@@ -1,3 +1,10 @@
+## Find subdomains with subfinder
+This tool does a passive lookup of subdomains against varous sources, great for teamtailor, persnio etc that use companyname.atsname.com
+```
+subfinder -d teamtailor.com -silent
+```
+
+## Google search example
 site:teamtailor.com
 ( "engineering manager" OR
 "engineering team lead" OR

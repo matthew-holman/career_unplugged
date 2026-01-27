@@ -14,7 +14,7 @@ from app.schemas.job import JobWithUserStateRead, UserJobStateRead, UserJobState
 from app.utils.locations.europe_filter import EuropeFilter
 
 JOB_UPSERT_CONSTRAINT = "job_source_url_key"
-JOB_UPSERT_EXCLUDE = {"id", "created_at", "updated_at", "deleted_at"}
+JOB_UPSERT_EXCLUDE = {"id", "created_at", "updated_at", "deleted_at", "analysed"}
 USER_JOB_UPSERT_EXCLUDE: set[str] = set()
 
 
