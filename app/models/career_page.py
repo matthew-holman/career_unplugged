@@ -1,4 +1,5 @@
 # app/models/career_page.py
+from datetime import datetime
 from typing import Optional
 
 from sqlmodel import Field, SQLModel
@@ -13,6 +14,8 @@ class CareerPageBase(SQLModel, table=False):  # type: ignore
 class CareerPage(CareerPageBase, table=True):  # type: ignore  # type: ignore
     __tablename__ = "career_page"
     id: int = Field(default=None, primary_key=True)
+    deactivated_at: datetime | None = Field(default=None)
+    last_status_code: int | None = Field(default=None)
 
 
 class CareerPageCreate(CareerPageBase, table=False):  # type: ignore

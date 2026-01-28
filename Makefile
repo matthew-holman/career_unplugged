@@ -37,7 +37,7 @@ main:
 	poetry run python3 main.py
 
 scrape:
-	poetry run python3 -m app.workers.job_scraper
+	poetry run python3 -m app.workers.job_scraper > scrapping_logs.txt
 
 analyse:
 	poetry run python3 -m app.workers.job_analyser

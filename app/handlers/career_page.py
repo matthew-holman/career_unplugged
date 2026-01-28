@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import Optional, Sequence
 
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from app.models.career_page import CareerPage, CareerPageCreate, CareerPageRead
 
@@ -14,8 +15,8 @@ class CareerPageHandler:
         statement = select(CareerPage).where(CareerPage.id == page_id)
         return self.db_session.exec(statement).first()
 
-    def get_all(self) -> Sequence[CareerPage]:
-        statement = select(CareerPage)
+    def get_all_active(self) -> Sequence[CareerPage]:
+        statement = select(CareerPage).where(col(CareerPage.active).is_(True))
         return self.db_session.exec(statement).all()
 
     def create(self, page: CareerPageCreate) -> CareerPageRead:
@@ -37,3 +38,9 @@ class CareerPageHandler:
         self.db_session.commit()
         self.db_session.refresh(page)
         return CareerPageRead.model_validate(page)
+
+    def deactivate(self, career_page: CareerPage, status_code: int) -> None:
+        career_page.active = False
+        career_page.deactivated_at = datetime.now(timezone.utc)
+        career_page.last_status_code = status_code
+        self.db_session.add(career_page)

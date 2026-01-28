@@ -6,7 +6,10 @@ from sqlmodel import Session
 from app.db.db import get_db
 from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
-from app.job_scrapers.ats_scraper_factory import AtsScraperFactory
+from app.job_scrapers.ats_scraper_factory import (
+    AtsScraperFactory,
+    CareerPageDeactivatedError,
+)
 from app.job_scrapers.linkedin import LinkedInScraper
 from app.job_scrapers.scraper import (
     JobPost,
@@ -158,11 +161,20 @@ def run_ats_scrapers(db_session: Session):
     jobs_saved = 0
 
     page_handler = CareerPageHandler(db_session)
-    career_pages = page_handler.get_all()
+    career_pages = page_handler.get_all_active()
 
     for page in career_pages:
         Log.info(f"Processing {page.company_name or page.url}")
-        ats_scraper = AtsScraperFactory.get_ats_scraper(page)
+        try:
+            ats_scraper = AtsScraperFactory.get_ats_scraper(page)
+        except CareerPageDeactivatedError as exc:
+            page_handler.deactivate(page, exc.status_code)
+            db_session.commit()
+            Log.warning(
+                f"{AtsScraperFactory.__name__}: deactivated career page {page.url} "
+                f"with status {exc.status_code}"
+            )
+            continue
         if not ats_scraper:
             Log.warning(f"No supported ATS parser for {page.url}")
             continue

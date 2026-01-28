@@ -266,4 +266,9 @@ RIPPLING_PAGE_SEEDS = [
         "url": "https://www.rippling.com/en-GB/careers/",
         "active": True,
     },
+    {
+        "company_name": "rippling",
+        "url": "https://www.rippling.com/careers",
+        "active": True,
+    },
 ]

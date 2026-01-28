@@ -237,7 +237,6 @@ CAREER_PAGE_SEEDS = [
     {"company_name": "nexos", "url": "https://nexos.ai/careers", "active": True},
     {"company_name": "nimblehq", "url": "https://nimblehq.co/careers", "active": True},
     {"company_name": "openai", "url": "https://openai.com/careers", "active": True},
-    {"company_name": "plaid", "url": "https://plaid.com/careers", "active": True},
     {
         "company_name": "procreate",
         "url": "https://procreate.com/careers",
@@ -370,11 +369,6 @@ CAREER_PAGE_SEEDS = [
         "url": "https://www.efinancialcareers.com",
         "active": True,
     },
-    {
-        "company_name": "energyhub",
-        "url": "https://www.energyhub.com/careers",
-        "active": True,
-    },
     {"company_name": "epam", "url": "https://www.epam.com/careers", "active": True},
     {"company_name": "etched", "url": "https://www.etched.com/careers", "active": True},
     {
@@ -441,7 +435,6 @@ CAREER_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "koyfin", "url": "https://www.koyfin.com/careers", "active": True},
-    {"company_name": "lear", "url": "https://www.lear.com/careers", "active": True},
     {"company_name": "notion", "url": "https://www.notion.com/careers", "active": True},
     {
         "company_name": "nutanix",
@@ -461,11 +454,6 @@ CAREER_PAGE_SEEDS = [
     {
         "company_name": "purestorage",
         "url": "https://www.purestorage.com/company/careers",
-        "active": True,
-    },
-    {
-        "company_name": "rippling",
-        "url": "https://www.rippling.com/careers",
         "active": True,
     },
     {

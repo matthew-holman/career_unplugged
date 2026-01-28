@@ -114,7 +114,11 @@ class AtsScraper:
         return AtsScraper._fetch_page(jobs_url)
 
     @staticmethod
-    def _fetch_page(url: str) -> Optional[Response]:
+    def _fetch_page(
+        url: str,
+        *,
+        return_non_200: bool = False,
+    ) -> Optional[Response]:
         try:
             response = requests.get(
                 url,
@@ -137,7 +141,7 @@ class AtsScraper:
             Log.warning(f"Request error while fetching {url}: {exc}")
             return None
 
-        if response.status_code != 200:
+        if response.status_code != 200 and not return_non_200:
             Log.warning(f"Failed to fetch {url}: {response.status_code}")
             return None
 
