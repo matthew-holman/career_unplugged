@@ -32,6 +32,13 @@ class TeamTailorScraper(AtsScraper):
         return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
+
+        # Fetch jobs page, jobs aren't always listed on landing page.
+        response = self._fetch_jobs_page(self.career_page.url + "/jobs")
+        if not response:
+            return []
+        soup = BeautifulSoup(response.text, "html.parser")
+
         jobs_list = soup.find("ul", id="jobs_list_container")
         if not jobs_list:
             return []
