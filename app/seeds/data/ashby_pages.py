@@ -640,4 +640,19 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/percona",
         "active": True,
     },
+    {
+        "company_name": "split metrics",
+        "url": "https://jobs.ashbyhq.com/splitmetrics/",
+        "active": True,
+    },
+    {
+        "company_name": "dune",
+        "url": "https://jobs.ashbyhq.com/dune",
+        "active": True,
+    },
+    {
+        "company_name": "Restream",
+        "url": "https://jobs.ashbyhq.com/Restream",
+        "active": True,
+    },
 ]

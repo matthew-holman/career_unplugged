@@ -549,11 +549,6 @@ CAREER_PAGE_SEEDS = [
         "active": True,
     },
     {
-        "company_name": "fyul",
-        "url": "https://careers.fyul.com/",
-        "active": True,
-    },
-    {
         "company_name": "lokalise",
         "url": "https://lokalise.com/careers/",
         "active": True,

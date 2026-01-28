@@ -1035,4 +1035,14 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.eu.greenhouse.io/whitetech",
         "active": True,
     },
+    {
+        "company_name": "clickhouse",
+        "url": "https://job-boards.greenhouse.io/clickhouse",
+        "active": True,
+    },
+    {
+        "company_name": "typeform",
+        "url": "https://job-boards.greenhouse.io/typeform",
+        "active": True,
+    },
 ]

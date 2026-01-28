@@ -11116,4 +11116,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://careers.simployer.com",
         "active": True,
     },
+    {
+        "company_name": "fyul",
+        "url": "https://careers.fyul.com/",
+        "active": True,
+    },
 ]

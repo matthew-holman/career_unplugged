@@ -815,4 +815,14 @@ WORKABLE_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "zyte", "url": "https://apply.workable.com/zyte", "active": True},
+    {
+        "company_name": "dealfront",
+        "url": "https://apply.workable.com/dealfront",
+        "active": True,
+    },
+    {
+        "company_name": "tabeo-ltd",
+        "url": "https://apply.workable.com/tabeo-ltd",
+        "active": True,
+    },
 ]
