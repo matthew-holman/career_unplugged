@@ -74,6 +74,8 @@ class CountryResolver:
         "casablanca": "Morocco",
         # Netherlands
         "amsterdam": "Netherlands",
+        "brabant": "Netherlands",
+        "eindhoven": "Netherlands",
         "haarlem": "Netherlands",
         "rotterdam": "Netherlands",
         "utrecht": "Netherlands",
@@ -119,6 +121,7 @@ class CountryResolver:
         # Spain
         "barcelona": "Spain",
         "madrid": "Spain",
+        "zaragoza": "Spain",
         # Sweden
         "arlanda": "Sweden",
         "alingsås": "Sweden",
@@ -126,6 +129,7 @@ class CountryResolver:
         "bromma": "Sweden",
         "fridhemsplan": "Sweden",
         "gärdet": "Sweden",
+        "gävle": "Sweden",
         "gårdsten": "Sweden",
         "gothenburg": "Sweden",
         "göteborg": "Sweden",
@@ -163,13 +167,20 @@ class CountryResolver:
         "zürich": "Switzerland",
         "geneva": "Switzerland",
         # United Kingdom
+        "aberdeen": "United Kingdom",
+        "birmingham": "United Kingdom",
         "brighton": "United Kingdom",
+        "cambridge": "United Kingdom",
         "cardiff": "United Kingdom",
+        "coventry": "United Kingdom",
+        "edinburgh": "United Kingdom",
+        "glasgow": "United Kingdom",
+        "leeds": "United Kingdom",
         "london": "United Kingdom",
         "manchester": "United Kingdom",
-        "edinburgh": "United Kingdom",
-        "cambridge": "United Kingdom",
+        "newcastle upon tyne": "United Kingdom",
         "sheffield": "United Kingdom",
+        "richmond upon thames": "United Kingdom",
         # United States (cities + a few state abbrev aliases you’ll see in listings)
         "san francisco": "United States",
         "south san francisco": "United States",

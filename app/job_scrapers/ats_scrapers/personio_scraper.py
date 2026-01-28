@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Source
 
 
 class PersonioScraper(AtsScraper):
@@ -59,20 +59,16 @@ class PersonioScraper(AtsScraper):
             )
 
         job_url = urljoin(self.career_page.url, href)
-        city, country = self.parse_location(location_raw)
-
-        remote_status = (
-            self.extract_remote_from_location(location_raw)
-            or self.extract_remote_from_location(title)
-            or self.parse_remote_status(location_raw)
-            or self.parse_remote_status(title)
+        card_text = card.get_text(" ", strip=True)
+        location, remote_status = self.extract_location_and_remote_status(
+            card_text=card_text, location_hint=location_raw
         )
 
         return JobPost(
             title=title.strip(),
             company_name=self.company_name(),
             company_url=self.career_page.url,
-            location=Location(city=city, country=country),
+            location=location,
             date_posted=None,
             job_url=job_url,
             job_type=None,

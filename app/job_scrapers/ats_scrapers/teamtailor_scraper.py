@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup, Tag
 from mypy.checkexpr import Optional
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Source
 from app.log import Log
 
 
@@ -13,7 +13,6 @@ from app.log import Log
 class JobCardMetadata:
     department: Optional[str]
     location_raw: Optional[str]
-    work_mode_raw: Optional[str]
 
 
 class TeamTailorScraper(AtsScraper):
@@ -54,18 +53,21 @@ class TeamTailorScraper(AtsScraper):
 
         metadata = self._extract_job_metadata(card)
 
-        city, country = AtsScraper.parse_location(metadata.location_raw)
+        card_text = card.get_text(" ", strip=True)
+        location, remote_status = AtsScraper.extract_location_and_remote_status(
+            card_text=card_text, location_hint=metadata.location_raw
+        )
 
         return JobPost(
             title=title,
             company_name=self.company_name(),
             company_url=self.career_page.url,
-            location=Location(city=city, country=country),
+            location=location,
             date_posted=None,
             job_url=job_url,
             job_type=None,
             description=None,
-            remote_status=self.parse_remote_status(metadata.work_mode_raw),
+            remote_status=remote_status,
             source=self.source_name,
         )
 
@@ -81,38 +83,20 @@ class TeamTailorScraper(AtsScraper):
             "div", class_=lambda c: isinstance(c, str) and "mt-1" in c.split()
         )
         if not metadata_container:
-            return JobCardMetadata(
-                department=None, location_raw=None, work_mode_raw=None
-            )
+            return JobCardMetadata(department=None, location_raw=None)
 
         content_spans = self._get_direct_content_spans(metadata_container)
 
-        # Split into "work mode" vs "other tokens" by content (not position)
-        tokens: list[str] = []
-        work_mode_raw: Optional[str] = None
+        if len(content_spans) == 0:
+            return JobCardMetadata(department=None, location_raw=None)
 
-        for text in content_spans:
-            # if it looks like Hybrid/Remote/Onsite, treat it as work mode
-            if self.parse_remote_status(text) is not None:
-                work_mode_raw = text
-                continue
-            tokens.append(text)
-
-        # tokens now contains dept/location-ish data
-        if len(tokens) == 0:
-            return JobCardMetadata(
-                department=None, location_raw=None, work_mode_raw=work_mode_raw
-            )
-
-        if len(tokens) == 1:
-            # e.g. ["London"]
-            return JobCardMetadata(
-                department=None, location_raw=tokens[0], work_mode_raw=work_mode_raw
-            )
+        if len(content_spans) == 1:
+            # e.g. ["London"] or ["Hybrid"]
+            return JobCardMetadata(department=None, location_raw=content_spans[0])
 
         # e.g. ["Commercial", "Paris"] or ["Software Development", "Kaunas, Vilnius"]
         return JobCardMetadata(
-            department=tokens[0], location_raw=tokens[1], work_mode_raw=work_mode_raw
+            department=content_spans[0], location_raw=content_spans[1]
         )
 
     @staticmethod

@@ -4,7 +4,7 @@ from typing import Iterable, Optional
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Source
 from app.log import Log
 
 
@@ -14,7 +14,6 @@ class GreenhouseEmbedJobCard:
     location_raw: Optional[str]
     job_url: str
     department: Optional[str] = None
-    remote_status_raw: Optional[str] = None
 
 
 class GreenHouseEmbedScraper(AtsScraper):
@@ -82,18 +81,16 @@ class GreenHouseEmbedScraper(AtsScraper):
         if not parsed:
             return None
 
-        # remote detection from location string (cheap and good enough)
-        remote_status = None
-        if parsed.location_raw:
-            remote_status = self.parse_remote_status(parsed.location_raw)
-
-        city, country = self.parse_location(parsed.location_raw)
+        card_text = job_card.get_text(" ", strip=True)
+        location, remote_status = self.extract_location_and_remote_status(
+            card_text=card_text, location_hint=parsed.location_raw
+        )
 
         return JobPost(
             title=parsed.title,
             company_name=self.career_page.company_name,
             company_url=self.career_page.url,
-            location=Location(city=city, country=country),
+            location=location,
             date_posted=None,
             job_url=parsed.job_url,
             job_type=None,

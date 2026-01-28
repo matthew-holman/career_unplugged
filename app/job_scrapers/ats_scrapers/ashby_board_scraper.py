@@ -7,7 +7,7 @@ from typing import Iterable, Optional
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Source
 from app.log import Log
 
 JSON_DATA_VAR = "window.__appData = "
@@ -63,8 +63,14 @@ class AshbyBoardScraper(AtsScraper):
         if not isinstance(location_raw, str):
             location_raw = ""
 
-        remote_status = AtsScraper.parse_remote_status(job_card.get("workplaceType"))
-        city, country = AtsScraper.parse_location(location_raw)
+        workplace_type = job_card.get("workplaceType")
+        card_text_parts = [title, location_raw]
+        if isinstance(workplace_type, str):
+            card_text_parts.append(workplace_type)
+        card_text = " ".join(part for part in card_text_parts if part)
+        location, remote_status = AtsScraper.extract_location_and_remote_status(
+            card_text=card_text, location_hint=location_raw
+        )
 
         published_date = job_card.get("publishedDate")
         listing_date = None
@@ -88,7 +94,7 @@ class AshbyBoardScraper(AtsScraper):
             title=title.strip(),
             company_name=self.career_page.company_name,
             company_url=self.career_page.url,
-            location=Location(city=city, country=country),
+            location=location,
             date_posted=listing_date,
             job_url=job_url,
             job_type=[job_type],

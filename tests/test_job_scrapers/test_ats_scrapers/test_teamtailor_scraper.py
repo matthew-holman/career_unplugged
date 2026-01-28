@@ -12,8 +12,8 @@ def test_teamtailor_scraper() -> None:
     )
 
     career_page = CareerPage(
-        company_name="na-kd",
-        url="https://career.na-kd.com/",
+        company_name="buena-kd",
+        url="https://plasmancareerseurope.teamtailor.com",
     )
 
     run_ats_scraper_test(

@@ -10,7 +10,14 @@ from bs4 import BeautifulSoup
 from requests import Response
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
 
-from app.job_scrapers.scraper import JobPost, JobResponse, JobType, RemoteStatus, Source
+from app.job_scrapers.scraper import (
+    JobPost,
+    JobResponse,
+    JobType,
+    Location,
+    RemoteStatus,
+    Source,
+)
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.utils.locations.country_resolver import CountryResolver
@@ -175,47 +182,117 @@ class AtsScraper:
         return None
 
     @classmethod
-    def parse_remote_status(cls, raw: str | None) -> Optional[RemoteStatus]:
+    def extract_location_and_remote_status(
+        cls,
+        *,
+        card_text: str,
+        location_hint: str | None = None,
+    ) -> tuple[Location | None, RemoteStatus]:
         """
-        Convert a free-text remote label into RemoteStatus.
-        Returns None if no confident match.
+        Canonical location + remote status extraction.
+        Scrapers should not implement their own location parsing once this exists.
         """
-        if not raw:
-            return None
+        signal_text = cls._build_signal_text(card_text, location_hint)
+        remote_status = cls._detect_remote_status(signal_text)
 
-        value = cls._normalize_scraped_text(raw)
+        location_candidate = cls._pick_location_candidate(card_text, location_hint)
+        if location_candidate:
+            city, country = cls.parse_location(location_candidate)
+            if city or country:
+                return Location(city=city, country=country), remote_status
 
-        # Order matters
-        if value == "remote":
-            return RemoteStatus.REMOTE
+        return None, remote_status
 
-        if value == "hybrid":
-            return RemoteStatus.HYBRID
+    @classmethod
+    def _build_signal_text(cls, card_text: str, location_hint: str | None) -> str:
+        parts = [card_text.strip()]
+        if location_hint:
+            parts.append(location_hint.strip())
+        return " ".join(part for part in parts if part)
 
-        if value in {"onsite", "on site", "office"}:
-            return RemoteStatus.ONSITE
+    @classmethod
+    def _detect_remote_status(cls, text: str) -> RemoteStatus:
+        normalized = cls._normalize_scraped_text(text)
+        markers: set[RemoteStatus] = set()
+
+        if re.search(r"\b(remote|fully remote|100% remote)\b", normalized):
+            markers.add(RemoteStatus.REMOTE)
+        if re.search(r"\bhybrid\b", normalized):
+            markers.add(RemoteStatus.HYBRID)
+        if re.search(r"\b(on[\s-]?site|onsite|in office)\b", normalized):
+            markers.add(RemoteStatus.ONSITE)
+
+        if len(markers) > 1:
+            return RemoteStatus.UNKNOWN
+        if len(markers) == 1:
+            return next(iter(markers))
+
+        return RemoteStatus.UNKNOWN
+
+    @classmethod
+    def _pick_location_candidate(
+        cls, card_text: str, location_hint: str | None
+    ) -> Optional[str]:
+        if location_hint and cls._is_location_hint_valid(location_hint):
+            return cls._clean_location_hint(location_hint)
+
+        candidate = cls._extract_location_candidate_from_text(card_text)
+        if candidate:
+            return candidate
 
         return None
 
     @classmethod
-    def extract_remote_from_location(
-        cls, location_raw: Optional[str]
-    ) -> Optional[RemoteStatus]:
-        if not location_raw:
+    def _extract_location_candidate_from_text(cls, text: str) -> Optional[str]:
+        if not text:
             return None
 
-        text = location_raw.lower()
+        for chunk in re.split(r"[|•·/]+", text):
+            if cls._is_location_hint_valid(chunk):
+                return cls._clean_location_hint(chunk)
 
-        if "remote" in text:
-            return RemoteStatus.REMOTE
-
-        if "hybrid" in text:
-            return RemoteStatus.HYBRID
-
-        if "onsite" in text or "on-site" in text or "on site" in text:
-            return RemoteStatus.ONSITE
+        pattern = re.compile(r"([A-Za-zÀ-ÖØ-öø-ÿ.'\- ]+),\\s*([A-Za-zÀ-ÖØ-öø-ÿ.'\- ]+)")
+        for match in pattern.finditer(text):
+            candidate = f"{match.group(1).strip()}, {match.group(2).strip()}"
+            if cls._is_location_hint_valid(candidate):
+                return cls._clean_location_hint(candidate)
 
         return None
+
+    @classmethod
+    def _is_location_hint_valid(cls, hint: str) -> bool:
+        cleaned = cls._clean_location_hint(hint)
+        if not cleaned:
+            return False
+
+        lowered = cleaned.lower()
+        if re.search(r"\b(eu|emea|europe|european union)\b", lowered):
+            return True
+
+        if "," in cleaned:
+            right = cleaned.split(",", 1)[-1].strip()
+            if CountryResolver.resolve_country(right):
+                return True
+
+        if CountryResolver.resolve_country(cleaned):
+            return True
+
+        return False
+
+    @classmethod
+    def _clean_location_hint(cls, hint: str) -> str:
+        cleaned = " ".join(hint.split())
+        cleaned = re.sub(r"[·|/]+", ", ", cleaned)
+        cleaned = cleaned.replace("—", "-").replace("–", "-")
+        cleaned = cleaned.strip(" ,;|-")
+        cleaned = cls._normalize_location(cleaned)
+
+        lowered = cleaned.lower()
+        ignore_tokens = {"head office", "hq", "global", "multiple locations"}
+        if lowered in ignore_tokens:
+            return ""
+
+        return cleaned
 
     def company_name(self) -> str:
         return self.career_page.company_name or "Unknown"

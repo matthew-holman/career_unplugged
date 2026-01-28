@@ -6,14 +6,13 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Source
 from app.log import Log
 
 
 @dataclass(frozen=True)
 class _LocationMatch:
     location_raw: str | None
-    remote_status_raw: str | None
 
 
 class RecruiteeScraper(AtsScraper):
@@ -65,17 +64,16 @@ class RecruiteeScraper(AtsScraper):
         job_url = urljoin(self.career_page.url, href)
 
         location_match = self._extract_location_match(card)
-        city, country = self.parse_location(location_match.location_raw)
-
-        remote_status = self.extract_remote_from_location(
-            location_match.remote_status_raw
-        ) or self.parse_remote_status(location_match.remote_status_raw)
+        card_text = card.get_text(" ", strip=True)
+        location, remote_status = self.extract_location_and_remote_status(
+            card_text=card_text, location_hint=location_match.location_raw
+        )
 
         return JobPost(
             title=title,
             company_name=self.company_name(),
             company_url=self.career_page.url,
-            location=Location(city=city, country=country),
+            location=location,
             date_posted=None,
             job_url=job_url,
             job_type=None,
@@ -88,20 +86,14 @@ class RecruiteeScraper(AtsScraper):
         for parent in self._iter_parent_cards(anchor):
             location_raw = self._extract_location_from_container(parent)
             if location_raw:
-                return _LocationMatch(
-                    location_raw=location_raw,
-                    remote_status_raw=location_raw,
-                )
+                return _LocationMatch(location_raw=location_raw)
 
         for parent in self._iter_parent_cards(anchor):
             fallback = self._extract_location_fallback(parent)
             if fallback:
-                return _LocationMatch(
-                    location_raw=fallback,
-                    remote_status_raw=fallback,
-                )
+                return _LocationMatch(location_raw=fallback)
 
-        return _LocationMatch(location_raw=None, remote_status_raw=None)
+        return _LocationMatch(location_raw=None)
 
     @staticmethod
     def _iter_parent_cards(anchor: Tag) -> list[Tag]:

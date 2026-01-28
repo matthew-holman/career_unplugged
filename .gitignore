@@ -148,3 +148,5 @@ cython_debug/
 
 # All zip files under any folder
 *.zip
+
+scrapping_logs.txt

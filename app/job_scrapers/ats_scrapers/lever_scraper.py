@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup, Tag
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Location, Source
+from app.job_scrapers.scraper import JobPost, Source
 from app.log import Log
 
 
@@ -50,20 +50,22 @@ class LeverScraper(AtsScraper):
     def parse_job_card(self, card: object) -> Optional[JobPost]:
         if not isinstance(card, Tag):
             return None
-        card = cast(Tag, card)
+        card_tag = cast(Tag, card)
 
-        parsed = self._parse_lever_job_card(card)
+        parsed = self._parse_lever_job_card(card_tag)
         if not parsed:
             return None
 
-        city, country = AtsScraper.parse_location(parsed.location_raw)
-        remote_status = AtsScraper.extract_remote_from_location(parsed.location_raw)
+        card_text = card_tag.get_text(" ", strip=True)
+        location, remote_status = AtsScraper.extract_location_and_remote_status(
+            card_text=card_text, location_hint=parsed.location_raw
+        )
 
         return JobPost(
             title=parsed.title,
             company_name=self.career_page.company_name,
             company_url=self.career_page.url,
-            location=Location(city=city, country=country),
+            location=location,
             date_posted=None,
             job_url=parsed.job_url,
             job_type=None,

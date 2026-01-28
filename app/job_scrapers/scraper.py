@@ -16,6 +16,7 @@ class JobType(Enum):
 
 
 class RemoteStatus(str, Enum):
+    UNKNOWN = "UNKNOWN"
     ONSITE = "ONSITE"
     HYBRID = "HYBRID"
     REMOTE = "REMOTE"
