@@ -1,3 +1,4 @@
+from datetime import datetime
 from time import sleep
 
 from dotenv import load_dotenv
@@ -19,6 +20,7 @@ from app.job_scrapers.scraper import (
     ScraperInput,
 )
 from app.log import Log
+from app.models.career_page import CareerPage
 from app.models.job import Job, JobCreate
 from app.search_profile import (
     COMPANIES_TO_IGNORE,
@@ -101,6 +103,29 @@ def _flush_pending_jobs(
         return []
 
 
+def _flush_pending_pages(
+    db_session: Session,
+    pending_pages: list[CareerPage],
+    *,
+    batch_size: int,
+    force: bool = False,
+) -> list[CareerPage]:
+    if not pending_pages:
+        return []
+    if not force and len(pending_pages) < batch_size:
+        return pending_pages
+
+    try:
+        for page in pending_pages:
+            db_session.add(page)
+        db_session.commit()
+        return []
+    except Exception as exc:
+        db_session.rollback()
+        Log.warning(f"Failed to persist career pages batch: {exc}")
+        return []
+
+
 def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
     job_handler = JobHandler(db_session)
     batch_size = settings.DB_BATCH_SIZE
@@ -157,6 +182,7 @@ def run_ats_scrapers(db_session: Session):
     job_handler = JobHandler(db_session)
     batch_size = settings.DB_BATCH_SIZE
     pending_jobs: list[Job] = []
+    pending_pages: list[CareerPage] = []
     jobs_processed = 0
     jobs_saved = 0
 
@@ -169,7 +195,12 @@ def run_ats_scrapers(db_session: Session):
             ats_scraper = AtsScraperFactory.get_ats_scraper(page)
         except CareerPageDeactivatedError as exc:
             page_handler.deactivate(page, exc.status_code)
-            db_session.commit()
+            pending_pages.append(page)
+            pending_pages = _flush_pending_pages(
+                db_session,
+                pending_pages,
+                batch_size=batch_size,
+            )
             Log.warning(
                 f"{AtsScraperFactory.__name__}: deactivated career page {page.url} "
                 f"with status {exc.status_code}"
@@ -194,10 +225,24 @@ def run_ats_scrapers(db_session: Session):
                 batch_size=batch_size,
             )
 
+        page.last_synced_at = datetime.utcnow()
+        pending_pages.append(page)
+        pending_pages = _flush_pending_pages(
+            db_session,
+            pending_pages,
+            batch_size=batch_size,
+        )
+
     _flush_pending_jobs(
         db_session,
         job_handler,
         pending_jobs,
+        batch_size=batch_size,
+        force=True,
+    )
+    _flush_pending_pages(
+        db_session,
+        pending_pages,
         batch_size=batch_size,
         force=True,
     )

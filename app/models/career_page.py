@@ -16,6 +16,7 @@ class CareerPage(CareerPageBase, table=True):  # type: ignore  # type: ignore
     id: int = Field(default=None, primary_key=True)
     deactivated_at: datetime | None = Field(default=None)
     last_status_code: int | None = Field(default=None)
+    last_synced_at: datetime | None = Field(default=None)
 
 
 class CareerPageCreate(CareerPageBase, table=False):  # type: ignore

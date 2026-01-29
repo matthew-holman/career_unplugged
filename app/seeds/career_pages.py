@@ -59,9 +59,6 @@ class CareerPageSeeder:
                 if existing.company_name is None and seed.get("company_name"):
                     existing.company_name = seed["company_name"]
 
-                if existing.active is None and seed.get("active") is not None:
-                    existing.active = seed["active"]
-
                 self.db_session.add(existing)
 
         self.db_session.commit()
