@@ -4615,4 +4615,9 @@ PERSONIO_PAGE_SEEDS = [
         "url": "https://zuumeo.jobs.personio.com",
         "active": True,
     },
+    {
+        "company_name": "holiday pirates",
+        "url": "https://holidaypirates.jobs.personio.de/",
+        "active": True,
+    },
 ]

@@ -1,5 +1,7 @@
-from datetime import datetime
-from time import sleep
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Any
 
 from dotenv import load_dotenv
 from sqlmodel import Session
@@ -11,12 +13,9 @@ from app.job_scrapers.ats_scraper_factory import (
     AtsScraperFactory,
     CareerPageDeactivatedError,
 )
-from app.job_scrapers.linkedin import LinkedInScraper
-from app.job_scrapers.scraper import JobType, RemoteStatus, ScraperInput
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job
-from app.search_profile import JOB_LOCATIONS, linkedin_search_string
 from app.settings import settings
 from app.workers.sync_common import (
     build_jobs_to_save,
@@ -25,68 +24,50 @@ from app.workers.sync_common import (
 )
 
 
-def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
+def run_sync_ats(
+    *,
+    career_page_ids: list[int] | None = None,
+    max_age_hours: int | None = None,
+    include_inactive: bool = False,
+) -> dict[str, Any]:
+    load_dotenv()
+    Log.setup(application_name="sync_ats")
+
+    with next(get_db()) as db_session:
+        return run_sync_ats_with_session(
+            db_session,
+            career_page_ids=career_page_ids,
+            max_age_hours=max_age_hours,
+            include_inactive=include_inactive,
+        )
+
+
+def run_sync_ats_with_session(
+    db_session: Session,
+    *,
+    career_page_ids: list[int] | None = None,
+    max_age_hours: int | None = None,
+    include_inactive: bool = False,
+) -> dict[str, Any]:
     job_handler = JobHandler(db_session)
+    page_handler = CareerPageHandler(db_session)
     batch_size = settings.DB_BATCH_SIZE
-    pending_jobs: list[Job] = []
-    jobs_processed = 0
-    jobs_saved = 0
 
-    for job_location in JOB_LOCATIONS:
-        Log.info(f"Scraping jobs for {job_location.location}")
-
-        remote_statuses = [RemoteStatus.ONSITE, RemoteStatus.HYBRID]
-        if job_location.remote:
-            remote_statuses = [RemoteStatus.REMOTE]
-
-        for remote_status in remote_statuses:
-            Log.info(f"Scraping with remote status {remote_status.name}")
-
-            scraper_input = ScraperInput(
-                search_term=linkedin_search_string(),
-                location=job_location.location,
-                job_type=JobType.FULL_TIME,
-                results_wanted=400,
-                hours_old=96,
-                remote_status=remote_status,
-            )
-
-            response = scraper.scrape(scraper_input=scraper_input)
-
-            jobs_processed += len(response.jobs)
-            jobs_to_save = build_jobs_to_save(response)
-            if jobs_to_save:
-                jobs_saved += len(jobs_to_save)
-                pending_jobs.extend(jobs_to_save)
-                pending_jobs = flush_pending_jobs(
-                    db_session,
-                    job_handler,
-                    pending_jobs,
-                    batch_size=batch_size,
-                )
-
-    flush_pending_jobs(
-        db_session,
-        job_handler,
-        pending_jobs,
-        batch_size=batch_size,
-        force=True,
-    )
-    Log.info(
-        f"LinkedIn scrape processed {jobs_processed} jobs, " f"saved {jobs_saved} jobs."
-    )
-
-
-def run_ats_scrapers(db_session: Session):
-    job_handler = JobHandler(db_session)
-    batch_size = settings.DB_BATCH_SIZE
     pending_jobs: list[Job] = []
     pending_pages: list[CareerPage] = []
+
     jobs_processed = 0
     jobs_saved = 0
+    pages_selected = 0
+    pages_synced = 0
+    pages_deactivated = 0
 
-    page_handler = CareerPageHandler(db_session)
-    career_pages = page_handler.get_all_active()
+    career_pages = page_handler.select_for_sync(
+        career_page_ids=career_page_ids,
+        max_age_hours=max_age_hours,
+        include_inactive=include_inactive,
+    )
+    pages_selected = len(career_pages)
 
     for page in career_pages:
         Log.info(f"Processing {page.company_name or page.url}")
@@ -100,6 +81,7 @@ def run_ats_scrapers(db_session: Session):
                 pending_pages,
                 batch_size=batch_size,
             )
+            pages_deactivated += 1
             Log.warning(
                 f"{AtsScraperFactory.__name__}: deactivated career page {page.url} "
                 f"with status {exc.status_code}"
@@ -109,9 +91,8 @@ def run_ats_scrapers(db_session: Session):
             Log.warning(f"No supported ATS parser for {page.url}")
             continue
 
-        # I don't want to be blocked or limited.
-        sleep(settings.ATS_SCRAPER_DELAY_SECONDS)
         response = ats_scraper.scrape()
+        pages_synced += 1
         jobs_processed += len(response.jobs)
         jobs_to_save = build_jobs_to_save(response, career_page_id=page.id)
         if jobs_to_save:
@@ -124,7 +105,7 @@ def run_ats_scrapers(db_session: Session):
                 batch_size=batch_size,
             )
 
-        page.last_synced_at = datetime.utcnow()
+        page.last_synced_at = datetime.now(timezone.utc)
         pending_pages.append(page)
         pending_pages = flush_pending_pages(
             db_session,
@@ -145,17 +126,18 @@ def run_ats_scrapers(db_session: Session):
         batch_size=batch_size,
         force=True,
     )
-    Log.info(f"ATS scrape processed {jobs_processed} jobs, saved {jobs_saved} jobs.")
+
+    return {
+        "pages_selected": pages_selected,
+        "pages_synced": pages_synced,
+        "pages_deactivated": pages_deactivated,
+        "jobs_processed": jobs_processed,
+        "jobs_saved": jobs_saved,
+    }
 
 
 def main() -> int:
-    load_dotenv()
-    Log.setup()
-    scraper = LinkedInScraper()
-
-    with next(get_db()) as db_session:
-        run_linkedin_scraper(db_session, scraper)
-        run_ats_scrapers(db_session)
+    run_sync_ats()
     return 0
 
 

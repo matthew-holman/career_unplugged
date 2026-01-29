@@ -1051,7 +1051,7 @@ GREENHOUSE_PAGE_SEEDS = [
         "active": True,
     },
     {
-        "company_name": "saas group",
+        "company_name": "craftsman",
         "url": "https://job-boards.greenhouse.io/craftsman",
         "active": True,
     },

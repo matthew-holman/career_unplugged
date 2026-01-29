@@ -1,9 +1,11 @@
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Optional, Sequence
+from datetime import datetime, timedelta, timezone
+from typing import List, Optional, Sequence
 
+from sqlalchemy import desc, func, nulls_last, or_
 from sqlmodel import Session, col, select
 
+from app.filters.career_page_filter import CareerPageFilter
 from app.models.career_page import CareerPage, CareerPageCreate, CareerPageRead
 
 
@@ -14,6 +16,72 @@ class CareerPageHandler:
     def get_by_id(self, page_id: int) -> Optional[CareerPage]:
         statement = select(CareerPage).where(CareerPage.id == page_id)
         return self.db_session.exec(statement).first()
+
+    def list(self, filters: CareerPageFilter) -> list[CareerPage]:
+        query = select(CareerPage)
+        provided = filters.model_dump(exclude_none=True)
+
+        filter_builders = {
+            "company_name": lambda value: func.lower(
+                col(CareerPage.company_name)
+            ).contains(value.lower()),
+            "url": lambda value: func.lower(col(CareerPage.url)).contains(
+                value.lower()
+            ),
+            "active": lambda value: col(CareerPage.active) == value,
+            "last_synced_at_gte": lambda value: (
+                col(CareerPage.last_synced_at) >= value
+            ),
+            "last_synced_at_lte": lambda value: (
+                col(CareerPage.last_synced_at) <= value
+            ),
+            "deactivated_at_gte": lambda value: (
+                col(CareerPage.deactivated_at) >= value
+            ),
+            "deactivated_at_lte": lambda value: (
+                col(CareerPage.deactivated_at) <= value
+            ),
+            "last_status_code": lambda value: (
+                col(CareerPage.last_status_code) == value
+            ),
+        }
+
+        for field_name, value in provided.items():
+            builder = filter_builders.get(field_name)
+            if builder is not None:
+                query = query.where(builder(value))
+
+        query = query.order_by(
+            nulls_last(desc(CareerPage.last_synced_at)), desc(CareerPage.id)  # type: ignore[arg-type]
+        )
+        return self.db_session.exec(query).all()
+
+    def select_for_sync(
+        self,
+        career_page_ids: List[int] | None,
+        max_age_hours: int | None,
+        include_inactive: bool,
+    ) -> List[CareerPage]:
+        query = select(CareerPage)
+        if not include_inactive:
+            query = query.where(col(CareerPage.active).is_(True))
+
+        if career_page_ids:
+            query = query.where(CareerPage.id.in_(career_page_ids))  # type: ignore[attr-defined]
+            return self.db_session.exec(query).all()
+
+        if max_age_hours is not None:
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
+            query = query.where(
+                or_(
+                    col(CareerPage.last_synced_at).is_(None),
+                    col(CareerPage.last_synced_at) < cutoff,
+                )
+            )
+        else:
+            query = query.where(col(CareerPage.last_synced_at).is_(None))
+
+        return self.db_session.exec(query).all()
 
     def get_all_active(self) -> Sequence[CareerPage]:
         statement = select(CareerPage).where(col(CareerPage.active).is_(True))

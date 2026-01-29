@@ -36,8 +36,14 @@ start-db:
 main:
 	poetry run python3 main.py
 
-scrape:
-	poetry run python3 -m app.workers.job_scraper > scrapping_logs.txt
+sync-ats:
+	poetry run python3 -m app.workers.sync_ats > scrapping_ats_logs.txt
+
+sync-linkedin:
+	poetry run python3 -m app.workers.sync_linkedin > scrapping_linkedin_logs.txt
+
+sync-all:
+	poetry run python3 -m app.workers.sync_all > scrapping_logs.txt
 
 analyse:
 	poetry run python3 -m app.workers.job_analyser
