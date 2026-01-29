@@ -1045,4 +1045,14 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/typeform",
         "active": True,
     },
+    {
+        "company_name": "saas group",
+        "url": "https://job-boards.eu.greenhouse.io/saasgroup",
+        "active": True,
+    },
+    {
+        "company_name": "saas group",
+        "url": "https://job-boards.greenhouse.io/craftsman",
+        "active": True,
+    },
 ]

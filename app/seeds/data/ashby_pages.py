@@ -655,4 +655,24 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/Restream",
         "active": True,
     },
+    {
+        "company_name": "welltech",
+        "url": "https://jobs.ashbyhq.com/welltech",
+        "active": True,
+    },
+    {
+        "company_name": "socure",
+        "url": "https://jobs.ashbyhq.com/socure",
+        "active": True,
+    },
+    {
+        "company_name": "rasa",
+        "url": "https://jobs.ashbyhq.com/rasa",
+        "active": True,
+    },
+    {
+        "company_name": "mural",
+        "url": "https://jobs.ashbyhq.com/mural",
+        "active": True,
+    },
 ]

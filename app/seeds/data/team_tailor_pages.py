@@ -11121,4 +11121,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://careers.fyul.com/",
         "active": True,
     },
+    {
+        "company_name": "hymeth",
+        "url": "https://careers.hymeth.com/",
+        "active": True,
+    },
 ]
