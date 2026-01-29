@@ -48,7 +48,9 @@ def should_save_job(job_post: JobPost) -> bool:
     return False
 
 
-def build_jobs_to_save(response: JobResponse) -> list[Job]:
+def build_jobs_to_save(
+    response: JobResponse, *, career_page_id: int | None = None
+) -> list[Job]:
     jobs: list[Job] = []
     for job_post in response.jobs:
         country = job_post.location.country if job_post.location else None
@@ -74,6 +76,7 @@ def build_jobs_to_save(response: JobResponse) -> list[Job]:
                 listing_date=job_post.listing_date or job_post.date_posted,
                 listing_remote=job_post.remote_status,
                 source=job_post.source,
+                career_page_id=career_page_id,
             )
             jobs.append(Job.model_validate(job))
 
@@ -214,7 +217,7 @@ def run_ats_scrapers(db_session: Session):
         sleep(settings.ATS_SCRAPER_DELAY_SECONDS)
         response = ats_scraper.scrape()
         jobs_processed += len(response.jobs)
-        jobs_to_save = build_jobs_to_save(response)
+        jobs_to_save = build_jobs_to_save(response, career_page_id=page.id)
         if jobs_to_save:
             jobs_saved += len(jobs_to_save)
             pending_jobs.extend(jobs_to_save)

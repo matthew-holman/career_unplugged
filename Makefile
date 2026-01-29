@@ -48,6 +48,9 @@ create-user:
 seed-career-pages:
 	poetry run python3 -m app.workers.seed_career_pages
 
+backfill-job-career-page:
+	poetry run python3 -m app.workers.backfill_job_career_page
+
 urlscan-first-level:
 	poetry run python3 -m app.seeds.url_scan_client $(domain)
 

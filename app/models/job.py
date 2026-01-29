@@ -30,6 +30,9 @@ class JobBase(BaseModel, table=False):  # type: ignore
     negative_keyword_match: bool = Field(nullable=True, default=False)
     source: Source = Field(nullable=False, default=Source.LINKEDIN)
     source_url: str = Field(nullable=False, primary_key=False, unique=True)
+    career_page_id: int | None = Field(
+        default=None, foreign_key="career_page.id", index=True
+    )
 
 
 class Job(JobBase, table=True):  # type: ignore

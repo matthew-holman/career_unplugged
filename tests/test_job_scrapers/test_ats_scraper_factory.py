@@ -111,7 +111,7 @@ def test_get_ats_scraper_deactivates_on_301(monkeypatch):
 
 def test_get_ats_scraper_ignores_301_to_customer_domain(monkeypatch, caplog):
     redirect = _FakeResponse("", status_code=301)
-    html = '<div class="lever-jobs-container"></div>'
+    html = '<div class="lever.co"></div>'
     monkeypatch.setattr(
         AtsScraper,
         "_fetch_page",
