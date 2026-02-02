@@ -3,13 +3,22 @@ import re
 from bs4 import BeautifulSoup
 
 from app.db.db import get_db
+from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
 from app.job_analysis import DescriptionExtractorFactory
-from app.job_scrapers.scraper import RemoteStatus
+from app.job_analysis.description_extractors.linkedin import (
+    extract_external_apply_url_from_linkedin_html,
+)
+from app.job_scrapers.scraper import RemoteStatus, Source
 from app.job_scrapers.utils import create_session
 from app.log import Log
+from app.models.career_page import CareerPageCreate
 from app.search_profile import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 from app.settings import settings
+from app.utils.ats_discovery import (
+    discover_career_page,
+    extract_slug_from_career_page_url,
+)
 
 REMOTE_REG_EX_PATTERNS = [
     r"\s(GMT|CET)\s",
@@ -93,13 +102,8 @@ def _fetch_job_page(session, job) -> str | None:
     return response.text
 
 
-def _extract_job_description(session, job) -> str | None:
-    description_html = _fetch_job_page(session, job)
-
-    if not description_html:
-        return None
-
-    soup = BeautifulSoup(description_html, "html.parser")
+def _extract_job_description(job_page_html: str, job) -> str | None:
+    soup = BeautifulSoup(job_page_html, "html.parser")
 
     extractor = DescriptionExtractorFactory.get_for_source(job.source)
     if not extractor:
@@ -111,8 +115,46 @@ def _extract_job_description(session, job) -> str | None:
     return extractor.extract_description(soup) or ""
 
 
-def _apply_description_analysis(job, session) -> None:
-    job_description_text = _extract_job_description(session, job)
+def _discover_career_page_from_linkedin(
+    job,
+    job_page_html: str,
+    career_page_handler: CareerPageHandler,
+) -> None:
+    external_apply_url = extract_external_apply_url_from_linkedin_html(job_page_html)
+    if not external_apply_url:
+        return
+
+    discovery = discover_career_page(external_apply_url)
+    if not discovery:
+        return
+
+    canonical_url = discovery.url
+    slug = extract_slug_from_career_page_url(canonical_url)
+    # Prefer ATS slugs to keep naming consistent across discovered pages.
+    company_name = slug or job.company
+
+    _, created = career_page_handler.upsert_discovered(
+        CareerPageCreate(company_name=company_name, url=canonical_url)
+    )
+    if created:
+        provider = discovery.source.value
+        Log.info(
+            f"Discovered {provider} career page from LinkedIn job: {canonical_url}"
+        )
+
+
+def _apply_description_analysis(
+    job, session, career_page_handler: CareerPageHandler
+) -> None:
+    job_page_html = _fetch_job_page(session, job)
+    if not job_page_html:
+        job.mark_analysed()
+        return
+
+    if job.source == Source.LINKEDIN:
+        _discover_career_page_from_linkedin(job, job_page_html, career_page_handler)
+
+    job_description_text = _extract_job_description(job_page_html, job)
     if job_description_text is None:
         job.mark_analysed()
         return
@@ -167,6 +209,7 @@ def _flush_pending_jobs(
 def main() -> int:
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
+        career_page_handler = CareerPageHandler(db_session)
         jobs = job_handler.get_pending_analysis()
         batch_size = settings.DB_BATCH_SIZE
         pending_jobs: list = []
@@ -187,7 +230,7 @@ def main() -> int:
         session = create_session(is_tls=False, has_retry=True, delay=15)
         for job in jobs:
             jobs_processed += 1
-            _apply_description_analysis(job, session)
+            _apply_description_analysis(job, session, career_page_handler)
             jobs_saved += 1
             pending_jobs.append(job)
             pending_jobs = _flush_pending_jobs(

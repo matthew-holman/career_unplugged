@@ -356,6 +356,10 @@ class AtsScraper:
             r"\bonsite\b",
             r"\bhybrid\b",
             r"\bremote\b",
+            r"\bgreater\b",
+            r"\bmetropolitan\b",
+            r"\barea\b",
+            r"\bregion\b",
         ]
         for pattern in patterns:
             text = re.sub(pattern, "", text, flags=re.IGNORECASE)

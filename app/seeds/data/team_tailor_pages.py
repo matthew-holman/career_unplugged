@@ -11126,4 +11126,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://careers.hymeth.com/",
         "active": True,
     },
+    {
+        "company_name": "quizrr",
+        "url": "https://career.quizrr.se/",
+        "active": True,
+    },
 ]

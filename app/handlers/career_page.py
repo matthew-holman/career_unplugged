@@ -17,6 +17,30 @@ class CareerPageHandler:
         statement = select(CareerPage).where(CareerPage.id == page_id)
         return self.db_session.exec(statement).first()
 
+    def get_by_url(self, url: str) -> Optional[CareerPage]:
+        statement = select(CareerPage).where(
+            func.lower(col(CareerPage.url)) == url.lower()
+        )
+        return self.db_session.exec(statement).first()
+
+    def upsert_discovered(
+        self, page: CareerPageCreate
+    ) -> tuple[CareerPage | None, bool]:
+        existing = self.get_by_url(page.url)
+        if existing:
+            if not existing.active:
+                return None, False
+            if page.company_name and not existing.company_name:
+                existing.company_name = page.company_name
+                self.db_session.add(existing)
+                self.db_session.flush()
+            return existing, False
+
+        validated_page = CareerPage.model_validate(page)
+        self.db_session.add(validated_page)
+        self.db_session.flush()
+        return validated_page, True
+
     def list(self, filters: CareerPageFilter) -> list[CareerPage]:
         query = select(CareerPage)
         provided = filters.model_dump(exclude_none=True)
