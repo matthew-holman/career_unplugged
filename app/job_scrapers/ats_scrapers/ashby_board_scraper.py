@@ -21,7 +21,7 @@ class AshbyBoardScraper(AtsScraper):
         return Source.ASHBY
 
     @classmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         for script in soup.select("script"):
             if JSON_DATA_VAR in script.text and JSON_JOB_BOARD_KEY in script.text:
                 return True

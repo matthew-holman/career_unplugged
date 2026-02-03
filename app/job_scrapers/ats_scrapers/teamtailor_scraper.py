@@ -22,7 +22,7 @@ class TeamTailorScraper(AtsScraper):
         return Source.TEAMTAILOR
 
     @classmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         html = str(soup).lower()
         if "teamtailor-cdn" in html:
             Log.debug(f"Detected {cls.__name__} page with jobs list")

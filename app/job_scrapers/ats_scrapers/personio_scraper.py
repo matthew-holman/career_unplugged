@@ -15,7 +15,7 @@ class PersonioScraper(AtsScraper):
         return Source.PERSONIO
 
     @classmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         html = str(soup).lower()
         if "personio.de" in html:
             return True

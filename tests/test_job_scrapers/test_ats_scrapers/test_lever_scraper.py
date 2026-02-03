@@ -12,7 +12,7 @@ def test_lever_supports_positive() -> None:
     html = '<div class="lever-jobs-container"></div>'
     soup = BeautifulSoup(html, "html.parser")
 
-    assert LeverScraper.supports(soup) is True
+    assert LeverScraper.supports(url="https://example.com", soup=soup) is True
 
 
 def test_lever_supports_negative() -> None:
@@ -22,7 +22,7 @@ def test_lever_supports_negative() -> None:
 
     soup = BeautifulSoup("<html></html>", "html.parser")
 
-    assert LeverScraper.supports(soup) is False
+    assert LeverScraper.supports(url="https://example.com", soup=soup) is False
 
 
 @pytest.mark.integration

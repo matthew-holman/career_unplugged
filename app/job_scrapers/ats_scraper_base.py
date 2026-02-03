@@ -28,12 +28,18 @@ class AtsScraper:
     """
     Base interface for all ATS scrapers.
     Each subclass must implement:
-      - supports(soup: BeautifulSoup) -> bool
+      - supports(url: str, soup: BeautifulSoup) -> bool
       - scrape(scraper_input: Optional[ScraperInput]) -> JobResponse
     """
 
-    def __init__(self, career_page: CareerPage):
+    def __init__(
+        self,
+        career_page: CareerPage,
+        *,
+        initial_response: Optional[Response] = None,
+    ):
         self.career_page = career_page
+        self._initial_response = initial_response
 
     @property
     @abstractmethod
@@ -43,7 +49,7 @@ class AtsScraper:
 
     @classmethod
     @abstractmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         """Return True if this scraper can handle the given page soup."""
         raise NotImplementedError
 
@@ -61,12 +67,19 @@ class AtsScraper:
             Log.warning(f"Could not resolve jobs index URL for {self.career_page.url}")
             return JobResponse(jobs=[])
 
-        response = self._fetch_jobs_page(jobs_url)
+        response = self._initial_response or self._fetch_jobs_page(jobs_url)
         if not response:
+            return JobResponse(jobs=[])
+
+        if response.status_code != 200:
+            Log.warning(f"Failed to fetch {jobs_url}: {response.status_code}")
             return JobResponse(jobs=[])
 
         soup = BeautifulSoup(response.text, "html.parser")
 
+        return self._scrape_from_soup(soup, jobs_url)
+
+    def _scrape_from_soup(self, soup: BeautifulSoup, jobs_url: str) -> JobResponse:
         job_cards = list(self.find_job_cards(soup))
         if not job_cards:
             Log.warning(f"No job cards found on {jobs_url}")

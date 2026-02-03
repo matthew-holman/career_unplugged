@@ -23,7 +23,7 @@ class LeverScraper(AtsScraper):
         return Source.LEVER
 
     @classmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         html = str(soup).lower()
         if "lever-jobs-embed" in html or "lever.co" in html:
             return True

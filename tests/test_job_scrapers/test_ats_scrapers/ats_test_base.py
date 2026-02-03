@@ -47,7 +47,7 @@ def run_ats_scraper_test(
 
     html = response.text or response.content
     soup = BeautifulSoup(html, "html.parser")
-    supports = scraper_cls.supports(soup)
+    supports = scraper_cls.supports(url=career_page.url, soup=soup)
     assert supports is True, f"{scraper_cls.__name__}.supports() returned False"
 
     scraper = scraper_cls(career_page)

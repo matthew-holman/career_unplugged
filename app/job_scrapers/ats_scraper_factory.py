@@ -57,9 +57,9 @@ class AtsScraperFactory:
         soup = BeautifulSoup(html, "html.parser")
 
         for scraper_cls in cls.SCRAPERS:
-            if scraper_cls.supports(soup):
+            if scraper_cls.supports(url=career_page.url, soup=soup):
                 Log.info(f"Matched {scraper_cls.__name__} for {career_page.url}")
-                return scraper_cls(career_page)
+                return scraper_cls(career_page, initial_response=response)
         Log.warning(f"No ATS scraper matched for {career_page.url}")
         return None
 

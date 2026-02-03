@@ -21,7 +21,7 @@ class RecruiteeScraper(AtsScraper):
         return Source.RECRUITEE
 
     @classmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         html = str(soup).lower()
         if "recruiteecdn" in html and 'data-testid="offer-list-grid"' in html:
             return True

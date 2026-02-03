@@ -28,7 +28,7 @@ class GreenHouseEmbedScraper(AtsScraper):
         return Source.GREENHOUSE_EMBEDDED
 
     @classmethod
-    def supports(cls, soup: BeautifulSoup) -> bool:
+    def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
         html = str(soup).lower()
         if "greenhouse-job-board" in html or "greenhouse-board" in html:
             return True
