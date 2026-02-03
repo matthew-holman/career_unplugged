@@ -19,21 +19,6 @@ JOBYLON_PAGE_SEEDS = [
     {"company_name": "bonava", "url": "https://careers.bonava.com", "active": True},
     {"company_name": "catena", "url": "https://careers.catena.se", "active": True},
     {"company_name": "dometic", "url": "https://careers.dometic.com", "active": True},
-    {
-        "company_name": "handverksdata",
-        "url": "https://careers.handverksdata.no",
-        "active": True,
-    },
-    {
-        "company_name": "handwerksdata",
-        "url": "https://careers.handwerksdata.de",
-        "active": True,
-    },
-    {
-        "company_name": "hantverksdata",
-        "url": "https://careers.hantverksdata.se",
-        "active": True,
-    },
     {"company_name": "klarpris", "url": "https://careers.klarpris.dk", "active": True},
     {"company_name": "lyko", "url": "https://careers.lyko.com", "active": True},
     {

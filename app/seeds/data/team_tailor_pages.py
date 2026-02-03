@@ -11131,4 +11131,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://career.quizrr.se/",
         "active": True,
     },
+    {
+        "company_name": "aceve",
+        "url": "https://career.aceve.com/",
+        "active": True,
+    },
 ]

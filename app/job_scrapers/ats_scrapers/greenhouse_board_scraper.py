@@ -26,7 +26,9 @@ class GreenHouseBoardScraper(AtsScraper):
     def supports(cls, soup: BeautifulSoup) -> bool:
         if soup.select_one("div.job-posts"):
             return True
-        if soup.select_one('a[href*="job-boards.greenhouse.io"]'):
+        if soup.select_one('a[href*="job-boards.greenhouse.io"]') or soup.select_one(
+            'a[href*="job-boards.eu.greenhouse.io"]'
+        ):
             return True
         return False
 
