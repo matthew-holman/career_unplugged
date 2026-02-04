@@ -15,6 +15,7 @@ from app.routers.dashboard import router as dashboard
 from app.routers.job import router as job
 from app.routers.regions import router as regions
 from app.routers.sync import router as sync
+from app.routers.user import router as user
 from app.routers.worker_runs import router as worker_runs
 from app.settings import settings
 
@@ -39,6 +40,7 @@ def get_app():
     application.include_router(job)
     application.include_router(regions)
     application.include_router(sync)
+    application.include_router(user)
     application.include_router(worker_runs)
 
     @application.exception_handler(HTTPException)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup, Tag
 
@@ -15,6 +15,9 @@ class _LocationMatch:
     location_raw: str | None
 
 
+RECRUITEE_HOST_SUFFIX = ".recruitee.com"
+
+
 class RecruiteeScraper(AtsScraper):
     @property
     def source_name(self) -> Source:
@@ -22,11 +25,8 @@ class RecruiteeScraper(AtsScraper):
 
     @classmethod
     def supports(cls, *, url: str, soup: BeautifulSoup) -> bool:
-        html = str(soup).lower()
-        if "recruiteecdn" in html and 'data-testid="offer-list-grid"' in html:
-            return True
-
-        return False
+        hostname = urlparse(url).hostname or ""
+        return hostname.endswith(RECRUITEE_HOST_SUFFIX)
 
     def find_job_cards(self, soup: BeautifulSoup) -> list[Tag]:
         containers = soup.select('[data-testid="offer-list-grid"]')

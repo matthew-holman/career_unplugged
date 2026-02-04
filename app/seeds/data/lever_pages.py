@@ -464,4 +464,9 @@ LEVER_PAGE_SEEDS = [
     {"company_name": "xero", "url": "https://jobs.lever.co/xero", "active": True},
     {"company_name": "xero", "url": "https://jobs.lever.co/connectly", "active": True},
     {"company_name": "xero", "url": "https://jobs.lever.co/plaid/", "active": True},
+    {
+        "company_name": "collabora",
+        "url": "https://jobs.lever.co/collabora",
+        "active": True,
+    },
 ]

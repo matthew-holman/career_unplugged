@@ -131,11 +131,15 @@ class AtsScraper:
         url: str,
         *,
         return_non_200: bool = False,
+        headers: dict[str, str] | None = None,
     ) -> Optional[Response]:
+        request_headers = {"User-Agent": "Mozilla/5.0"}
+        if headers:
+            request_headers.update(headers)
         try:
             response = requests.get(
                 url,
-                headers={"User-Agent": "Mozilla/5.0"},
+                headers=request_headers,
                 # Tuple timeout: (connect_timeout, read_timeout)
                 timeout=(5, 10),
             )

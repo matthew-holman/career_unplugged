@@ -52,6 +52,8 @@ JOB_TITLES: List[str] = [
     "Product Engineer",
     "Technical Project Manager",
     "Technical Product Manager",
+    "Python",
+    "FastAPI",
 ]
 
 # the linkedin search is weird, I think it also checks skills listed against
@@ -70,6 +72,7 @@ COMPANIES_TO_IGNORE: List[str] = ["Canonical", "Crossover"]
 JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="Berlin, Germany", remote=False),
     SearchLocation(location="Berlin, Germany", remote=True),
+    SearchLocation(location="Germany", remote=True),
     SearchLocation(location="London Area, United Kingdom", remote=False),
     SearchLocation(location="London Area, United Kingdom", remote=True),
     SearchLocation(location="Amsterdam, North Holland, Netherlands", remote=False),
@@ -82,6 +85,9 @@ JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="Stockholm, Stockholm County, Sweden", remote=False),
     SearchLocation(location="Stockholm, Stockholm County, Sweden", remote=True),
     SearchLocation(location="Sweden", remote=True),
+    SearchLocation(location="Denmark", remote=True),
+    SearchLocation(location="Norway", remote=True),
+    SearchLocation(location="Norway", remote=True),
     SearchLocation(location="European Union", remote=True),
     SearchLocation(location="Finland", remote=True),
     SearchLocation(location="Helsinki Metropolitan Area", remote=True),

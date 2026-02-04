@@ -6,6 +6,7 @@ from app.job_scrapers.ats_scraper_factory import (
     CareerPageDeactivatedError,
 )
 from app.job_scrapers.ats_scrapers.ashby_board_scraper import AshbyBoardScraper
+from app.job_scrapers.ats_scrapers.hibob_scraper import HiBobScraper
 from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 from app.models import CareerPage
 
@@ -62,6 +63,22 @@ def test_get_ats_scraper_lever(monkeypatch):
     ats_scraper = AtsScraperFactory.get_ats_scraper(career_page)
 
     assert isinstance(ats_scraper, LeverScraper)
+
+
+def test_get_ats_scraper_hibob(monkeypatch):
+    html = "<meta property='og:url' content='https://wiredscore.careers.hibob.com/'>"
+    monkeypatch.setattr(
+        AtsScraper, "_fetch_page", lambda url, **kwargs: _FakeResponse(html)
+    )
+
+    career_page = CareerPage(
+        company_name="wiredscore",
+        url="https://wiredscore.careers.hibob.com/",
+    )
+
+    ats_scraper = AtsScraperFactory.get_ats_scraper(career_page)
+
+    assert isinstance(ats_scraper, HiBobScraper)
 
 
 def test_get_ats_scraper_deactivates_on_404(monkeypatch):

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from urllib.parse import urlparse
 
+from app.job_scrapers.ats_scrapers.hibob_scraper import HIBOB_HOST_SUFFIX
 from app.job_scrapers.scraper import Source
 
 GREENHOUSE_HOSTS = {"job-boards.greenhouse.io", "job-boards.eu.greenhouse.io"}
@@ -17,6 +18,7 @@ SUFFIX_SOURCES: tuple[tuple[str, Source, bool], ...] = (
     (".recruitee.com", Source.RECRUITEE, False),
     (".personio.com", Source.PERSONIO, False),
     (".personio.de", Source.PERSONIO, False),
+    (HIBOB_HOST_SUFFIX, Source.HIBOB, False),
 )
 
 

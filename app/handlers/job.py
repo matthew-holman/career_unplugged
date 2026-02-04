@@ -7,6 +7,7 @@ from sqlmodel import Session, col, select
 
 from app.db.db import upsert
 from app.filters.job import JobFilter
+from app.filters.user_activity import UserActivityFilter
 from app.job_scrapers.scraper import RemoteStatus
 from app.models.job import Job, JobRead
 from app.models.user_job import UserJob
@@ -123,6 +124,85 @@ class JobHandler:
 
         if "applied" not in provided and "ignored" not in provided:
             query = query.where(applied_expr.is_(False), ignored_expr.is_(False))
+
+        results = self.db_session.exec(query).all()
+        return [
+            JobWithUserStateRead(
+                **JobRead.model_validate(job).model_dump(),
+                applied=applied,
+                ignored=ignored,
+            )
+            for job, applied, ignored in results
+        ]
+
+    def list_user_activity(
+        self, filters: UserActivityFilter, user_id: int
+    ) -> list[JobWithUserStateRead]:
+        applied_expr = UserJob.applied
+        ignored_expr = UserJob.ignored
+
+        query = (
+            select(
+                Job,
+                applied_expr.label("applied"),  # type: ignore[attr-defined]
+                ignored_expr.label("ignored"),  # type: ignore[attr-defined]
+            )
+            .join(
+                UserJob,
+                and_(UserJob.job_id == Job.id, UserJob.user_id == user_id),  # type: ignore[arg-type]
+            )
+            .select_from(Job)
+        )
+
+        provided = filters.model_dump(exclude_none=True)
+        provided.pop("activity", None)
+        filter_builders = {
+            "title": lambda value: Job.title == value,
+            "company": lambda value: Job.company == value,
+            "country": lambda value: Job.country == value,
+            "city": lambda value: Job.city == value,
+            "positive_keyword_match": lambda value: (
+                Job.positive_keyword_match == value
+            ),
+            "negative_keyword_match": lambda value: (
+                Job.negative_keyword_match == value
+            ),
+            "true_remote": lambda value: Job.true_remote == value,
+            "analysed": lambda value: Job.analysed == value,
+            "listing_remote": lambda value: Job.listing_remote == value,
+            "source": lambda value: Job.source == value,
+            "created_at_gte": lambda value: Job.created_at >= value,
+            "created_at_lte": lambda value: Job.created_at <= value,
+            "listing_date_gte": lambda value: col(Job.listing_date) >= value,
+            "listing_date_lte": lambda value: col(Job.listing_date) <= value,
+            "applied": lambda value: applied_expr == value,
+            "ignored": lambda value: ignored_expr == value,
+        }
+
+        for field_name, value in provided.items():
+            builder = filter_builders.get(field_name)
+            if builder is not None:
+                query = query.where(builder(value))
+
+        if filters.recent_days is not None:
+            cutoff = datetime.now(timezone.utc) - timedelta(days=filters.recent_days)
+            query = query.where(Job.created_at >= cutoff)
+        if filters.eu_remote is True:
+            eu_countries = sorted(EuropeFilter.EU_COUNTRIES)
+            eu_match = func.lower(col(Job.country)).in_(eu_countries)
+            eu_remote = or_(
+                col(Job.true_remote).is_(True),
+                and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
+            )
+            query = query.where(eu_remote)
+
+        if filters.applied is None and filters.ignored is None:
+            if filters.activity == "applied":
+                query = query.where(applied_expr.is_(True))  # type: ignore[attr-defined]
+            elif filters.activity == "ignored":
+                query = query.where(ignored_expr.is_(True))  # type: ignore[attr-defined]
+            else:
+                query = query.where(or_(applied_expr.is_(True), ignored_expr.is_(True)))  # type: ignore[attr-defined]
 
         results = self.db_session.exec(query).all()
         return [
