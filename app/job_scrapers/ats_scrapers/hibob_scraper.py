@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
-from app.job_scrapers.scraper import JobPost, Source
+from app.job_scrapers.scraper import JobPost, Location, Source
 from app.log import Log
 
 HIBOB_HOST_SUFFIX = "careers.hibob.com"
@@ -59,20 +59,8 @@ class HiBobScraper(AtsScraper):
             )
             return None
 
-        location_raw = None
-        site = card.get("site")
-        if isinstance(site, str) and site.strip():
-            location_raw = site.strip()
-        country = card.get("country")
-        if not location_raw and isinstance(country, str):
-            location_raw = country.strip()
-
-        workspace_type = card.get("workspaceType")
-        card_text_parts = [title, location_raw, workspace_type]
-        card_text = " ".join(part for part in card_text_parts if part)
-        location, remote_status = AtsScraper.extract_location_and_remote_status(
-            card_text=card_text, location_hint=location_raw
-        )
+        location = Location(city=card.get("site"), country=card.get("country"))
+        remote_status = AtsScraper._detect_remote_status(card.get("workspaceType"))
 
         published_at = card.get("publishedAt")
         listing_date = self._parse_published_date(published_at)

@@ -28,20 +28,10 @@ class _FakeResponse:
         self.url = url
 
 
-def test_get_ats_scraper_ashby(monkeypatch):
-    html = (
-        "<html><script>"
-        'window.__appData = {"jobBoard": {"jobPostings": []}};'
-        "</script></html>"
-    )
-
-    monkeypatch.setattr(
-        AtsScraper, "_fetch_page", lambda url, **kwargs: _FakeResponse(html)
-    )
+def test_get_ats_scraper_ashby():
 
     career_page = CareerPage(
-        company_name="aspora",
-        url="https://jobs.ashbyhq.com/aspora",
+        company_name="aspora", url="https://highlights.teamtailor.com/"
     )
 
     ats_scraper = AtsScraperFactory.get_ats_scraper(career_page)

@@ -10,8 +10,8 @@ def test_hibob_scraper() -> None:
     from app.job_scrapers.ats_scrapers.hibob_scraper import HiBobScraper
 
     career_page = CareerPage(
-        company_name="wiredscore",
-        url="https://wiredscore.careers.hibob.com/",
+        company_name="provider trust",
+        url="https://providertrust.careers.hibob.com/",
     )
 
     run_ats_scraper_test(

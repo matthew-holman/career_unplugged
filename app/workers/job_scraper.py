@@ -105,6 +105,10 @@ def run_ats_scrapers(db_session: Session):
                 f"with status {exc.status_code}"
             )
             continue
+        except KeyboardInterrupt:
+            Log.error(f"KeyboardInterrupt while fetching: {page.url}")
+            raise
+
         if not ats_scraper:
             Log.warning(f"No supported ATS parser for {page.url}")
             continue

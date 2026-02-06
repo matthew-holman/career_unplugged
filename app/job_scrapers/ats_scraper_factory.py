@@ -45,8 +45,11 @@ class AtsScraperFactory:
     def get_ats_scraper(cls, career_page: CareerPage) -> Optional[AtsScraper]:
         if not career_page.active:
             return None
+        try:
+            response = AtsScraper._fetch_page(career_page.url, return_errors=True)
+        except ConnectionError:
+            raise CareerPageDeactivatedError(status_code=495)
 
-        response = AtsScraper._fetch_page(career_page.url, return_non_200=True)
         if response is None:
             Log.warning(f"Failed to fetch career page for {career_page.url}")
             return None

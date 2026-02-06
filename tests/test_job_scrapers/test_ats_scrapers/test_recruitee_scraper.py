@@ -10,8 +10,8 @@ def test_recruitee_scraper() -> None:
     from app.job_scrapers.ats_scrapers.recruitee_scraper import RecruiteeScraper
 
     career_page = CareerPage(
-        company_name="hostaway",
-        url="https://careers.hostaway.com/",
+        company_name="scrumsdotcom",
+        url="https://scrumsdotcom.recruitee.com/",
     )
 
     run_ats_scraper_test(

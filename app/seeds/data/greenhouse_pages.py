@@ -1055,4 +1055,9 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/craftsman",
         "active": True,
     },
+    {
+        "company_name": "sumup",
+        "url": "https://job-boards.greenhouse.io/sumup",
+        "active": True,
+    },
 ]

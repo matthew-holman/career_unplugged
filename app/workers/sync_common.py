@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections import Counter
+
 from sqlmodel import Session
 
 from app.handlers.job import JobHandler
@@ -75,8 +77,34 @@ def flush_pending_jobs(
     if not force and len(pending_jobs) < batch_size:
         return pending_jobs
 
+    # Deduplicate within the batch to avoid:
+    # psycopg2.errors.CardinalityViolation: ON CONFLICT DO UPDATE command cannot affect row a second time
+    #
+    # "Last write wins" is usually the least surprising in scraping pipelines,
+    # because later passes may have richer/more-correct fields.
+    jobs_by_source_url: dict[str, Job] = {}
+    for job in pending_jobs:
+        # Defensive: ignore impossible/invalid entries rather than crashing the whole batch
+        if not job.source_url:
+            continue
+        jobs_by_source_url[job.source_url] = job
+
+    deduped_jobs = list(jobs_by_source_url.values())
+
+    # Optional logging to prove you fixed the problem (and to find upstream dup sources)
+    if len(deduped_jobs) != len(pending_jobs):
+        source_url_counts = Counter(
+            job.source_url for job in pending_jobs if job.source_url
+        )
+        duplicate_count = sum(1 for count in source_url_counts.values() if count > 1)
+        Log.warning(
+            "Deduped pending_jobs before insert: "
+            f"{len(pending_jobs)} -> {len(deduped_jobs)} "
+            f"({duplicate_count} duplicated source_url values)"
+        )
+
     try:
-        job_handler.save_all(pending_jobs)
+        job_handler.save_all(deduped_jobs)
         db_session.commit()
         return []
     except Exception as exc:

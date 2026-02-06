@@ -58,7 +58,6 @@ def run_sync_ats_with_session(
 
     jobs_processed = 0
     jobs_saved = 0
-    pages_selected = 0
     pages_synced = 0
     pages_deactivated = 0
 

@@ -491,7 +491,6 @@ CAREER_PAGE_SEEDS = [
         "url": "https://www.starlingbank.com/careers",
         "active": True,
     },
-    {"company_name": "sumup", "url": "https://www.sumup.com/careers", "active": True},
     {"company_name": "tesla", "url": "https://www.tesla.com/careers", "active": True},
     {"company_name": "uplift", "url": "https://www.uplift.ltd/careers", "active": True},
     {"company_name": "zencity", "url": "https://zencity.io/careers", "active": True},
@@ -508,11 +507,6 @@ CAREER_PAGE_SEEDS = [
     {
         "company_name": "instagram",
         "url": "https://about.instagram.com/about-us/careers",
-        "active": True,
-    },
-    {
-        "company_name": "rippling-ats",
-        "url": "https://www.rippling.com/en-GB/careers/",
         "active": True,
     },
     {

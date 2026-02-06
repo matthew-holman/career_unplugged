@@ -130,7 +130,7 @@ class AtsScraper:
     def _fetch_page(
         url: str,
         *,
-        return_non_200: bool = False,
+        return_errors: bool = False,
         headers: dict[str, str] | None = None,
     ) -> Optional[Response]:
         request_headers = {"User-Agent": "Mozilla/5.0"}
@@ -151,14 +151,17 @@ class AtsScraper:
             Log.warning(f"Timeout while fetching {url}")
             return None
         except ConnectionError as exc:
-            Log.warning(f"Connection error while fetching {url}: {exc}")
-            return None
+            if return_errors:
+                raise ConnectionError
+            else:
+                Log.warning(f"Connection error while fetching {url}: {exc}")
+                return None
         except requests.RequestException as exc:
             # Catch-all for requests/urllib3 errors (DNS, SSL, etc.)
             Log.warning(f"Request error while fetching {url}: {exc}")
             return None
 
-        if response.status_code != 200 and not return_non_200:
+        if response.status_code != 200 and not return_errors:
             Log.warning(f"Failed to fetch {url}: {response.status_code}")
             return None
 
@@ -180,7 +183,6 @@ class AtsScraper:
             return JobType.INTERNSHIP
 
         if re.search(r"\bpart time\b|\bparttime\b|\b%?\s*50\b|\b%?\s*60\b", value):
-            # Note: percent detection is optional; remove if too magic.
             return JobType.PART_TIME
 
         if re.search(
@@ -254,8 +256,10 @@ class AtsScraper:
     def _pick_location_candidate(
         cls, card_text: str, location_hint: str | None
     ) -> Optional[str]:
-        if location_hint and cls._is_location_hint_valid(location_hint):
-            return cls._clean_location_hint(location_hint)
+        if location_hint:
+            cleaned_hint = cls._clean_location_hint(location_hint)
+            if cls._is_location_hint_valid(cleaned_hint):
+                return cleaned_hint
 
         candidate = cls._extract_location_candidate_from_text(card_text)
         if candidate:
@@ -272,7 +276,7 @@ class AtsScraper:
             if cls._is_location_hint_valid(chunk):
                 return cls._clean_location_hint(chunk)
 
-        pattern = re.compile(r"([A-Za-zÀ-ÖØ-öø-ÿ.'\- ]+),\\s*([A-Za-zÀ-ÖØ-öø-ÿ.'\- ]+)")
+        pattern = re.compile(r"([A-Za-zÀ-ÖØ-öø-ÿ.'\- ]+),\s*([A-Za-zÀ-ÖØ-öø-ÿ.'\- ]+)")
         for match in pattern.finditer(text):
             candidate = f"{match.group(1).strip()}, {match.group(2).strip()}"
             if cls._is_location_hint_valid(candidate):
@@ -282,6 +286,10 @@ class AtsScraper:
 
     @classmethod
     def _is_location_hint_valid(cls, hint: str) -> bool:
+        """
+        "Valid" here means: it looks like a specific country or a city/location
+        we can resolve to a country, OR one of a few known region tokens (e.g. Europe).
+        """
         cleaned = cls._clean_location_hint(hint)
         if not cleaned:
             return False
@@ -290,22 +298,43 @@ class AtsScraper:
         if re.search(r"\b(eu|emea|europe|european union)\b", lowered):
             return True
 
+        # Handle comma forms by checking both sides against our two primitives:
+        # - is_country(token): token is a country name
+        # - resolve_country(token): token is a city/location and returns its country
         if "," in cleaned:
-            right = cleaned.split(",", 1)[-1].strip()
-            if CountryResolver.resolve_country(right):
+            left, right = (p.strip() for p in cleaned.split(",", 1))
+            if (
+                (right and CountryResolver.is_country(right))
+                or (left and CountryResolver.resolve_country(left) is not None)
+                or (right and CountryResolver.resolve_country(right) is not None)
+            ):
                 return True
 
-        if CountryResolver.resolve_country(cleaned):
+        if CountryResolver.is_country(cleaned):
+            return True
+
+        if CountryResolver.resolve_country(cleaned) is not None:
             return True
 
         return False
 
     @classmethod
     def _clean_location_hint(cls, hint: str) -> str:
+        # Normalize whitespace first
         cleaned = " ".join(hint.split())
+
+        # Remove parenthetical qualifiers: "(remote)", "(hybrid)", "(onsite)", etc.
+        # This removes any (...) including surrounding whitespace
+        cleaned = re.sub(r"\s*\([^)]*\)", "", cleaned)
+
+        # Normalize separators
         cleaned = re.sub(r"[·|/]+", ", ", cleaned)
         cleaned = cleaned.replace("—", "-").replace("–", "-")
+
+        # Trim junk punctuation
         cleaned = cleaned.strip(" ,;|-")
+
+        # Canonical normalization (case, accents, etc.)
         cleaned = cls._normalize_location(cleaned)
 
         lowered = cleaned.lower()
@@ -419,7 +448,7 @@ class AtsScraper:
             return candidates[0]
 
         for candidate in candidates:
-            # We pass "country-ish" token into EuropeFilter: prefer right side of comma if present
+            # Prefer right side of comma if present (country-ish), else whole token.
             countryish = (
                 candidate.split(",", 1)[-1].strip() if "," in candidate else candidate
             )
@@ -435,9 +464,15 @@ class AtsScraper:
         """
         Parse a single candidate like:
           - "Berlin, Germany"
+          - "London, United Kingdom"
           - "Netherlands"
           - "Europe"
           - "United States & Canada"
+          - "London" (if resolvable as city -> country)
+
+        Contract assumptions:
+          - CountryResolver.is_country(token) == token is a country name
+          - CountryResolver.resolve_country(token) returns a country string IFF token is a city/location
         """
         candidate = candidate.strip()
         if not candidate:
@@ -445,36 +480,39 @@ class AtsScraper:
 
         if "," in candidate:
             left_raw, right_raw = (p.strip() for p in candidate.split(",", 1))
-            city = cls._clean_atom(left_raw)
+            left = cls._clean_atom(left_raw)
             right = cls._clean_atom(right_raw)
 
-            # If right looks like a known country/region (or can be resolved), treat as country
+            if not left and not right:
+                return None, None
+
+            # 1) Classic "City, Country"
+            if right and CountryResolver.is_country(right):
+                return left, right
+
+            # 2) Left is a city/location -> resolve to country
+            if left:
+                resolved_left_country = CountryResolver.resolve_country(left)
+                if resolved_left_country:
+                    return left, resolved_left_country
+
+            # 3) Right is a city/location -> resolve to country (salvage odd formats)
             if right:
-                resolved_right = CountryResolver.resolve_country(right) or right
-                # Only treat left as city if right is actually a country (not just any region token)
-                # CountryResolver returning something is the strongest signal.
-                if CountryResolver.resolve_country(right):
-                    return city, resolved_right
+                resolved_right_country = CountryResolver.resolve_country(right)
+                if resolved_right_country:
+                    return right, resolved_right_country
 
-            # Otherwise, see if left itself is a city we can resolve
-            if city:
-                resolved_left = CountryResolver.resolve_country(city)
-                if resolved_left:
-                    return city, resolved_left
-
-            # Fallback: keep right side as country/region-ish
-            return None, right
+            # 4) Fallback: keep the most country/region-ish side if present.
+            return None, right or left
 
         token = cls._clean_atom(candidate)
         if not token:
             return None, None
 
-        resolved = CountryResolver.resolve_country(token)
-        if resolved:
-            # token is city -> country
-            return token, resolved
+        resolved_country = CountryResolver.resolve_country(token)
+        if resolved_country:
+            return token, resolved_country
 
-        # token is country/region
         return None, token
 
     @staticmethod

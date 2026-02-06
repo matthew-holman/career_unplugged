@@ -12,8 +12,8 @@ def test_greenhouse_board_scraper() -> None:
     )
 
     career_page = CareerPage(
-        company_name="cred-platform",
-        url="https://jobs.ashbyhq.com/cred-platform",
+        company_name="roompricegenie",
+        url="https://jobs.ashbyhq.com/roompricegenie/",
     )
 
     run_ats_scraper_test(

@@ -12,8 +12,8 @@ def test_greenhouse_board_scraper() -> None:
     )
 
     career_page = CareerPage(
-        company_name="gitlab",
-        url="https://job-boards.greenhouse.io/gitlab",
+        company_name="clickhouse",
+        url="https://job-boards.greenhouse.io/clickhouse",
     )
 
     run_ats_scraper_test(

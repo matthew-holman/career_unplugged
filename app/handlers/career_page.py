@@ -102,8 +102,6 @@ class CareerPageHandler:
                     col(CareerPage.last_synced_at) < cutoff,
                 )
             )
-        else:
-            query = query.where(col(CareerPage.last_synced_at).is_(None))
 
         return self.db_session.exec(query).all()
 
