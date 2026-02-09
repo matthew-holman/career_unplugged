@@ -3,6 +3,7 @@ from typing import List, Optional
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from requests.exceptions import ConnectionError
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.ats_scrapers.ashby_board_scraper import AshbyBoardScraper
@@ -48,7 +49,7 @@ class AtsScraperFactory:
         try:
             response = AtsScraper._fetch_page(career_page.url, return_errors=True)
         except ConnectionError:
-            raise CareerPageDeactivatedError(status_code=495)
+            raise CareerPageDeactivatedError(status_code=495) from None
 
         if response is None:
             Log.warning(f"Failed to fetch career page for {career_page.url}")

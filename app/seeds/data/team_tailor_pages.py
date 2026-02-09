@@ -11136,4 +11136,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://career.aceve.com/",
         "active": True,
     },
+    {
+        "company_name": "nordhealth",
+        "url": "https://careers.nordhealth.com/",
+        "active": True,
+    },
 ]
