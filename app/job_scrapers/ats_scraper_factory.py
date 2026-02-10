@@ -7,6 +7,7 @@ from requests.exceptions import ConnectionError
 
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.ats_scrapers.ashby_board_scraper import AshbyBoardScraper
+from app.job_scrapers.ats_scrapers.bamboohr_scraper import BambooHrScraper
 from app.job_scrapers.ats_scrapers.greenhouse_board_scraper import (
     GreenHouseBoardScraper,
 )
@@ -39,6 +40,7 @@ class AtsScraperFactory:
         LeverScraper,
         PersonioScraper,
         RecruiteeScraper,
+        BambooHrScraper,
         TeamTailorScraper,
     ]
 

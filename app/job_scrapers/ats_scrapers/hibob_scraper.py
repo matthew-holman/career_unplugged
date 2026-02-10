@@ -60,7 +60,10 @@ class HiBobScraper(AtsScraper):
             return None
 
         location = Location(city=card.get("site"), country=card.get("country"))
-        remote_status = AtsScraper._detect_remote_status(card.get("workspaceType"))
+        workspace_type = card.get("workspaceType")
+        remote_status = AtsScraper._detect_remote_status(
+            workspace_type if isinstance(workspace_type, str) else ""
+        )
 
         published_at = card.get("publishedAt")
         listing_date = self._parse_published_date(published_at)

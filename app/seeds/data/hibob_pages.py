@@ -945,4 +945,129 @@ HIBOB_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "zepz", "url": "https://zepz.careers.hibob.com", "active": True},
+    {
+        "company_name": "acclym",
+        "url": "https://acclym.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "act", "url": "https://act.careers.hibob.com", "active": True},
+    {
+        "company_name": "adaptive-shield",
+        "url": "https://adaptive-shield.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "adaptiveshield",
+        "url": "https://adaptiveshield.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "adaragroup",
+        "url": "https://adaragroup.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "aerocloudsystems",
+        "url": "https://aerocloudsystems.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "agritask",
+        "url": "https://agritask.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "aiimi", "url": "https://aiimi.careers.hibob.com", "active": True},
+    {
+        "company_name": "aipmanagement",
+        "url": "https://aipmanagement.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "alexandergrou-45e090",
+        "url": "https://alexandergrou-45e090.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "allotechnology",
+        "url": "https://allotechnology.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "ambrosiumgroup",
+        "url": "https://ambrosiumgroup.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "aspectcapital-42aeea",
+        "url": "https://aspectcapital-42aeea.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "atticus",
+        "url": "https://atticus.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "bamm", "url": "https://bamm.careers.hibob.com", "active": True},
+    {
+        "company_name": "bankoflondon",
+        "url": "https://bankoflondon.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "brame", "url": "https://brame.careers.hibob.com", "active": True},
+    {
+        "company_name": "brameag",
+        "url": "https://brameag.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "briya", "url": "https://briya.careers.hibob.com", "active": True},
+    {
+        "company_name": "buxtoncompanyllc",
+        "url": "https://buxtoncompanyllc.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "bvgroup",
+        "url": "https://bvgroup.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "carbongroup",
+        "url": "https://carbongroup.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "cashaccessuk",
+        "url": "https://cashaccessuk.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "cespira",
+        "url": "https://cespira.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "cfbindiana",
+        "url": "https://cfbindiana.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "clicky",
+        "url": "https://clicky.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "clickymedialtd",
+        "url": "https://clickymedialtd.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "cloudnc",
+        "url": "https://cloudnc.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "cluepoints",
+        "url": "https://cluepoints.careers.hibob.com",
+        "active": True,
+    },
 ]
