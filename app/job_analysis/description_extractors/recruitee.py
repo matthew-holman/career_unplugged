@@ -5,13 +5,14 @@ import re
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from app.job_scrapers.scraper import Source
+from app.models import Job
 
 
 class Recruitee:
     source = Source.RECRUITEE
 
     @staticmethod
-    def extract_description(soup: BeautifulSoup) -> str:
+    def extract_description(soup: BeautifulSoup, job: Job) -> str:
         heading = Recruitee._find_heading(soup)
         if heading is None:
             return ""

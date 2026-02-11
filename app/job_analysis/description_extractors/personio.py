@@ -3,13 +3,14 @@ from __future__ import annotations
 from bs4 import BeautifulSoup
 
 from app.job_scrapers.scraper import Source
+from app.models import Job
 
 
 class Personio:
     source = Source.PERSONIO
 
     @staticmethod
-    def extract_description(soup: BeautifulSoup) -> str:
+    def extract_description(soup: BeautifulSoup, job: Job) -> str:
         container = soup.select_one("div#job-details")
         if container is None:
             return ""

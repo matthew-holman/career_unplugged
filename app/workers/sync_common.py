@@ -15,9 +15,29 @@ from app.utils.locations.remote_filter import RemoteFilter
 
 
 def should_save_job(job_post: JobPost) -> bool:
+    if not job_post.location or (
+        not job_post.location.city and not job_post.location.country
+    ):
+        Log.debug(
+            f"Skipping job without location: {job_post.title} "
+            f"from {job_post.company_name}"
+        )
+        return False
+
+    country = job_post.location.country
+    if country and not (
+        EuropeFilter.is_european(country) or RemoteFilter.is_remote(country)
+    ):
+        Log.debug(
+            f"Skipping non-European job: "
+            f"{job_post.title} at {job_post.company_name} "
+            f"(country='{country}', source='{job_post.source}')"
+        )
+        return False
+
     for company in COMPANIES_TO_IGNORE:
         if job_post.company_name and company.lower() == job_post.company_name.lower():
-            Log.info(f"Ignoring job from {job_post.company_name}")
+            Log.debug(f"Ignoring job from {job_post.company_name}")
             return False
 
     for job_title in JOB_TITLES:
@@ -25,7 +45,7 @@ def should_save_job(job_post: JobPost) -> bool:
             Log.info(f"Adding job {job_post.title} from {job_post.company_name}")
             return True
 
-    Log.info(f"Ignoring job with title {job_post.title} from {job_post.company_name}")
+    Log.debug(f"Ignoring job with title {job_post.title} from {job_post.company_name}")
     return False
 
 
@@ -34,19 +54,6 @@ def build_jobs_to_save(
 ) -> list[Job]:
     jobs: list[Job] = []
     for job_post in response.jobs:
-        country = job_post.location.country if job_post.location else None
-
-        if country:
-            if not (
-                EuropeFilter.is_european(country) or RemoteFilter.is_remote(country)
-            ):
-                Log.info(
-                    f"Skipping non-European job: "
-                    f"{job_post.title} at {job_post.company_name} "
-                    f"(country='{country}', source='{job_post.source}')"
-                )
-                continue
-
         if should_save_job(job_post):
             job = JobCreate(
                 title=job_post.title,

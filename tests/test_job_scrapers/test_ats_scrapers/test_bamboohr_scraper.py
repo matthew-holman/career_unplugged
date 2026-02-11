@@ -11,7 +11,7 @@ def test_greenhouse_board_scraper() -> None:
 
     career_page = CareerPage(
         company_name="cronoslabs",
-        url="https://cronoslabs.bamboohr.com",
+        url="https://satellogic.bamboohr.com/",
     )
 
     run_ats_scraper_test(

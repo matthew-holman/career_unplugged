@@ -5,14 +5,14 @@ from urllib.parse import parse_qs, unquote, urlparse
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 
-from app.models.job import Source
+from app.models.job import Job, Source
 
 
 class LinkedIn:
     source = Source.LINKEDIN
 
     @staticmethod
-    def extract_description(soup: BeautifulSoup) -> str:
+    def extract_description(soup: BeautifulSoup, job: Job) -> str:
         description_section = soup.find(
             "section", class_="core-section-container my-3 description"
         )

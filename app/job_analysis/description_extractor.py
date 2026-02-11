@@ -4,14 +4,14 @@ from typing import Protocol
 
 from bs4 import BeautifulSoup
 
-from app.models.job import Source
+from app.models.job import Job, Source
 
 
 class DescriptionExtractor(Protocol):
     source: Source
 
     @staticmethod
-    def extract_description(soup: BeautifulSoup) -> str: ...  # noqa: E704
+    def extract_description(soup: BeautifulSoup, job: Job) -> str: ...  # noqa: E704
 
 
 class DescriptionExtractorFactory:

@@ -25,7 +25,7 @@ class Log:
         handler.setFormatter(formatter)
 
         logger = logging.getLogger(LOG_NAME)
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
         logger.addHandler(handler)
         _CONFIGURED = True
         return logger

@@ -8,34 +8,31 @@ from app.job_analysis.description_extractor import DescriptionExtractor
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.scraper import Source
 from app.log import Log
+from app.models import Job
 
 
 class HiBob(DescriptionExtractor):
     source = Source.HIBOB
 
     @staticmethod
-    def extract_description(soup: BeautifulSoup) -> str:
-        job_url = HiBob._extract_job_url(soup)
-        if not job_url:
-            Log.warning("HiBob description extractor: job URL not found in HTML")
-            return ""
+    def extract_description(soup: BeautifulSoup, job: Job) -> str:
 
-        job_id = HiBob._extract_job_id(job_url)
+        job_id = HiBob._extract_job_id(job.source_url)
         if not job_id:
             Log.warning(
-                "HiBob description extractor: job ID not found for " f"{job_url}"
+                "HiBob description extractor: job ID not found for " f"{job.source_url}"
             )
             return ""
 
-        api_url = HiBob._build_application_form_url(job_url, job_id)
+        api_url = HiBob._build_application_form_url(job.source_url, job_id)
         if not api_url:
             return ""
 
-        company_identifier = HiBob._extract_company_identifier(job_url)
+        company_identifier = HiBob._extract_company_identifier(job.source_url)
         if not company_identifier:
             Log.warning(
                 "HiBob description extractor: company identifier not found for "
-                f"{job_url}"
+                f"{job.source_url}"
             )
             return ""
 

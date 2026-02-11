@@ -12,6 +12,7 @@ from app.job_analysis.description_extractors.linkedin import (
 from app.job_scrapers.scraper import RemoteStatus, Source
 from app.job_scrapers.utils import create_session
 from app.log import Log
+from app.models import Job
 from app.models.career_page import CareerPageCreate
 from app.search_profile import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
 from app.settings import settings
@@ -102,7 +103,7 @@ def _fetch_job_page(session, job) -> str | None:
     return response.text
 
 
-def _extract_job_description(job_page_html: str, job) -> str | None:
+def _extract_job_description(job_page_html: str, job: Job) -> str | None:
     soup = BeautifulSoup(job_page_html, "html.parser")
 
     extractor = DescriptionExtractorFactory.get_for_source(job.source)
@@ -112,7 +113,7 @@ def _extract_job_description(job_page_html: str, job) -> str | None:
         )
         return None
 
-    return extractor.extract_description(soup) or ""
+    return extractor.extract_description(soup, job) or ""
 
 
 def _discover_career_page_from_linkedin(
@@ -144,7 +145,7 @@ def _discover_career_page_from_linkedin(
 
 
 def _apply_description_analysis(
-    job, session, career_page_handler: CareerPageHandler
+    job: Job, session, career_page_handler: CareerPageHandler
 ) -> None:
     job_page_html = _fetch_job_page(session, job)
     if not job_page_html:

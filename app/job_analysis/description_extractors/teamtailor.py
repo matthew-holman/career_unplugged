@@ -5,13 +5,14 @@ from typing import Optional
 from bs4 import BeautifulSoup
 
 from app.job_scrapers.scraper import Source
+from app.models import Job
 
 
 class Teamtailor:
     source = Source.TEAMTAILOR
 
     @staticmethod
-    def extract_description(soup: BeautifulSoup) -> str:
+    def extract_description(soup: BeautifulSoup, job: Job) -> str:
         """
         Teamtailor description extractor.
 

@@ -1,5 +1,6 @@
 from app.job_analysis.description_extractor import DescriptionExtractorFactory
 from app.job_analysis.description_extractors.ashby_board import AshbyBoard
+from app.job_analysis.description_extractors.bamboohr import BambooHr
 from app.job_analysis.description_extractors.greenhouse_board import GreenHouseBoard
 from app.job_analysis.description_extractors.hibob import HiBob
 from app.job_analysis.description_extractors.lever_board import LeverBoard
@@ -16,3 +17,4 @@ DescriptionExtractorFactory.register(AshbyBoard)
 DescriptionExtractorFactory.register(Recruitee)
 DescriptionExtractorFactory.register(Personio)
 DescriptionExtractorFactory.register(HiBob)
+DescriptionExtractorFactory.register(BambooHr)
