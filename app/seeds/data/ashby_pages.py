@@ -675,4 +675,9 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/mural",
         "active": True,
     },
+    {
+        "company_name": "kognity",
+        "url": "https://jobs.ashbyhq.com/kognity",
+        "active": True,
+    },
 ]

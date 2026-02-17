@@ -127,6 +127,9 @@ def _discover_career_page_from_linkedin(
 
     discovery = discover_career_page(external_apply_url)
     if not discovery:
+        Log.info(
+            f"LinkedIn job url: {external_apply_url}, doesn't match existing ats scrapers"
+        )
         return
 
     canonical_url = discovery.url

@@ -49,7 +49,7 @@ JOB_TITLES: List[str] = [
     "Agile",
     "Scrum",
     "Engineering Squad Lead",
-    "Product Engineer",
+    # "Product Engineer",
     "Technical Project Manager",
     "Technical Product Manager",
     "Python",
