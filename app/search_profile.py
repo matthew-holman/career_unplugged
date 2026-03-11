@@ -50,10 +50,10 @@ JOB_TITLES: List[str] = [
     "Scrum",
     "Engineering Squad Lead",
     # "Product Engineer",
-    "Technical Project Manager",
-    "Technical Product Manager",
-    "Python",
-    "FastAPI",
+    # "Technical Project Manager",
+    # "Technical Product Manager",
+    # "Python",
+    # "FastAPI",
 ]
 
 # the linkedin search is weird, I think it also checks skills listed against

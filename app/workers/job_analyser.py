@@ -42,7 +42,7 @@ REMOTE_REG_EX_PATTERNS = [
     r"\b(across\s(EMEA|EU|timezones))\b",
     r"\b(flexible\slocation)\b",
     r"\b(work\sanywhere\s(in|across)\sEurope)\b",
-    r"\b(remote\s(within|from)?\s(Sweden|Europe|EU|EMEA))\b",
+    r"\b(remote(ly)?\s(within|from|across)?\s(Sweden|Europe|EU|EMEA))\b",
     r"\b(no\srelocation\sneeded)\b",
     r"\b(location[-\s]?agnostic)\b" r"\b(distributed[-\s]?team)\b",
     r"\b(GMT|CET|CEST|Central European (Standard|Summer)? Time)\b",
@@ -54,7 +54,7 @@ REMOTE_REG_EX_PATTERNS = [
     r"\b(based in\s+(Europe|EU|EMEA)[\s,]+but\s+open\s+to\s+remote)\b",
     r"\b(remote[-\s]work\s+(within|across)\s+(Europe|EU|EMEA))\b",
     r"\b(work\sfrom\sanywhere\s(in|within)\s(Europe|EMEA))\b",
-    r"\b(remote\s+in\s+(Europe|EMEA|Sweden))\b",
+    r"\b(remote(ly)?\s+in\s+(Europe|EMEA|Sweden))\b",
 ]
 
 TRUE_REMOTE_COUNTRIES = [
