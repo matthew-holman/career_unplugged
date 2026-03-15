@@ -14,7 +14,7 @@ class BambooHr(DescriptionExtractor):
 
     @staticmethod
     def extract_description(soup: BeautifulSoup, job: Job) -> str:
-        detail_url = job.source_url.rstrip("/") + "/detail"
+        detail_url = (job.ats_source_url or "").rstrip("/") + "/detail"
         response = AtsScraper._fetch_page(detail_url)
         if not response:
             return ""

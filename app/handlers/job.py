@@ -14,8 +14,40 @@ from app.models.user_job import UserJob
 from app.schemas.job import JobWithUserStateRead, UserJobStateRead, UserJobStateUpdate
 from app.utils.locations.europe_filter import EuropeFilter
 
-JOB_UPSERT_CONSTRAINT = "job_source_url_key"
-JOB_UPSERT_EXCLUDE = {"id", "created_at", "updated_at", "deleted_at", "analysed"}
+# ATS scrapers: upsert on ats_source_url, never overwrite an existing linkedin_url
+ATS_UPSERT_CONSTRAINT = "job_ats_source_url_key"
+ATS_UPSERT_EXCLUDE = {
+    "id",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "analysed",
+    "linkedin_url",
+}
+
+# LinkedIn scraper when an ATS URL was also extracted: upsert on ats_source_url,
+# and DO write linkedin_url onto the row (to link an existing ATS row to LinkedIn)
+LINKEDIN_ATS_UPSERT_CONSTRAINT = "job_ats_source_url_key"
+LINKEDIN_ATS_UPSERT_EXCLUDE = {
+    "id",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "analysed",
+}
+
+# LinkedIn scraper when no ATS URL was found: upsert on linkedin_url,
+# and never overwrite an existing ats_source_url with NULL
+LINKEDIN_ONLY_UPSERT_CONSTRAINT = "job_linkedin_url_key"
+LINKEDIN_ONLY_UPSERT_EXCLUDE = {
+    "id",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "analysed",
+    "ats_source_url",
+}
+
 USER_JOB_UPSERT_EXCLUDE: set[str] = set()
 
 
@@ -34,32 +66,68 @@ class JobHandler:
         return jobs
 
     def save(self, job: Job) -> None:
-        upsert(
-            model=Job,
-            db_session=self.db_session,
-            constraint=JOB_UPSERT_CONSTRAINT,
-            data_iter=[job],
-            exclude_columns=JOB_UPSERT_EXCLUDE,
-        )
-        self.db_session.flush()
+        self.save_all([job])
 
     def save_all(self, jobs: list[Job]) -> None:
         if not jobs:
             return
 
-        deduped: dict[tuple[str, str], Job] = {}
+        # Deduplicate within the batch: prefer ats_source_url as the canonical key
+        deduped: dict[str, Job] = {}
         for job in jobs:
-            if not job.source or not job.source_url:
-                continue  # or raise; depends on your invariants
-            deduped[(job.source, job.source_url)] = job
+            key = job.ats_source_url or job.linkedin_url
+            if not key:
+                continue
+            deduped[key] = job
 
-        upsert(
-            model=Job,
-            db_session=self.db_session,
-            constraint=JOB_UPSERT_CONSTRAINT,
-            data_iter=list(deduped.values()),
-            exclude_columns=JOB_UPSERT_EXCLUDE,
-        )
+        deduped_jobs = list(deduped.values())
+
+        # Split into three groups based on source and which URLs are present:
+        #
+        # 1. ATS scrapers (source != LINKEDIN): always have ats_source_url, never
+        #    linkedin_url — upsert on ats_source_url, preserve any existing linkedin_url.
+        #
+        # 2. LinkedIn scraper + ATS URL extracted: upsert on ats_source_url so the row
+        #    merges with any existing ATS row, and also writes linkedin_url onto it.
+        #
+        # 3. LinkedIn scraper, no ATS URL found: upsert on linkedin_url, preserve any
+        #    existing ats_source_url (won't be nulled out).
+
+        ats_only = [j for j in deduped_jobs if j.ats_source_url and not j.linkedin_url]
+        linkedin_with_ats = [
+            j for j in deduped_jobs if j.ats_source_url and j.linkedin_url
+        ]
+        linkedin_only = [
+            j for j in deduped_jobs if not j.ats_source_url and j.linkedin_url
+        ]
+
+        if ats_only:
+            upsert(
+                model=Job,
+                db_session=self.db_session,
+                constraint=ATS_UPSERT_CONSTRAINT,
+                data_iter=ats_only,
+                exclude_columns=ATS_UPSERT_EXCLUDE,
+            )
+
+        if linkedin_with_ats:
+            upsert(
+                model=Job,
+                db_session=self.db_session,
+                constraint=LINKEDIN_ATS_UPSERT_CONSTRAINT,
+                data_iter=linkedin_with_ats,
+                exclude_columns=LINKEDIN_ATS_UPSERT_EXCLUDE,
+            )
+
+        if linkedin_only:
+            upsert(
+                model=Job,
+                db_session=self.db_session,
+                constraint=LINKEDIN_ONLY_UPSERT_CONSTRAINT,
+                data_iter=linkedin_only,
+                exclude_columns=LINKEDIN_ONLY_UPSERT_EXCLUDE,
+            )
+
         self.db_session.flush()
 
     def list_for_user(

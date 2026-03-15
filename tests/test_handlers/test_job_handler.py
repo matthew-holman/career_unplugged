@@ -9,7 +9,7 @@ def job_create() -> JobCreate:
     return JobCreate(
         title="test title",
         company="test company",
-        source_url="https://example.com/job/1",
+        ats_source_url="https://example.com/job/1",
         country="test country",
     )
 

@@ -16,23 +16,24 @@ class HiBob(DescriptionExtractor):
 
     @staticmethod
     def extract_description(soup: BeautifulSoup, job: Job) -> str:
+        ats_url = job.ats_source_url or ""
 
-        job_id = HiBob._extract_job_id(job.source_url)
+        job_id = HiBob._extract_job_id(ats_url)
         if not job_id:
             Log.warning(
-                "HiBob description extractor: job ID not found for " f"{job.source_url}"
+                "HiBob description extractor: job ID not found for " f"{ats_url}"
             )
             return ""
 
-        api_url = HiBob._build_application_form_url(job.source_url, job_id)
+        api_url = HiBob._build_application_form_url(ats_url, job_id)
         if not api_url:
             return ""
 
-        company_identifier = HiBob._extract_company_identifier(job.source_url)
+        company_identifier = HiBob._extract_company_identifier(ats_url)
         if not company_identifier:
             Log.warning(
                 "HiBob description extractor: company identifier not found for "
-                f"{job.source_url}"
+                f"{ats_url}"
             )
             return ""
 

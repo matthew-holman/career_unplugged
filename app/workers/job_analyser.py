@@ -93,11 +93,18 @@ def _mark_true_remote_jobs(jobs) -> list:
 
 
 def _fetch_job_page(session, job) -> str | None:
-    response = session.get(job.source_url)
+    # LinkedIn jobs are analysed from their LinkedIn page; ATS jobs from their ATS page.
+    url = job.linkedin_url if job.source == Source.LINKEDIN else job.ats_source_url
+    if not url:
+        Log.warning(
+            f"No URL available to fetch description for {job.source} job {job.id}"
+        )
+        return None
+    response = session.get(url)
     if response.status_code != 200:
         Log.warning(
             f"Failed to fetch description for {job.source} job {job.id} "
-            f"({job.source_url}): {response.status_code}"
+            f"({url}): {response.status_code}"
         )
         return None
     return response.text

@@ -10,6 +10,9 @@ from urllib.parse import urlparse, urlunparse
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
+from app.job_analysis.description_extractors.linkedin import (
+    extract_external_apply_url_from_linkedin_html,
+)
 from app.job_scrapers.scraper import (
     DescriptionFormat,
     JobPost,
@@ -131,7 +134,7 @@ class LinkedInScraper(Scraper):
             if metadata_card
             else None
         )
-        listing_date = description = job_type = None
+        listing_date = description = job_type = ats_url = None
         if datetime_tag and "datetime" in datetime_tag.attrs:
             datetime_str = datetime_tag["datetime"]
             try:
@@ -139,7 +142,7 @@ class LinkedInScraper(Scraper):
             except Exception:
                 listing_date = None
         if full_descr:
-            description, job_type = self._get_job_description(job_url)
+            description, job_type, ats_url = self._get_job_description(job_url)
 
         return JobPost(
             title=title,
@@ -152,16 +155,17 @@ class LinkedInScraper(Scraper):
             description=description,
             emails=extract_emails_from_text(description) if description else None,
             listing_date=listing_date,
+            ats_url=ats_url,
             source=self.source_name,
         )
 
     def _get_job_description(
         self, job_page_url: str
-    ) -> tuple[str | None, list[JobType] | None]:
+    ) -> tuple[str | None, list[JobType] | None, str | None]:
         """
-        Retrieves job description by going to the job page url
+        Retrieves job description and ATS apply URL by going to the job page url.
         :param job_page_url:
-        :return: description or None
+        :return: (description, job_type, ats_url) — any element may be None
         """
         assert self.scraper_input is not None
         try:
@@ -174,9 +178,9 @@ class LinkedInScraper(Scraper):
             )
             response.raise_for_status()
         except Exception:
-            return None, None
+            return None, None, None
         if response.url == "https://www.linkedin.com/signup":
-            return None, None
+            return None, None, None
 
         soup = BeautifulSoup(response.text, "html.parser")
         div_content = soup.find(
@@ -194,7 +198,9 @@ class LinkedInScraper(Scraper):
             description = div_content.prettify(formatter="html")
             if self.scraper_input.description_format == DescriptionFormat.MARKDOWN:
                 description = markdown_converter(description)
-        return description, self._parse_job_type(soup)
+
+        ats_url = extract_external_apply_url_from_linkedin_html(response.text)
+        return description, self._parse_job_type(soup), ats_url
 
     def _get_location(self, metadata_card: Tag | None) -> Location:
         """

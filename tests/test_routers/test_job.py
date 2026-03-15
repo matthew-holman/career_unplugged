@@ -20,7 +20,7 @@ def job(db_session: Session) -> JobRead:
     job_data = JobCreate(
         title="test title",
         company="test company",
-        source_url="test linkedin url",
+        ats_source_url="test ats url",
         listing_remote=choice(list(RemoteStatus)),
         country="test country",
     )
@@ -30,7 +30,7 @@ def job(db_session: Session) -> JobRead:
     db_session.commit()
 
     job_instance = db_session.exec(
-        select(Job).where(Job.source_url == job_data.source_url)
+        select(Job).where(Job.ats_source_url == job_data.ats_source_url)
     ).first()
     assert job_instance is not None
     return JobRead.model_validate(job_instance)
@@ -71,7 +71,7 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
         JobCreate(
             title="alpha",
             company="acme",
-            source_url="https://example.com/a",
+            ats_source_url="https://example.com/a",
             country="SE",
             analysed=False,
             created_at=older,
@@ -80,7 +80,7 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
         JobCreate(
             title="beta",
             company="acme",
-            source_url="https://example.com/b",
+            ats_source_url="https://example.com/b",
             country="SE",
             analysed=True,
             created_at=now,
@@ -89,7 +89,7 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
         JobCreate(
             title="gamma",
             company="globex",
-            source_url="https://example.com/c",
+            ats_source_url="https://example.com/c",
             country="DE",
             analysed=False,
             created_at=now,
@@ -160,19 +160,19 @@ def test_list_jobs_excludes_applied_ignored_by_default(
         JobCreate(
             title="keep",
             company="acme",
-            source_url="https://example.com/keep",
+            ats_source_url="https://example.com/keep",
             country="SE",
         ),
         JobCreate(
             title="applied",
             company="acme",
-            source_url="https://example.com/applied",
+            ats_source_url="https://example.com/applied",
             country="SE",
         ),
         JobCreate(
             title="ignored",
             company="acme",
-            source_url="https://example.com/ignored",
+            ats_source_url="https://example.com/ignored",
             country="SE",
         ),
     ]
@@ -215,13 +215,13 @@ def test_list_jobs_filters_applied_ignored(
         JobCreate(
             title="applied",
             company="acme",
-            source_url="https://example.com/applied-filter",
+            ats_source_url="https://example.com/applied-filter",
             country="SE",
         ),
         JobCreate(
             title="ignored",
             company="acme",
-            source_url="https://example.com/ignored-filter",
+            ats_source_url="https://example.com/ignored-filter",
             country="SE",
         ),
     ]
@@ -265,13 +265,13 @@ def test_upsert_job_state(
     job_data = JobCreate(
         title="stateful",
         company="acme",
-        source_url="https://example.com/stateful",
+        ats_source_url="https://example.com/stateful",
         country="SE",
     )
     handler.save(Job.model_validate(job_data))
     db_session.commit()
     job_row = db_session.exec(
-        select(Job).where(Job.source_url == job_data.source_url)
+        select(Job).where(Job.ats_source_url == job_data.ats_source_url)
     ).first()
     assert job_row is not None
 
@@ -310,13 +310,13 @@ def test_get_job_includes_user_state(
     job_data = JobCreate(
         title="stateful-get",
         company="acme",
-        source_url="https://example.com/stateful-get",
+        ats_source_url="https://example.com/stateful-get",
         country="SE",
     )
     handler.save(Job.model_validate(job_data))
     db_session.commit()
     job_row = db_session.exec(
-        select(Job).where(Job.source_url == job_data.source_url)
+        select(Job).where(Job.ats_source_url == job_data.ats_source_url)
     ).first()
     assert job_row is not None
     db_session.add(

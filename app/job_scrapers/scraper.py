@@ -107,6 +107,7 @@ class JobPost(BaseModel):
     listing_date: date | None = None
     emails: list[str] | None = None
     remote_status: RemoteStatus | None = None
+    ats_url: str | None = None
 
     source: Source | None = None
 

@@ -14,19 +14,19 @@ def _seed_activity_jobs(db_session: Session, test_user: User) -> None:
         JobCreate(
             title="applied",
             company="acme",
-            source_url="https://example.com/applied",
+            ats_source_url="https://example.com/applied",
             country="SE",
         ),
         JobCreate(
             title="ignored",
             company="acme",
-            source_url="https://example.com/ignored",
+            ats_source_url="https://example.com/ignored",
             country="SE",
         ),
         JobCreate(
             title="neither",
             company="acme",
-            source_url="https://example.com/neither",
+            ats_source_url="https://example.com/neither",
             country="SE",
         ),
     ]
