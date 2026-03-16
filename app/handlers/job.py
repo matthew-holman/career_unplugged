@@ -14,7 +14,8 @@ from app.models.user_job import UserJob
 from app.schemas.job import JobWithUserStateRead, UserJobStateRead, UserJobStateUpdate
 from app.utils.locations.europe_filter import EuropeFilter
 
-JOB_UPSERT_CONSTRAINT = "job_source_url_key"
+ATS_JOB_UPSERT_CONSTRAINT = "job_ats_source_url_key"
+LINKEDIN_JOB_UPSERT_CONSTRAINT = "job_linkedin_source_url_key"
 JOB_UPSERT_EXCLUDE = {"id", "created_at", "updated_at", "deleted_at", "analysed"}
 USER_JOB_UPSERT_EXCLUDE: set[str] = set()
 
@@ -34,10 +35,15 @@ class JobHandler:
         return jobs
 
     def save(self, job: Job) -> None:
+        constraint = (
+            ATS_JOB_UPSERT_CONSTRAINT
+            if job.ats_source_url
+            else LINKEDIN_JOB_UPSERT_CONSTRAINT
+        )
         upsert(
             model=Job,
             db_session=self.db_session,
-            constraint=JOB_UPSERT_CONSTRAINT,
+            constraint=constraint,
             data_iter=[job],
             exclude_columns=JOB_UPSERT_EXCLUDE,
         )
@@ -47,19 +53,30 @@ class JobHandler:
         if not jobs:
             return
 
-        deduped: dict[tuple[str, str], Job] = {}
+        ats_deduped: dict[str, Job] = {}
+        linkedin_deduped: dict[str, Job] = {}
         for job in jobs:
-            if not job.source or not job.source_url:
-                continue  # or raise; depends on your invariants
-            deduped[(job.source, job.source_url)] = job
+            if job.ats_source_url:
+                ats_deduped[job.ats_source_url] = job
+            elif job.linkedin_source_url:
+                linkedin_deduped[job.linkedin_source_url] = job
 
-        upsert(
-            model=Job,
-            db_session=self.db_session,
-            constraint=JOB_UPSERT_CONSTRAINT,
-            data_iter=list(deduped.values()),
-            exclude_columns=JOB_UPSERT_EXCLUDE,
-        )
+        if ats_deduped:
+            upsert(
+                model=Job,
+                db_session=self.db_session,
+                constraint=ATS_JOB_UPSERT_CONSTRAINT,
+                data_iter=list(ats_deduped.values()),
+                exclude_columns=JOB_UPSERT_EXCLUDE,
+            )
+        if linkedin_deduped:
+            upsert(
+                model=Job,
+                db_session=self.db_session,
+                constraint=LINKEDIN_JOB_UPSERT_CONSTRAINT,
+                data_iter=list(linkedin_deduped.values()),
+                exclude_columns=JOB_UPSERT_EXCLUDE,
+            )
         self.db_session.flush()
 
     def list_for_user(
