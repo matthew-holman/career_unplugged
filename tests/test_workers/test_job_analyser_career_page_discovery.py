@@ -46,7 +46,7 @@ def test_analyser_discovers_career_page_from_linkedin(db_session) -> None:
         title="Data Engineer",
         company="Acme",
         source=Source.LINKEDIN,
-        source_url="https://www.linkedin.com/jobs/view/123",
+        linkedin_source_url="https://www.linkedin.com/jobs/view/123",
         listing_remote=RemoteStatus.UNKNOWN,
     )
     db_session.add(job)

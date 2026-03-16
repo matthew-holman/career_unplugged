@@ -5,7 +5,7 @@ from collections import Counter
 from sqlmodel import Session
 
 from app.handlers.job import JobHandler
-from app.job_scrapers.scraper import JobPost, JobResponse
+from app.job_scrapers.scraper import JobPost, JobResponse, Source
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job, JobCreate
@@ -55,12 +55,14 @@ def build_jobs_to_save(
     jobs: list[Job] = []
     for job_post in response.jobs:
         if should_save_job(job_post):
+            is_linkedin = job_post.source == Source.LINKEDIN
             job = JobCreate(
                 title=job_post.title,
                 company=job_post.company_name,
                 country=job_post.location.country if job_post.location else None,
                 city=job_post.location.city if job_post.location else None,
-                source_url=job_post.job_url,
+                ats_source_url=None if is_linkedin else job_post.job_url,
+                linkedin_source_url=job_post.job_url if is_linkedin else None,
                 listing_date=job_post.listing_date or job_post.date_posted,
                 listing_remote=job_post.remote_status,
                 source=job_post.source,
@@ -89,25 +91,28 @@ def flush_pending_jobs(
     #
     # "Last write wins" is usually the least surprising in scraping pipelines,
     # because later passes may have richer/more-correct fields.
-    jobs_by_source_url: dict[str, Job] = {}
+    jobs_by_url: dict[str, Job] = {}
     for job in pending_jobs:
         # Defensive: ignore impossible/invalid entries rather than crashing the whole batch
-        if not job.source_url:
+        url = job.ats_source_url or job.linkedin_source_url
+        if not url:
             continue
-        jobs_by_source_url[job.source_url] = job
+        jobs_by_url[url] = job
 
-    deduped_jobs = list(jobs_by_source_url.values())
+    deduped_jobs = list(jobs_by_url.values())
 
     # Optional logging to prove you fixed the problem (and to find upstream dup sources)
     if len(deduped_jobs) != len(pending_jobs):
-        source_url_counts = Counter(
-            job.source_url for job in pending_jobs if job.source_url
+        url_counts = Counter(
+            job.ats_source_url or job.linkedin_source_url
+            for job in pending_jobs
+            if job.ats_source_url or job.linkedin_source_url
         )
-        duplicate_count = sum(1 for count in source_url_counts.values() if count > 1)
+        duplicate_count = sum(1 for count in url_counts.values() if count > 1)
         Log.warning(
             "Deduped pending_jobs before insert: "
             f"{len(pending_jobs)} -> {len(deduped_jobs)} "
-            f"({duplicate_count} duplicated source_url values)"
+            f"({duplicate_count} duplicated url values)"
         )
 
     try:

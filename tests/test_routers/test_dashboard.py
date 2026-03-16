@@ -18,7 +18,7 @@ def test_dashboard_jobs_summary(
         JobCreate(
             title="recent",
             company="acme",
-            source_url="https://example.com/recent",
+            linkedin_source_url="https://example.com/recent",
             country="Sweden",
             listing_remote=RemoteStatus.REMOTE,
             positive_keyword_match=True,
@@ -27,7 +27,7 @@ def test_dashboard_jobs_summary(
         JobCreate(
             title="old",
             company="globex",
-            source_url="https://example.com/old",
+            ats_source_url="https://example.com/old",
             country="DE",
             listing_remote=RemoteStatus.ONSITE,
             source=Source.TEAMTAILOR,
