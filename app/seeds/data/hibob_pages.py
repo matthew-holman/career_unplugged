@@ -1070,4 +1070,29 @@ HIBOB_PAGE_SEEDS = [
         "url": "https://cluepoints.careers.hibob.com",
         "active": True,
     },
+    {
+        "company_name": "careers",
+        "url": "https://thegappartnership.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://hibob-fa0ad69d0cb34a.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://iren.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://n2group.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://imexdental.careers.hibob.com",
+        "active": True,
+    },
 ]

@@ -24,6 +24,15 @@ class LinkedIn:
 
 def extract_apply_url_from_html(html: str) -> str | None:
     soup = BeautifulSoup(html, "html.parser")
+
+    # New format: offsiteApplyUrl embedded as JSON in any <script> tag
+    for script in soup.find_all("script"):
+        text = script.string or ""
+        match = re.search(r'"offsiteApplyUrl":"(https?://[^"]+)"', text)
+        if match:
+            return unquote(match.group(1))
+
+    # Legacy format: <code id="applyUrl"> containing a LinkedIn redirect URL
     code = soup.find("code", id="applyUrl")
     if not code:
         return None

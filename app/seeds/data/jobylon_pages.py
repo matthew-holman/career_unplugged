@@ -136,4 +136,26 @@ JOBYLON_PAGE_SEEDS = [
         "url": "https://www.werkenbijdetussenvoorziening.nl",
         "active": True,
     },
+    {"company_name": "emp", "url": "https://emp.jobylon.com", "active": True},
+    {
+        "company_name": "svensktsportforum",
+        "url": "https://svensktsportforum.jobylon.com",
+        "active": True,
+    },
+    {"company_name": "www", "url": "https://www.jobylon.com", "active": True},
+    {
+        "company_name": "aftonbladet",
+        "url": "https://aftonbladet.jobylon.com",
+        "active": True,
+    },
+    {"company_name": "cdn", "url": "https://cdn.jobylon.com", "active": True},
+    {"company_name": "email", "url": "https://email.jobylon.com", "active": True},
+    {"company_name": "fora", "url": "https://fora.jobylon.com", "active": True},
+    {"company_name": "media-eu", "url": "https://media-eu.jobylon.com", "active": True},
+    {"company_name": "roadmap", "url": "https://roadmap.jobylon.com", "active": True},
+    {
+        "company_name": "static-eu",
+        "url": "https://static-eu.jobylon.com",
+        "active": True,
+    },
 ]

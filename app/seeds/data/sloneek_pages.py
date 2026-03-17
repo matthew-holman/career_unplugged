@@ -4,4 +4,9 @@ SLONEEK_PAGE_SEEDS = [
         "url": "https://jobs.sloneek.com/ats-v2/Eliq",
         "active": True,
     },
+    {
+        "company_name": "Daytrip",
+        "url": "https://jobs.sloneek.com/ats-v2/Daytrip",
+        "active": True,
+    },
 ]

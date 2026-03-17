@@ -36,5 +36,7 @@ class Settings(BaseSettings):
 
     RUN_NETWORK_TESTS: str = Field(default="true")
 
+    URL_SCAN_API_KEY: str | None = Field(default=None)
+
 
 settings = Settings()

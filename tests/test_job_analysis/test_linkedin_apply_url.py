@@ -23,6 +23,18 @@ def test_extract_external_apply_url_from_linkedin_html() -> None:
     assert extract_apply_url_from_html(html) == external_url
 
 
+def test_extract_external_apply_url_from_linkedin_html_offsite_apply_url() -> None:
+    external_url = "https://jobs.example.com/job/123/engineer/berlin"
+    html = (
+        "<html><body>"
+        '<script type="text/javascript" id="rehydrate-data">'
+        f'"offsiteApplyUrl":"{external_url}"'
+        "</script>"
+        "</body></html>"
+    )
+    assert extract_apply_url_from_html(html) == external_url
+
+
 def test_extract_external_apply_url_from_linkedin_html_missing() -> None:
     html = "<html><body><p>No apply URL</p></body></html>"
     assert extract_apply_url_from_html(html) is None
