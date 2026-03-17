@@ -17,6 +17,7 @@ from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job
 from app.settings import settings
+from app.workers.job_analyser import run_analyser
 from app.workers.sync_common import (
     build_jobs_to_save,
     flush_pending_jobs,
@@ -137,6 +138,7 @@ def run_sync_ats_with_session(
 
 def main() -> int:
     run_sync_ats()
+    run_analyser()
     return 0
 
 

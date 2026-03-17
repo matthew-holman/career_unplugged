@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
 from app.job_analysis.description_extractors.linkedin import (
-    extract_external_apply_url_from_linkedin_html,
+    extract_apply_url_from_html,
 )
 
 
@@ -20,9 +20,9 @@ def test_extract_external_apply_url_from_linkedin_html() -> None:
         "</body></html>"
     )
 
-    assert extract_external_apply_url_from_linkedin_html(html) == external_url
+    assert extract_apply_url_from_html(html) == external_url
 
 
 def test_extract_external_apply_url_from_linkedin_html_missing() -> None:
     html = "<html><body><p>No apply URL</p></body></html>"
-    assert extract_external_apply_url_from_linkedin_html(html) is None
+    assert extract_apply_url_from_html(html) is None

@@ -11288,4 +11288,14 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://aalborgzoo.teamtailor.com",
         "active": True,
     },
+    {
+        "company_name": "grebban",
+        "url": "https://career.grebban.com/",
+        "active": True,
+    },
+    {
+        "company_name": "astek sweden ab",
+        "url": "https://astekswedenab.teamtailor.com/",
+        "active": True,
+    },
 ]

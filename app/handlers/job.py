@@ -16,7 +16,22 @@ from app.utils.locations.europe_filter import EuropeFilter
 
 ATS_JOB_UPSERT_CONSTRAINT = "job_ats_source_url_key"
 LINKEDIN_JOB_UPSERT_CONSTRAINT = "job_linkedin_source_url_key"
-JOB_UPSERT_EXCLUDE = {"id", "created_at", "updated_at", "deleted_at", "analysed"}
+ATS_JOB_UPSERT_EXCLUDE = {
+    "id",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "analysed",
+    "linkedin_source_url",
+}
+LINKEDIN_JOB_UPSERT_EXCLUDE = {
+    "id",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "analysed",
+    "ats_source_url",
+}
 USER_JOB_UPSERT_EXCLUDE: set[str] = set()
 
 
@@ -35,17 +50,18 @@ class JobHandler:
         return jobs
 
     def save(self, job: Job) -> None:
-        constraint = (
-            ATS_JOB_UPSERT_CONSTRAINT
-            if job.ats_source_url
-            else LINKEDIN_JOB_UPSERT_CONSTRAINT
-        )
+        if job.ats_source_url:
+            constraint = ATS_JOB_UPSERT_CONSTRAINT
+            exclude = ATS_JOB_UPSERT_EXCLUDE
+        else:
+            constraint = LINKEDIN_JOB_UPSERT_CONSTRAINT
+            exclude = LINKEDIN_JOB_UPSERT_EXCLUDE
         upsert(
             model=Job,
             db_session=self.db_session,
             constraint=constraint,
             data_iter=[job],
-            exclude_columns=JOB_UPSERT_EXCLUDE,
+            exclude_columns=exclude,
         )
         self.db_session.flush()
 
@@ -67,7 +83,7 @@ class JobHandler:
                 db_session=self.db_session,
                 constraint=ATS_JOB_UPSERT_CONSTRAINT,
                 data_iter=list(ats_deduped.values()),
-                exclude_columns=JOB_UPSERT_EXCLUDE,
+                exclude_columns=ATS_JOB_UPSERT_EXCLUDE,
             )
         if linkedin_deduped:
             upsert(
@@ -75,8 +91,65 @@ class JobHandler:
                 db_session=self.db_session,
                 constraint=LINKEDIN_JOB_UPSERT_CONSTRAINT,
                 data_iter=list(linkedin_deduped.values()),
-                exclude_columns=JOB_UPSERT_EXCLUDE,
+                exclude_columns=LINKEDIN_JOB_UPSERT_EXCLUDE,
             )
+        self.db_session.flush()
+
+    def get_by_ats_source_url(self, url: str) -> Optional[Job]:
+        return self.db_session.exec(
+            select(Job).where(Job.ats_source_url == url)
+        ).first()
+
+    def merge_linkedin_into_ats(self, linkedin_job: Job, ats_job: Job) -> None:
+        """Merge a LinkedIn job duplicate into its canonical ATS job record.
+
+        Copies the linkedin_source_url onto the ATS job, transfers any UserJob
+        activity records (OR-ing applied/ignored flags), then soft-deletes the
+        LinkedIn job so it is not processed again.
+        """
+        # Fetch UserJob records first (before any mutations) to avoid autoflush
+        # interference while both job rows still hold the same linkedin_source_url.
+        linkedin_user_jobs = self.db_session.exec(
+            select(UserJob).where(UserJob.job_id == linkedin_job.id)  # type: ignore[arg-type]
+        ).all()
+
+        existing_ats_ujs = {
+            uj.user_id: uj
+            for uj in self.db_session.exec(
+                select(UserJob).where(UserJob.job_id == ats_job.id)  # type: ignore[arg-type]
+            ).all()
+        }
+
+        # Step 1: Release the linkedin_source_url from the LinkedIn job first.
+        # This flush clears the value in the DB so the next flush can set it
+        # on the ATS job without a transient unique constraint violation.
+        linkedin_url = linkedin_job.linkedin_source_url
+        linkedin_job.linkedin_source_url = None
+        self.db_session.add(linkedin_job)
+        self.db_session.flush()
+
+        # Step 2: Transfer the URL, activity records, and soft-delete.
+        ats_job.linkedin_source_url = linkedin_url
+
+        for linkedin_uj in linkedin_user_jobs:
+            existing_ats_uj = existing_ats_ujs.get(linkedin_uj.user_id)
+            if existing_ats_uj:
+                existing_ats_uj.applied = existing_ats_uj.applied or linkedin_uj.applied
+                existing_ats_uj.ignored = existing_ats_uj.ignored or linkedin_uj.ignored
+                self.db_session.add(existing_ats_uj)
+            else:
+                self.db_session.add(
+                    UserJob(
+                        user_id=linkedin_uj.user_id,
+                        job_id=ats_job.id,
+                        applied=linkedin_uj.applied,
+                        ignored=linkedin_uj.ignored,
+                    )
+                )
+
+        linkedin_job.delete()
+        self.db_session.add(linkedin_job)
+        self.db_session.add(ats_job)
         self.db_session.flush()
 
     def list_for_user(

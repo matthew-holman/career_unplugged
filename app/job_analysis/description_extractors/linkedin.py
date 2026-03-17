@@ -22,7 +22,7 @@ class LinkedIn:
         return ""
 
 
-def extract_external_apply_url_from_linkedin_html(html: str) -> str | None:
+def extract_apply_url_from_html(html: str) -> str | None:
     soup = BeautifulSoup(html, "html.parser")
     code = soup.find("code", id="applyUrl")
     if not code:

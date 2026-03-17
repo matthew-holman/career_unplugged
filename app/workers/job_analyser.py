@@ -1,5 +1,7 @@
 import re
 
+from urllib.parse import urlparse, urlunparse
+
 from bs4 import BeautifulSoup
 
 from app.db.db import get_db
@@ -7,7 +9,7 @@ from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
 from app.job_analysis import DescriptionExtractorFactory
 from app.job_analysis.description_extractors.linkedin import (
-    extract_external_apply_url_from_linkedin_html,
+    extract_apply_url_from_html,
 )
 from app.job_scrapers.scraper import RemoteStatus, Source
 from app.job_scrapers.utils import create_session
@@ -117,15 +119,17 @@ def _extract_job_description(job_page_html: str, job: Job) -> str | None:
     return extractor.extract_description(soup, job) or ""
 
 
+def _normalize_ats_url(url: str) -> str:
+    """Strip query params and fragment — LinkedIn adds tracking params to ATS URLs."""
+    parsed = urlparse(url)
+    return urlunparse(parsed._replace(query="", fragment=""))
+
+
 def _discover_career_page_from_linkedin(
     job,
-    job_page_html: str,
+    external_apply_url: str,
     career_page_handler: CareerPageHandler,
 ) -> None:
-    external_apply_url = extract_external_apply_url_from_linkedin_html(job_page_html)
-    if not external_apply_url:
-        return
-
     discovery = discover_career_page(external_apply_url)
     if not discovery:
         Log.info(
@@ -148,25 +152,25 @@ def _discover_career_page_from_linkedin(
         )
 
 
-def _apply_description_analysis(
-    job: Job, session, career_page_handler: CareerPageHandler
+def _update_ats_url_for_linkedin_job(
+    job: Job, external_url: str, job_handler: JobHandler
 ) -> None:
-    job_page_html = _fetch_job_page(session, job)
-    if not job_page_html:
-        job.mark_analysed()
-        return
+    normalized = _normalize_ats_url(external_url)
+    existing_ats_job = job_handler.get_by_ats_source_url(normalized)
+    if existing_ats_job:
+        Log.info(
+            f"Merging LinkedIn job {job.id} into ATS job "
+            f"{existing_ats_job.id} ({normalized})"
+        )
+        job_handler.merge_linkedin_into_ats(job, existing_ats_job)
+    else:
+        job.ats_source_url = normalized
+        Log.info(f"Set ats_source_url={normalized} on LinkedIn job {job.id}")
 
-    if job.source == Source.LINKEDIN:
-        _discover_career_page_from_linkedin(job, job_page_html, career_page_handler)
 
-    job_description_text = _extract_job_description(job_page_html, job)
-    if job_description_text is None:
-        job.mark_analysed()
-        return
-
+def _apply_keyword_analysis(job: Job, text: str) -> None:
     for pattern in REMOTE_REG_EX_PATTERNS:
-        match = re.search(pattern, job_description_text, re.IGNORECASE)
-        if match is not None:
+        if re.search(pattern, text, re.IGNORECASE):
             job.mark_true_remote(pattern)
             Log.info(
                 f"Job {job.title} at {job.company} has match with {pattern} in job description text."
@@ -174,17 +178,36 @@ def _apply_description_analysis(
             break
 
     for pattern in POSITIVE_MATCH_KEYWORDS:
-        match = re.search(pattern, job_description_text, re.IGNORECASE)
-        if match is not None:
+        if re.search(pattern, text, re.IGNORECASE):
             job.mark_positive_match()
             break
 
     for pattern in NEGATIVE_MATCH_KEYWORDS:
-        match = re.search(pattern, job_description_text, re.IGNORECASE)
-        if match is not None:
+        if re.search(pattern, text, re.IGNORECASE):
             job.mark_negative_match()
             break
 
+
+def _apply_description_analysis(
+    job: Job, session, career_page_handler: CareerPageHandler, job_handler: JobHandler
+) -> None:
+    job_page_html = _fetch_job_page(session, job)
+    if not job_page_html:
+        job.mark_analysed()
+        return
+
+    if job.source == Source.LINKEDIN:
+        external_url = extract_apply_url_from_html(job_page_html)
+        if external_url:
+            _discover_career_page_from_linkedin(job, external_url, career_page_handler)
+            _update_ats_url_for_linkedin_job(job, external_url, job_handler)
+
+    job_description_text = _extract_job_description(job_page_html, job)
+    if job_description_text is None:
+        job.mark_analysed()
+        return
+
+    _apply_keyword_analysis(job, job_description_text)
     job.mark_analysed()
 
 
@@ -212,6 +235,10 @@ def _flush_pending_jobs(
 
 
 def main() -> int:
+    return run_analyser()
+
+
+def run_analyser() -> int:
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
         career_page_handler = CareerPageHandler(db_session)
@@ -235,9 +262,10 @@ def main() -> int:
         session = create_session(is_tls=False, has_retry=True, delay=15)
         for job in jobs:
             jobs_processed += 1
-            _apply_description_analysis(job, session, career_page_handler)
-            jobs_saved += 1
-            pending_jobs.append(job)
+            _apply_description_analysis(job, session, career_page_handler, job_handler)
+            if job.deleted_at is None:
+                jobs_saved += 1
+                pending_jobs.append(job)
             pending_jobs = _flush_pending_jobs(
                 db_session,
                 job_handler,
@@ -253,7 +281,6 @@ def main() -> int:
             force=True,
         )
         Log.info(f"Analysis processed {jobs_processed} jobs, saved {jobs_saved} jobs.")
-
     return 0
 
 

@@ -13,6 +13,7 @@ from app.log import Log
 from app.models.job import Job
 from app.search_profile import JOB_LOCATIONS, linkedin_search_string
 from app.settings import settings
+from app.workers.job_analyser import run_analyser
 from app.workers.sync_common import build_jobs_to_save, flush_pending_jobs
 
 
@@ -82,6 +83,7 @@ def run_sync_linkedin_with_session(db_session: Session) -> dict[str, Any]:
 
 def main() -> int:
     run_sync_linkedin()
+    run_analyser()
     return 0
 
 

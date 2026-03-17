@@ -5,6 +5,7 @@ from typing import Any
 from dotenv import load_dotenv
 
 from app.log import Log
+from app.workers.job_analyser import run_analyser
 from app.workers.sync_ats import run_sync_ats
 from app.workers.sync_linkedin import run_sync_linkedin
 
@@ -13,8 +14,10 @@ def run_sync_all() -> dict[str, Any]:
     load_dotenv()
     Log.setup(application_name="sync_all")
 
-    ats_summary = run_sync_ats()
     linkedin_summary = run_sync_linkedin()
+    run_analyser()
+    ats_summary = run_sync_ats()
+    run_analyser()
 
     return {
         "ats": ats_summary,
