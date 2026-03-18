@@ -27400,4 +27400,9 @@ BAMBOO_PAGE_SEEDS = [
     },
     {"company_name": "uplink", "url": "https://uplink.bamboohr.com", "active": True},
     {"company_name": "wis", "url": "https://wis.bamboohr.com", "active": True},
+    {
+        "company_name": "wis",
+        "url": "https://argosmultilingual.bamboohr.com/",
+        "active": True,
+    },
 ]
