@@ -66,6 +66,15 @@ ADDITIONAL_SEARCH_TERMS: List[str] = ["Agile", "scrum"]
 # Crossover seems a company to avoid
 COMPANIES_TO_IGNORE: List[str] = ["Canonical", "Crossover"]
 
+# Jobs from these locations are saved regardless of title match.
+# Useful for finding local jobs with unusual titles.
+PREFERRED_LOCATIONS: set[str] = {
+    "Alingsås",
+    "Göteborg",
+    "Gothenburg",
+    "Malmö",
+}
+
 # this is a list of locations that the scraper will loop through
 # remote false will search for roles listed as onsite and hybrid,
 # remote true will search for remote

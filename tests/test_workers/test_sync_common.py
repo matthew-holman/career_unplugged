@@ -9,7 +9,7 @@ from app.job_scrapers.scraper import (
     Source,
 )
 from app.models.job import Job
-from app.workers.sync_common import build_jobs_to_save
+from app.workers.sync_common import build_jobs_to_save, should_save_job
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -57,6 +57,46 @@ def test_build_jobs_to_save_routes_ats_url_to_ats_source_url() -> None:
     assert len(jobs) == 1
     assert jobs[0].ats_source_url == url
     assert jobs[0].linkedin_source_url is None
+
+
+# ---------------------------------------------------------------------------
+# should_save_job — preferred location bypass tests
+# ---------------------------------------------------------------------------
+
+
+def _make_unmatched_title_job_post(
+    city: str | None = None, country: str | None = None, company: str = "Acme"
+) -> JobPost:
+    return JobPost(
+        title="Product Manager",  # does NOT match any value in JOB_TITLES
+        company_name=company,
+        job_url="https://example.com/job/1",
+        location=Location(city=city, country=country),
+        remote_status=RemoteStatus.ONSITE,
+        source=Source.ASHBY,
+    )
+
+
+def test_preferred_city_saves_job_without_title_match() -> None:
+    job = _make_unmatched_title_job_post(city="Berlin", country="Germany")
+    assert should_save_job(job) is True
+
+
+def test_preferred_country_saves_job_without_title_match() -> None:
+    job = _make_unmatched_title_job_post(city="Munich", country="Germany")
+    assert should_save_job(job) is True
+
+
+def test_non_preferred_location_does_not_bypass_title_check() -> None:
+    job = _make_unmatched_title_job_post(city="Amsterdam", country="Netherlands")
+    assert should_save_job(job) is False
+
+
+def test_preferred_location_still_respects_company_ignore() -> None:
+    job = _make_unmatched_title_job_post(
+        city="Berlin", country="Germany", company="Canonical"
+    )
+    assert should_save_job(job) is False
 
 
 # ---------------------------------------------------------------------------

@@ -9,7 +9,7 @@ from app.job_scrapers.scraper import JobPost, JobResponse, Source
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job, JobCreate
-from app.search_profile import COMPANIES_TO_IGNORE, JOB_TITLES
+from app.search_profile import COMPANIES_TO_IGNORE, JOB_TITLES, PREFERRED_LOCATIONS
 from app.utils.locations.europe_filter import EuropeFilter
 from app.utils.locations.remote_filter import RemoteFilter
 
@@ -39,6 +39,16 @@ def should_save_job(job_post: JobPost) -> bool:
         if job_post.company_name and company.lower() == job_post.company_name.lower():
             Log.debug(f"Ignoring job from {job_post.company_name}")
             return False
+
+    city = job_post.location.city or ""
+    country = job_post.location.country or ""
+    preferred = {loc.lower() for loc in PREFERRED_LOCATIONS}
+    if city.lower() in preferred or country.lower() in preferred:
+        Log.info(
+            f"Adding job {job_post.title} from {job_post.company_name} "
+            f"(preferred location: city='{city}', country='{country}')"
+        )
+        return True
 
     for job_title in JOB_TITLES:
         if job_title.lower() in job_post.title.lower():
