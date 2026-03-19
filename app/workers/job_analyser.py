@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from app.db.db import get_db
 from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
+from app.handlers.job_tag import JobTagHandler
 from app.job_analysis import DescriptionExtractorFactory
 from app.job_analysis.description_extractors.linkedin import (
     extract_apply_url_from_html,
@@ -16,7 +17,13 @@ from app.job_scrapers.utils import create_session
 from app.log import Log
 from app.models import Job
 from app.models.career_page import CareerPageCreate
-from app.search_profile import NEGATIVE_MATCH_KEYWORDS, POSITIVE_MATCH_KEYWORDS
+from app.models.job_tag import JobTag, TagCategory
+from app.search_profile import (
+    NEGATIVE_MATCH_KEYWORDS,
+    POSITIVE_MATCH_KEYWORDS,
+    ROLE_TYPE_TAGS,
+    TECH_STACK_TAGS,
+)
 from app.settings import settings
 from app.utils.ats_discovery import (
     discover_career_page,
@@ -168,6 +175,23 @@ def _update_ats_url_for_linkedin_job(
         Log.info(f"Set ats_source_url={normalized} on LinkedIn job {job.id}")
 
 
+def _extract_tags(job: Job, text: str) -> list[JobTag]:
+    """Match tag patterns against combined job title + description. Pure function, no side effects."""
+    combined = f"{job.title} {text}"
+    tags: list[JobTag] = []
+    for name, pattern in TECH_STACK_TAGS.items():
+        if re.search(pattern, combined, re.IGNORECASE):
+            tags.append(
+                JobTag(job_id=job.id, name=name, category=TagCategory.TECH_STACK)
+            )
+    for name, pattern in ROLE_TYPE_TAGS.items():
+        if re.search(pattern, combined, re.IGNORECASE):
+            tags.append(
+                JobTag(job_id=job.id, name=name, category=TagCategory.ROLE_TYPE)
+            )
+    return tags
+
+
 def _apply_keyword_analysis(job: Job, text: str) -> None:
     for pattern in REMOTE_REG_EX_PATTERNS:
         if re.search(pattern, text, re.IGNORECASE):
@@ -189,10 +213,15 @@ def _apply_keyword_analysis(job: Job, text: str) -> None:
 
 
 def _apply_description_analysis(
-    job: Job, session, career_page_handler: CareerPageHandler, job_handler: JobHandler
+    job: Job,
+    session,
+    career_page_handler: CareerPageHandler,
+    job_handler: JobHandler,
+    job_tag_handler: JobTagHandler,
 ) -> None:
     job_page_html = _fetch_job_page(session, job)
     if not job_page_html:
+        job_tag_handler.replace_tags(job.id, [])
         job.mark_analysed()
         return
 
@@ -204,10 +233,13 @@ def _apply_description_analysis(
 
     job_description_text = _extract_job_description(job_page_html, job)
     if job_description_text is None:
+        job_tag_handler.replace_tags(job.id, [])
         job.mark_analysed()
         return
 
     _apply_keyword_analysis(job, job_description_text)
+    tags = _extract_tags(job, job_description_text)
+    job_tag_handler.replace_tags(job.id, tags)
     job.mark_analysed()
 
 
@@ -242,6 +274,7 @@ def run_analyser() -> int:
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
         career_page_handler = CareerPageHandler(db_session)
+        job_tag_handler = JobTagHandler(db_session)
         jobs = job_handler.get_pending_analysis()
         batch_size = settings.DB_BATCH_SIZE
         pending_jobs: list = []
@@ -262,7 +295,9 @@ def run_analyser() -> int:
         session = create_session(is_tls=False, has_retry=True, delay=15)
         for job in jobs:
             jobs_processed += 1
-            _apply_description_analysis(job, session, career_page_handler, job_handler)
+            _apply_description_analysis(
+                job, session, career_page_handler, job_handler, job_tag_handler
+            )
             if job.deleted_at is None:
                 jobs_saved += 1
                 pending_jobs.append(job)

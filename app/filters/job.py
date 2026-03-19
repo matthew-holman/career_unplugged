@@ -3,6 +3,7 @@ from datetime import date, datetime
 from pydantic import BaseModel
 
 from app.job_scrapers.scraper import RemoteStatus, Source
+from app.models.job_tag import TagCategory
 
 
 class JobFilter(BaseModel):
@@ -24,3 +25,5 @@ class JobFilter(BaseModel):
     listing_date_lte: date | None = None
     eu_remote: bool | None = None
     recent_days: int | None = None
+    tags: list[str] | None = None
+    tag_category: TagCategory | None = None

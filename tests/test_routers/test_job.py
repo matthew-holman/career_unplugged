@@ -73,7 +73,6 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
             company="acme",
             ats_source_url="https://example.com/a",
             country="SE",
-            analysed=False,
             created_at=older,
             listing_date=older.date(),
         ),
@@ -82,7 +81,6 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
             company="acme",
             ats_source_url="https://example.com/b",
             country="SE",
-            analysed=True,
             created_at=now,
             listing_date=now.date(),
         ),
@@ -91,7 +89,6 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
             company="globex",
             ats_source_url="https://example.com/c",
             country="DE",
-            analysed=False,
             created_at=now,
             listing_date=None,
         ),
@@ -101,6 +98,12 @@ def test_list_jobs_filters(authed_client: TestClient, db_session: Session):
     db_session.commit()
     created_rows = db_session.exec(select(Job)).all()
     assert created_rows
+
+    # analysed is excluded from the upsert SET clause — set it directly after saving
+    beta_row = next(r for r in created_rows if r.title == "beta")
+    beta_row.analysed = True
+    db_session.add(beta_row)
+    db_session.commit()
 
     response = authed_client.get(f"/{JOB_INTERFACE}/", params={"company": "acme"})
     assert response.status_code == status.HTTP_200_OK

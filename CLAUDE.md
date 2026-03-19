@@ -141,11 +141,18 @@ The codebase enforces a **four-layer architecture**. Never mix responsibilities 
 - `status` (enum: PENDING/RUNNING/SUCCEEDED/FAILED)
 - `started_at`, `finished_at`, `summary` (JSONB), `errors` (JSONB)
 
+**`job_tag`** — Tags extracted during analysis, categorised for frontend display
+- `id`, `job_id` (FK, indexed), `name`, `category` (enum: TECH_STACK/ROLE_TYPE)
+- UNIQUE on `(job_id, name)` — no duplicate tags per job
+- No audit fields; tags are replaced wholesale on each analysis run via `JobTagHandler.replace_tags()`
+- Tag patterns configured in `app/search_profile.py` (`TECH_STACK_TAGS`, `ROLE_TYPE_TAGS`)
+
 ### Enums
 - `RemoteStatus`: UNKNOWN, ONSITE, HYBRID, REMOTE
 - `Source`: LINKEDIN, TEAMTAILOR, GREENHOUSE_BOARD, GREENHOUSE_EMBEDDED, ASHBY, LEVER, RECRUITEE, RIPPLING, PERSONIO, HIBOB, BAMBOO
 - `WorkerRunStatus`: PENDING, RUNNING, SUCCEEDED, FAILED
 - `JobType`: FULL_TIME, PART_TIME, INTERNSHIP, CONTRACT, TEMPORARY
+- `TagCategory`: TECH_STACK, ROLE_TYPE
 
 ### Soft Deletes
 All tables have a `deleted_at` nullable DateTime. Call `.delete()` to set the timestamp — never hard-delete records. Queries must exclude soft-deleted rows.
@@ -385,11 +392,13 @@ Both jobs must pass on every PR.
 | `app/db/` | Engine, session factory, session dependency |
 | `app/models/base_model.py` | Base class with `created_at`, `updated_at`, `deleted_at` |
 | `app/handlers/job.py` | Job CRUD, upsert, user-scoped filtering |
+| `app/handlers/job_tag.py` | Tag persistence: `replace_tags()`, `get_tags_for_jobs()` |
 | `app/handlers/career_page.py` | Career page management |
 | `app/handlers/worker_run.py` | Worker run tracking |
+| `app/models/job_tag.py` | `JobTag` table, `TagCategory` enum, `JobTagRead` response schema |
 | `app/workers/sync_ats.py` | ATS scraping orchestration |
 | `app/workers/sync_linkedin.py` | LinkedIn scraping orchestration |
-| `app/workers/job_analyser.py` | Remote detection + keyword matching |
+| `app/workers/job_analyser.py` | Remote detection, keyword matching, tag extraction |
 | `app/job_scrapers/ats_scraper_factory.py` | ATS scraper selection factory |
 | `app/job_scrapers/ats_scraper_base.py` | Abstract base for all ATS scrapers |
 | `app/utils/ats_discovery.py` | Detect ATS platform from career page URL |

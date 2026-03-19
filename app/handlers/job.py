@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Sequence
+from typing import Optional, Sequence, TypeVar
 
-from sqlalchemy import and_, func, or_
+from sqlalchemy import Select, and_, func, or_
 from sqlmodel import Session, col, select
 
 from app.db.db import upsert
@@ -10,9 +10,30 @@ from app.filters.job import JobFilter
 from app.filters.user_activity import UserActivityFilter
 from app.job_scrapers.scraper import RemoteStatus
 from app.models.job import Job, JobRead
+from app.models.job_tag import JobTag, TagCategory
 from app.models.user_job import UserJob
 from app.schemas.job import JobWithUserStateRead, UserJobStateRead, UserJobStateUpdate
 from app.utils.locations.europe_filter import EuropeFilter
+
+_SelectT = TypeVar("_SelectT", bound=tuple)
+
+
+def _apply_tag_filter(
+    query: Select[_SelectT],
+    tags: list[str] | None,
+    tag_category: TagCategory | None,
+) -> Select[_SelectT]:
+    """Apply tag-based WHERE clauses. Returns the query unchanged if no tag filters are set."""
+    if tags:
+        tag_sq = select(col(JobTag.job_id)).where(col(JobTag.name).in_(tags))
+        if tag_category:
+            tag_sq = tag_sq.where(JobTag.category == tag_category)
+        return query.where(col(Job.id).in_(tag_sq))
+    if tag_category:
+        tag_sq = select(col(JobTag.job_id)).where(JobTag.category == tag_category)
+        return query.where(col(Job.id).in_(tag_sq))
+    return query
+
 
 ATS_JOB_UPSERT_CONSTRAINT = "job_ats_source_url_key"
 LINKEDIN_JOB_UPSERT_CONSTRAINT = "job_linkedin_source_url_key"
@@ -212,6 +233,8 @@ class JobHandler:
             )
             query = query.where(eu_remote)
 
+        query = _apply_tag_filter(query, filters.tags, filters.tag_category)
+
         if "applied" not in provided and "ignored" not in provided:
             query = query.where(applied_expr.is_(False), ignored_expr.is_(False))
 
@@ -285,6 +308,8 @@ class JobHandler:
                 and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
             )
             query = query.where(eu_remote)
+
+        query = _apply_tag_filter(query, filters.tags, filters.tag_category)
 
         if filters.applied is None and filters.ignored is None:
             if filters.activity == "applied":

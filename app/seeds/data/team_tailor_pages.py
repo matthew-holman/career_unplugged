@@ -11806,4 +11806,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://yousign.teamtailor.com",
         "active": True,
     },
+    {
+        "company_name": "lynqa",
+        "url": "https://jobs.lynqa.se/",
+        "active": True,
+    },
 ]

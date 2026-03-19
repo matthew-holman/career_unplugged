@@ -31,7 +31,8 @@ JOB_TITLES: List[str] = [
     "engineering lead manager",
     "principal engineering manager",
     "engineering team lead",
-    "Engineering Lead",
+    "engineer team lead",
+    "engineering lead",
     "software team lead",
     "backend team lead",
     "fullstack team lead",
@@ -72,6 +73,8 @@ PREFERRED_LOCATIONS: set[str] = {
     "Alingsås",
     "Göteborg",
     "Gothenburg",
+    "Lerum",
+    "Partille",
     "Malmö",
 }
 
@@ -129,6 +132,42 @@ NEGATIVE_MATCH_KEYWORDS = [
     "C#",
     "Kotlin",
 ]
+
+# Tags are extracted during analysis from the job title + description.
+# Keys are the canonical display name (stored as tag.name in the DB).
+# Values are regex patterns matched case-insensitively.
+# Add new entries here to extend tagging without changing any other code.
+TECH_STACK_TAGS: dict[str, str] = {
+    "Python": r"\bPython\b",
+    "FastAPI": r"\bFastAPI\b",
+    "Django": r"\bDjango\b",
+    "TypeScript": r"\bTypeScript\b",
+    "JavaScript": r"\bJavaScript\b",
+    "Next.js": r"\bNext\.js\b",
+    "React": r"\bReact\b",
+    "Node.js": r"\bNode\.js\b",
+    "NestJS": r"\bNestJS\b",
+    "Vue.js": r"\bVue\.?js\b",
+    "PostgreSQL": r"\b(PostgreSQL|Postgres)\b",
+    "Docker": r"\bDocker\b",
+    "Kubernetes": r"\b(Kubernetes|K8s)\b",
+    "AWS": r"\bAWS\b",
+    "GCP": r"\b(GCP|Google Cloud)\b",
+    "Azure": r"\bAzure\b",
+}
+
+ROLE_TYPE_TAGS: dict[str, str] = {
+    "Engineering Manager": r"\bengineering\s+manager\b",
+    "Head of Engineering": r"\bhead\s+of\s+(software\s+)?engineering\b",
+    "VP Engineering": r"\bvp\s+of\s+engineering\b",
+    "Director of Engineering": r"\bdirector\s+of\s+(software\s+)?engineering\b",
+    "CTO": r"\b(cto|chief\s+technology\s+officer|chief\s+technical\s+officer)\b",
+    "Staff Engineer": r"\bstaff\s+(software\s+)?engineer\b",
+    "Principal Engineer": r"\bprincipal\s+(software\s+)?engineer\b",
+    "Tech Lead": r"\b(tech(nical)?\s+lead|team\s+lead)\b",
+    "IC": r"\bindividual\s+contributor\b",
+    "People Management": r"\b(line\s+manag|performance\s+review|1.on.1|one.on.one|career\s+development)\b",
+}
 
 
 def linkedin_search_string():

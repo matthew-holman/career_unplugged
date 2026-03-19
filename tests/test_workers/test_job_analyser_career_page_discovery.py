@@ -4,6 +4,7 @@ from sqlmodel import Session, col, select
 
 from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
+from app.handlers.job_tag import JobTagHandler
 from app.job_scrapers.scraper import RemoteStatus, Source
 from app.models.job import Job
 from app.models.user import User
@@ -64,9 +65,12 @@ def test_analyser_discovers_career_page_from_linkedin(db_session: Session) -> No
 
     career_handler = CareerPageHandler(db_session)
     job_handler = JobHandler(db_session)
+    job_tag_handler = JobTagHandler(db_session)
     session = _FakeSession(_FakeResponse(html))
 
-    job_analyser._apply_description_analysis(job, session, career_handler, job_handler)
+    job_analyser._apply_description_analysis(
+        job, session, career_handler, job_handler, job_tag_handler
+    )
 
     page = career_handler.get_by_url("https://jobs.ashbyhq.com/acme")
     assert page is not None
@@ -92,9 +96,12 @@ def test_analyser_sets_ats_source_url_on_linkedin_job_when_no_conflict(
 
     career_handler = CareerPageHandler(db_session)
     job_handler = JobHandler(db_session)
+    job_tag_handler = JobTagHandler(db_session)
     session = _FakeSession(_FakeResponse(html))
 
-    job_analyser._apply_description_analysis(job, session, career_handler, job_handler)
+    job_analyser._apply_description_analysis(
+        job, session, career_handler, job_handler, job_tag_handler
+    )
 
     assert job.ats_source_url == external_url
     assert job.deleted_at is None
@@ -137,10 +144,11 @@ def test_analyser_merges_linkedin_job_into_existing_ats_job(
 
     career_handler = CareerPageHandler(db_session)
     job_handler = JobHandler(db_session)
+    job_tag_handler = JobTagHandler(db_session)
     session = _FakeSession(_FakeResponse(html))
 
     job_analyser._apply_description_analysis(
-        linkedin_job, session, career_handler, job_handler
+        linkedin_job, session, career_handler, job_handler, job_tag_handler
     )
 
     db_session.refresh(ats_job)

@@ -78,12 +78,12 @@ def _make_unmatched_title_job_post(
 
 
 def test_preferred_city_saves_job_without_title_match() -> None:
-    job = _make_unmatched_title_job_post(city="Berlin", country="Germany")
+    job = _make_unmatched_title_job_post(city="Göteborg", country="Sweden")
     assert should_save_job(job) is True
 
 
 def test_preferred_country_saves_job_without_title_match() -> None:
-    job = _make_unmatched_title_job_post(city="Munich", country="Germany")
+    job = _make_unmatched_title_job_post(city="Alingsås", country="Sweden")
     assert should_save_job(job) is True
 
 
