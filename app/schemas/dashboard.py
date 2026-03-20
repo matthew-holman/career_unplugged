@@ -9,4 +9,3 @@ class JobSummary(BaseModel):
     eu_remote: int
     sweden: int
     new7d: int
-    positive_matches: int

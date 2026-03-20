@@ -69,10 +69,6 @@ class DashboardHandler:
         new7d = self.db_session.exec(
             select(func.count()).where(Job.created_at >= cutoff)
         ).one()
-        positive_matches = self.db_session.exec(
-            select(func.count()).where(col(Job.positive_keyword_match).is_(True))
-        ).one()
-
         return JobSummary(
             counts_by_source=counts_by_source,
             counts_by_country=counts_by_country,
@@ -81,5 +77,4 @@ class DashboardHandler:
             eu_remote=eu_remote,
             sweden=sweden,
             new7d=new7d,
-            positive_matches=positive_matches,
         )

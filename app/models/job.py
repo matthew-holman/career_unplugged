@@ -26,8 +26,6 @@ class JobBase(BaseModel, table=False):  # type: ignore
         default=None,
         description="Reason this job was flagged as remote (pattern match, location, etc.)",
     )
-    positive_keyword_match: bool = Field(nullable=True, default=False)
-    negative_keyword_match: bool = Field(nullable=True, default=False)
     source: Source = Field(nullable=False, default=Source.LINKEDIN)
     ats_source_url: str | None = Field(nullable=True, default=None, unique=True)
     linkedin_source_url: str | None = Field(nullable=True, default=None, unique=True)
@@ -43,14 +41,6 @@ class Job(JobBase, table=True):  # type: ignore
         self.true_remote = True
         self.analysed = True
         self.remote_flag_reason = flag_reason
-
-    def mark_positive_match(self) -> None:
-        self.positive_keyword_match = True
-        self.analysed = True
-
-    def mark_negative_match(self) -> None:
-        self.negative_keyword_match = True
-        self.analysed = True
 
     def mark_analysed(self) -> None:
         self.analysed = True

@@ -21,7 +21,6 @@ def test_dashboard_jobs_summary(
             linkedin_source_url="https://example.com/recent",
             country="Sweden",
             listing_remote=RemoteStatus.REMOTE,
-            positive_keyword_match=True,
             source=Source.LINKEDIN,
         ),
         JobCreate(
@@ -62,4 +61,3 @@ def test_dashboard_jobs_summary(
     assert data["eu_remote"] == 1
     assert data["sweden"] == 1
     assert data["new7d"] == 2
-    assert data["positive_matches"] == 1

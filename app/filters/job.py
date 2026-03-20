@@ -13,8 +13,6 @@ class JobFilter(BaseModel):
     city: str | None = None
     applied: bool = False
     ignored: bool = False
-    positive_keyword_match: bool | None = None
-    negative_keyword_match: bool | None = None
     true_remote: bool | None = None
     analysed: bool | None = None
     listing_remote: RemoteStatus | None = None

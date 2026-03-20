@@ -36,6 +36,10 @@ JOB_TITLES: List[str] = [
     "software team lead",
     "backend team lead",
     "fullstack team lead",
+    "team lead",
+    "squad lead",
+    "group lead",
+    "tribe lead",
     "Chief Technology Officer",
     " cto ",
     "(cto)",
@@ -106,54 +110,75 @@ JOB_LOCATIONS: List[SearchLocation] = [
     SearchLocation(location="EMEA", remote=True),
 ]
 
-# the linkedin job search does not check the body text, the analyser will use
-# these keywords and if found set job.keyword_match to true.
-POSITIVE_MATCH_KEYWORDS: List[str] = [
-    "Python",
-    "Typescript",
-    "NestJs",
-    "FastAPI",
-    "GreenTech",
-    "DeepTech",
-    "Vue",
-    "sustainability",
-    "Node",
-    "energy",
-    # add more keywords
-]
-
-# the analyser will use these keywords and if found set job.keyword_match
-# to false. Think of these as terms to help you filter out roles
-NEGATIVE_MATCH_KEYWORDS = [
-    "crypto",
-    "web3",
-    "blockchain",
-    "Java",
-    "C#",
-    "Kotlin",
-]
-
 # Tags are extracted during analysis from the job title + description.
 # Keys are the canonical display name (stored as tag.name in the DB).
 # Values are regex patterns matched case-insensitively.
 # Add new entries here to extend tagging without changing any other code.
 TECH_STACK_TAGS: dict[str, str] = {
+    # Languages
     "Python": r"\bPython\b",
-    "FastAPI": r"\bFastAPI\b",
-    "Django": r"\bDjango\b",
     "TypeScript": r"\bTypeScript\b",
     "JavaScript": r"\bJavaScript\b",
-    "Next.js": r"\bNext\.js\b",
-    "React": r"\bReact\b",
-    "Node.js": r"\bNode\.js\b",
+    "Rust": r"\bRust\b",
+    "Go": r"\b(Go(lang)?)\b",
+    "Java": r"\bJava\b",
+    "Kotlin": r"\bKotlin\b",
+    "Scala": r"\bScala\b",
+    "Ruby": r"\bRuby\b",
+    "PHP": r"\bPHP\b",
+    "C#": r"\bC#\b",
+    "C++": r"\bC\+\+\b",
+    "Elixir": r"\bElixir\b",
+    "Swift": r"\bSwift\b",
+    # Backend frameworks
+    "FastAPI": r"\bFastAPI\b",
+    "Django": r"\bDjango\b",
+    "Flask": r"\bFlask\b",
+    "Spring": r"\bSpring\b",
+    "Node.js": r"\bNode\.?js\b",
     "NestJS": r"\bNestJS\b",
+    "Express.js": r"\bExpress\.?js\b",
+    "Rails": r"\b(Ruby\s+on\s+)?Rails\b",
+    "Laravel": r"\bLaravel\b",
+    "Phoenix": r"\bPhoenix\b",
+    "Axum": r"\bAxum\b",
+    "Actix": r"\bActix\b",
+    # Frontend frameworks
+    "React": r"\bReact\b",
+    "Next.js": r"\bNext\.js\b",
     "Vue.js": r"\bVue\.?js\b",
+    "Angular": r"\bAngular\b",
+    "Svelte": r"\bSvelte\b",
+    # Databases — relational
     "PostgreSQL": r"\b(PostgreSQL|Postgres)\b",
+    "MySQL": r"\bMySQL\b",
+    "SQLite": r"\bSQLite\b",
+    "SQL Server": r"\bSQL\s+Server\b",
+    # Databases — NoSQL
+    "MongoDB": r"\bMongoDB\b",
+    "Redis": r"\bRedis\b",
+    "Elasticsearch": r"\b(Elasticsearch|OpenSearch)\b",
+    "Cassandra": r"\bCassandra\b",
+    "DynamoDB": r"\bDynamoDB\b",
+    # Messaging & event streaming
+    "Kafka": r"\bKafka\b",
+    "RabbitMQ": r"\bRabbitMQ\b",
+    "Celery": r"\bCelery\b",
+    "SQS": r"\bSQS\b",
+    "Pub/Sub": r"\bPub[\s/]?Sub\b",
+    # Infrastructure & cloud
     "Docker": r"\bDocker\b",
     "Kubernetes": r"\b(Kubernetes|K8s)\b",
+    "Terraform": r"\bTerraform\b",
     "AWS": r"\bAWS\b",
     "GCP": r"\b(GCP|Google Cloud)\b",
     "Azure": r"\bAzure\b",
+    # Data & ML
+    "GraphQL": r"\bGraphQL\b",
+    "gRPC": r"\bgRPC\b",
+    "Spark": r"\b(Apache\s+)?Spark\b",
+    "Airflow": r"\b(Apache\s+)?Airflow\b",
+    "dbt": r"\bdbt\b",
 }
 
 ROLE_TYPE_TAGS: dict[str, str] = {
@@ -167,6 +192,10 @@ ROLE_TYPE_TAGS: dict[str, str] = {
     "Tech Lead": r"\b(tech(nical)?\s+lead|team\s+lead)\b",
     "IC": r"\bindividual\s+contributor\b",
     "People Management": r"\b(line\s+manag|performance\s+review|1.on.1|one.on.one|career\s+development)\b",
+    "GreenTech": r"\b(green\s*tech|cleantech|clean\s+tech|climate\s+tech|climatetech)\b",
+    "DeepTech": r"\bdeep\s*tech\b",
+    "Sustainability": r"\bsustainab(le|ility)\b",
+    "Energy": r"\b(renewable\s+energy|clean\s+energy|energy\s+transition|energy\s+sector)\b",
 }
 
 

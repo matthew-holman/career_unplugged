@@ -48,6 +48,9 @@ sync-all:
 analyse:
 	poetry run python3 -m app.workers.job_analyser
 
+analyse-force:
+	poetry run python3 -m app.workers.job_analyser --force
+
 create-user:
 	poetry run python3 -m app.workers.create_user --name "$(name)" --email "$(email)"
 

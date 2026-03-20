@@ -19,8 +19,6 @@ from app.models import Job
 from app.models.career_page import CareerPageCreate
 from app.models.job_tag import JobTag, TagCategory
 from app.search_profile import (
-    NEGATIVE_MATCH_KEYWORDS,
-    POSITIVE_MATCH_KEYWORDS,
     ROLE_TYPE_TAGS,
     TECH_STACK_TAGS,
 )
@@ -192,23 +190,13 @@ def _extract_tags(job: Job, text: str) -> list[JobTag]:
     return tags
 
 
-def _apply_keyword_analysis(job: Job, text: str) -> None:
+def _apply_remote_analysis(job: Job, text: str) -> None:
     for pattern in REMOTE_REG_EX_PATTERNS:
         if re.search(pattern, text, re.IGNORECASE):
             job.mark_true_remote(pattern)
             Log.info(
                 f"Job {job.title} at {job.company} has match with {pattern} in job description text."
             )
-            break
-
-    for pattern in POSITIVE_MATCH_KEYWORDS:
-        if re.search(pattern, text, re.IGNORECASE):
-            job.mark_positive_match()
-            break
-
-    for pattern in NEGATIVE_MATCH_KEYWORDS:
-        if re.search(pattern, text, re.IGNORECASE):
-            job.mark_negative_match()
             break
 
 
@@ -237,7 +225,7 @@ def _apply_description_analysis(
         job.mark_analysed()
         return
 
-    _apply_keyword_analysis(job, job_description_text)
+    _apply_remote_analysis(job, job_description_text)
     tags = _extract_tags(job, job_description_text)
     job_tag_handler.replace_tags(job.id, tags)
     job.mark_analysed()
@@ -266,16 +254,16 @@ def _flush_pending_jobs(
         return []
 
 
-def main() -> int:
-    return run_analyser()
+def main(force: bool = False) -> int:
+    return run_analyser(force=force)
 
 
-def run_analyser() -> int:
+def run_analyser(force: bool = False) -> int:
     with next(get_db()) as db_session:
         job_handler = JobHandler(db_session)
         career_page_handler = CareerPageHandler(db_session)
         job_tag_handler = JobTagHandler(db_session)
-        jobs = job_handler.get_pending_analysis()
+        jobs = job_handler.get_jobs_for_analysis(force=force)
         batch_size = settings.DB_BATCH_SIZE
         pending_jobs: list = []
         jobs_processed = 0
@@ -320,5 +308,15 @@ def run_analyser() -> int:
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        default=False,
+        help="Re-analyse all jobs, including already-analysed ones",
+    )
+    args = parser.parse_args()
     Log.setup()
-    raise SystemExit(main())
+    raise SystemExit(main(force=args.force))

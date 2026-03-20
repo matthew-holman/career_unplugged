@@ -65,8 +65,10 @@ class JobHandler:
         job = self.db_session.exec(statement).first()
         return job
 
-    def get_pending_analysis(self) -> Sequence[Job]:
-        statement = select(Job).where(Job.analysed == False)  # noqa
+    def get_jobs_for_analysis(self, force: bool = False) -> Sequence[Job]:
+        statement = select(Job)
+        if not force:
+            statement = statement.where(Job.analysed == False)  # noqa
         jobs = self.db_session.exec(statement).all()
         return jobs
 
@@ -198,12 +200,6 @@ class JobHandler:
             "company": lambda value: Job.company == value,
             "country": lambda value: Job.country == value,
             "city": lambda value: Job.city == value,
-            "positive_keyword_match": lambda value: (
-                Job.positive_keyword_match == value
-            ),
-            "negative_keyword_match": lambda value: (
-                Job.negative_keyword_match == value
-            ),
             "true_remote": lambda value: Job.true_remote == value,
             "analysed": lambda value: Job.analysed == value,
             "listing_remote": lambda value: Job.listing_remote == value,
@@ -274,12 +270,6 @@ class JobHandler:
             "company": lambda value: Job.company == value,
             "country": lambda value: Job.country == value,
             "city": lambda value: Job.city == value,
-            "positive_keyword_match": lambda value: (
-                Job.positive_keyword_match == value
-            ),
-            "negative_keyword_match": lambda value: (
-                Job.negative_keyword_match == value
-            ),
             "true_remote": lambda value: Job.true_remote == value,
             "analysed": lambda value: Job.analysed == value,
             "listing_remote": lambda value: Job.listing_remote == value,
