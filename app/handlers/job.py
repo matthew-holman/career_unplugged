@@ -211,6 +211,8 @@ class JobHandler:
                 and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
             )
             query = query.where(eu_remote)
+        if filters.min_remote_score is not None:
+            query = query.where(Job.remote_score >= filters.min_remote_score)
 
         if "applied" not in provided and "ignored" not in provided:
             query = query.where(applied_expr.is_(False), ignored_expr.is_(False))
@@ -285,6 +287,8 @@ class JobHandler:
                 and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
             )
             query = query.where(eu_remote)
+        if filters.min_remote_score is not None:
+            query = query.where(Job.remote_score >= filters.min_remote_score)
 
         if filters.applied is None and filters.ignored is None:
             if filters.activity == "applied":

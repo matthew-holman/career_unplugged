@@ -24,3 +24,4 @@ class JobFilter(BaseModel):
     listing_date_lte: date | None = None
     eu_remote: bool | None = None
     recent_days: int | None = None
+    min_remote_score: int | None = None

@@ -21,6 +21,11 @@ class JobBase(BaseModel, table=False):  # type: ignore
         nullable=True, primary_key=False, default=None
     )
     true_remote: bool | None = Field(nullable=False, default=False)
+    remote_score: int = Field(
+        nullable=False,
+        default=0,
+        description="Remote eligibility score 0-5. 5=remote-first, 4=EU remote, 3=likely remote, 2=hybrid/weak, 1=unclear, 0=onsite.",
+    )
     analysed: bool = Field(nullable=True, default=False)
     remote_flag_reason: str | None = Field(
         default=None,
@@ -38,6 +43,11 @@ class JobBase(BaseModel, table=False):  # type: ignore
 
 class Job(JobBase, table=True):  # type: ignore
     id: int = Field(default=None, primary_key=True)
+
+    def set_remote_score(self, score: int, reason: str) -> None:
+        self.remote_score = score
+        self.remote_flag_reason = reason
+        self.true_remote = score >= 3
 
     def mark_true_remote(self, flag_reason: str) -> None:
         self.true_remote = True
