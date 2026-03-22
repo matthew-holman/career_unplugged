@@ -25,3 +25,4 @@ class JobFilter(BaseModel):
     recent_days: int | None = None
     tags: list[str] | None = None
     tag_category: TagCategory | None = None
+    min_remote_score: int | None = None

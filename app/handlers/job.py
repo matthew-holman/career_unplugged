@@ -228,6 +228,8 @@ class JobHandler:
                 and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
             )
             query = query.where(eu_remote)
+        if filters.min_remote_score is not None:
+            query = query.where(Job.remote_score >= filters.min_remote_score)
 
         query = _apply_tag_filter(query, filters.tags, filters.tag_category)
 
@@ -298,6 +300,8 @@ class JobHandler:
                 and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
             )
             query = query.where(eu_remote)
+        if filters.min_remote_score is not None:
+            query = query.where(Job.remote_score >= filters.min_remote_score)
 
         query = _apply_tag_filter(query, filters.tags, filters.tag_category)
 
