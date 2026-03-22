@@ -11811,4 +11811,24 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://jobs.lynqa.se/",
         "active": True,
     },
+    {
+        "company_name": "xtel",
+        "url": "https://careers.xtel-group.com/",
+        "active": True,
+    },
+    {
+        "company_name": "stravito",
+        "url": "https://careers.stravito.com/",
+        "active": True,
+    },
+    {
+        "company_name": "friday vibes",
+        "url": "https://fridayvibes.teamtailor.com/",
+        "active": True,
+    },
+    {
+        "company_name": "code magic",
+        "url": "https://careers.codemagic.io/",
+        "active": True,
+    },
 ]

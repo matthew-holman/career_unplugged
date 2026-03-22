@@ -33,7 +33,7 @@ class Teamtailor:
     def _extract_prose(soup: BeautifulSoup) -> str:
         # 1) Primary: section.company-links -> div.prose
         prose_div = soup.select_one("section.company-links div.prose")
-        return prose_div.decode_contents()
+        return prose_div.decode_contents() if prose_div else ""
 
     @staticmethod
     def _extract_script_description(soup: BeautifulSoup) -> Optional[str]:  # noqa: C901

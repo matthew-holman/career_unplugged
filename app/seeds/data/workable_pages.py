@@ -825,4 +825,9 @@ WORKABLE_PAGE_SEEDS = [
         "url": "https://apply.workable.com/tabeo-ltd",
         "active": True,
     },
+    {
+        "company_name": "cloud linux",
+        "url": "https://apply.workable.com/cloudlinux-1",
+        "active": True,
+    },
 ]

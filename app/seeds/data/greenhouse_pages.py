@@ -1635,4 +1635,14 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/tomorrowhealth",
         "active": True,
     },
+    {
+        "company_name": "human signal",
+        "url": "https://job-boards.greenhouse.io/humansignal",
+        "active": True,
+    },
+    {
+        "company_name": "ip fabric",
+        "url": "https://job-boards.greenhouse.io/ipfabric",
+        "active": True,
+    },
 ]
