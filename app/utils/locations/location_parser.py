@@ -132,7 +132,10 @@ class LocationParser:
         if not primary:
             return None, None
 
-        return cls._parse_single_location_candidate(primary)
+        city, country = cls._parse_single_location_candidate(primary)
+        if city:
+            city = CountryResolver.resolve_alias(city)
+        return city, country
 
     @staticmethod
     def normalize_location(location: str) -> str:
@@ -207,7 +210,7 @@ class LocationParser:
         return candidates[0]
 
     @classmethod
-    def _parse_single_location_candidate(
+    def _parse_single_location_candidate(  # noqa: C901
         cls, candidate: str
     ) -> tuple[str | None, str | None]:
         """

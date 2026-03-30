@@ -182,15 +182,39 @@ TECH_STACK_TAGS: dict[str, str] = {
 }
 
 ROLE_TYPE_TAGS: dict[str, str] = {
-    "Engineering Manager": r"\bengineering\s+manager\b",
-    "Head of Engineering": r"\bhead\s+of\s+(software\s+)?engineering\b",
-    "VP Engineering": r"\bvp\s+of\s+engineering\b",
-    "Director of Engineering": r"\bdirector\s+of\s+(software\s+)?engineering\b",
-    "CTO": r"\b(cto|chief\s+technology\s+officer|chief\s+technical\s+officer)\b",
-    "Staff Engineer": r"\bstaff\s+(software\s+)?engineer\b",
-    "Principal Engineer": r"\bprincipal\s+(software\s+)?engineer\b",
-    "Tech Lead": r"\b(tech(nical)?\s+lead|team\s+lead)\b",
-    "IC": r"\bindividual\s+contributor\b",
+    # --- Role categories (matched primarily via job title) ---
+    # All software engineering IC titles: backend, frontend, fullstack, mobile, etc.
+    "Individual Contributor": (
+        r"\b(junior\s+|mid[\s-]?level\s+|senior\s+|staff\s+|principal\s+)?"
+        r"(software|backend|back[\s-]end|frontend|front[\s-]end|fullstack|full[\s-]stack"
+        r"|platform|mobile|ios|android|data|ml|devops|site\s+reliability|sre)\s+"
+        r"(engineer|developer)\b"
+    ),
+    # Engineering managers, team leads, squad leads, tech lead managers
+    "Engineering Leadership": (
+        r"\b((senior|group|principal|staff)\s+)?engineering\s+manager\b"
+        r"|\b(technical?\s+lead\s+manager|tech\s+lead\s+manager|engineering\s+lead\s+manager)\b"
+        r"|\b(software|backend|fullstack|developer?|engineer)\s+(development\s+)?team\s+lead\b"
+        r"|\b(engineering|engineer|engineering\s+squad)\s+(team\s+)?lead\b"
+        r"|\b(team|squad|tribe|group)\s+lead\b"
+        r"|\bsoftware\s+development\s+manager\b"
+    ),
+    # Director, VP, Head of Eng, CTO — org-wide or multi-team scope
+    "Senior Engineering Leadership": (
+        r"\b(cto|chief\s+te(?:chnology|chnical)\s+officer|interim\s+cto|fractional\s+cto)\b"
+        r"|\b(director|engineering\s+director)\s+of\s+(software\s+)?engineering\b"
+        r"|\bdirector,?\s+engineering\b"
+        r"|\bhead\s+of\s+(software\s+)?engineering\b"
+        r"|\bhead\s+of\s+technology\b"
+        r"|\bvp\s+of\s+engineering\b"
+    ),
+    # Product owner, product manager, senior product manager
+    "Product Management": (
+        r"\b(senior\s+|associate\s+|junior\s+)?product\s+(manager|owner)\b"
+    ),
+    # Project manager, technical project manager, TPM
+    "Project Management": (r"\b(technical\s+)?project\s+manager\b" r"|\btpm\b"),
+    # --- Job attributes (matched from full description) ---
     "People Management": r"\b(line\s+manag|performance\s+review|1.on.1|one.on.one|career\s+development)\b",
     "GreenTech": r"\b(green\s*tech|cleantech|clean\s+tech|climate\s+tech|climatetech)\b",
     "DeepTech": r"\bdeep\s*tech\b",

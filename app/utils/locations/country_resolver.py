@@ -720,6 +720,49 @@ class CountryResolver:
         "remote(europe)": "Europe",
     }
 
+    CITY_ALIASES: dict[str, str] = {
+        # Sweden
+        "göteborg": "Gothenburg",
+        # Denmark
+        "københavn": "Copenhagen",
+        "aarhus": "Aarhus",
+        "århus": "Aarhus",
+        # Germany
+        "münchen": "Munich",
+        "köln": "Cologne",
+        "nürnberg": "Nuremberg",
+        "frankfurt am main": "Frankfurt",
+        # Austria
+        "wien": "Vienna",
+        # Netherlands
+        "den haag": "The Hague",
+        "'s-gravenhage": "The Hague",
+        # Belgium
+        "bruxelles": "Brussels",
+        "antwerpen": "Antwerp",
+        # Switzerland
+        "genève": "Geneva",
+        "zürich": "Zurich",
+        # Poland
+        "kraków": "Krakow",
+        "gdańsk": "Gdansk",
+        "wrocław": "Wroclaw",
+        "łódź": "Lodz",
+        "poznań": "Poznan",
+        # Czech Republic
+        "praha": "Prague",
+        # Finland
+        "helsinki": "Helsinki",
+        "espoo": "Espoo",
+        # Norway
+        "oslo": "Oslo",
+    }
+
+    @classmethod
+    def resolve_alias(cls, city: str) -> str:
+        """Return the canonical English city name, or the input unchanged."""
+        return cls.CITY_ALIASES.get(city.lower(), city)
+
     @classmethod
     def resolve_country(cls, location: str | None) -> str | None:
         if not location:

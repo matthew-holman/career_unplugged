@@ -60,6 +60,9 @@ seed-career-pages:
 backfill-job-career-page:
 	poetry run python3 -m app.workers.backfill_job_career_page
 
+backfill-city-aliases:
+	poetry run python3 -m app.workers.backfill_city_aliases
+
 urlscan-first-level:
 	poetry run python3 -m app.seeds.url_scan_client $(domain)
 

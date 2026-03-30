@@ -11831,4 +11831,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://careers.codemagic.io/",
         "active": True,
     },
+    {
+        "company_name": "resourcify",
+        "url": "https://resourcify.teamtailor.com/",
+        "active": True,
+    },
 ]
