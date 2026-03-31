@@ -1,0 +1,127 @@
+DEEL_PAGE_SEEDS = [
+    {
+        "company_name": "klarna",
+        "url": "https://jobs.deel.com/klarna",
+        "active": True,
+    },
+    {
+        "company_name": "Cochrane",
+        "url": "https://jobs.deel.com/Cochrane",
+        "active": True,
+    },
+    {
+        "company_name": "EAGGlobal",
+        "url": "https://jobs.deel.com/EAGGlobal",
+        "active": True,
+    },
+    {
+        "company_name": "QMLCareers",
+        "url": "https://jobs.deel.com/QMLCareers",
+        "active": True,
+    },
+    {"company_name": "airbase", "url": "https://jobs.deel.com/airbase", "active": True},
+    {"company_name": "algrano", "url": "https://jobs.deel.com/algrano", "active": True},
+    {
+        "company_name": "apmc-careers",
+        "url": "https://jobs.deel.com/apmc-careers",
+        "active": True,
+    },
+    {
+        "company_name": "bablesmartcities",
+        "url": "https://jobs.deel.com/bablesmartcities",
+        "active": True,
+    },
+    {
+        "company_name": "bc8ec313-d5a9-4de7-84a1-0cc5a9dd0197",
+        "url": "https://jobs.deel.com/bc8ec313-d5a9-4de7-84a1-0cc5a9dd0197",
+        "active": True,
+    },
+    {"company_name": "cardo", "url": "https://jobs.deel.com/cardo", "active": True},
+    {
+        "company_name": "careersaionsilicon",
+        "url": "https://jobs.deel.com/careersaionsilicon",
+        "active": True,
+    },
+    {
+        "company_name": "cellpoint-digital",
+        "url": "https://jobs.deel.com/cellpoint-digital",
+        "active": True,
+    },
+    {
+        "company_name": "christel-house",
+        "url": "https://jobs.deel.com/christel-house",
+        "active": True,
+    },
+    {
+        "company_name": "compliancequest",
+        "url": "https://jobs.deel.com/compliancequest",
+        "active": True,
+    },
+    {"company_name": "deel", "url": "https://jobs.deel.com/deel", "active": True},
+    {"company_name": "dfns", "url": "https://jobs.deel.com/dfns", "active": True},
+    {"company_name": "dott", "url": "https://jobs.deel.com/dott", "active": True},
+    {
+        "company_name": "dott-1769520315673",
+        "url": "https://jobs.deel.com/dott-1769520315673",
+        "active": True,
+    },
+    {
+        "company_name": "evident-insights",
+        "url": "https://jobs.deel.com/evident-insights",
+        "active": True,
+    },
+    {
+        "company_name": "fc6dedc3-7260-42ce-9549-3cce3e644c5b",
+        "url": "https://jobs.deel.com/fc6dedc3-7260-42ce-9549-3cce3e644c5b",
+        "active": True,
+    },
+    {"company_name": "glacier", "url": "https://jobs.deel.com/glacier", "active": True},
+    {
+        "company_name": "guardare",
+        "url": "https://jobs.deel.com/guardare",
+        "active": True,
+    },
+    {"company_name": "guest", "url": "https://jobs.deel.com/guest", "active": True},
+    {
+        "company_name": "job-boards",
+        "url": "https://jobs.deel.com/job-boards",
+        "active": True,
+    },
+    {"company_name": "klarna", "url": "https://jobs.deel.com/klarna", "active": True},
+    {"company_name": "mako", "url": "https://jobs.deel.com/mako", "active": True},
+    {
+        "company_name": "mccrae-tech",
+        "url": "https://jobs.deel.com/mccrae-tech",
+        "active": True,
+    },
+    {"company_name": "offsec", "url": "https://jobs.deel.com/offsec", "active": True},
+    {
+        "company_name": "otamiser",
+        "url": "https://jobs.deel.com/otamiser",
+        "active": True,
+    },
+    {"company_name": "qubitra", "url": "https://jobs.deel.com/qubitra", "active": True},
+    {
+        "company_name": "raffish-agency",
+        "url": "https://jobs.deel.com/raffish-agency",
+        "active": True,
+    },
+    {
+        "company_name": "red-bay-coffee-company",
+        "url": "https://jobs.deel.com/red-bay-coffee-company",
+        "active": True,
+    },
+    {"company_name": "sendfx", "url": "https://jobs.deel.com/sendfx", "active": True},
+    {"company_name": "shufti", "url": "https://jobs.deel.com/shufti", "active": True},
+    {
+        "company_name": "swingvision",
+        "url": "https://jobs.deel.com/swingvision",
+        "active": True,
+    },
+    {
+        "company_name": "zema.global",
+        "url": "https://jobs.deel.com/zema.global",
+        "active": True,
+    },
+    {"company_name": "zonos", "url": "https://jobs.deel.com/zonos", "active": True},
+]

@@ -1645,4 +1645,9 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/ipfabric",
         "active": True,
     },
+    {
+        "company_name": "automattic",
+        "url": "https://job-boards.greenhouse.io/automatticcareers",
+        "active": True,
+    },
 ]

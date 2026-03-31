@@ -40,6 +40,7 @@ from app.seeds.data.ashby_pages import ASHBY_PAGE_SEEDS
 from app.seeds.data.bamboo_pages import BAMBOO_PAGE_SEEDS
 from app.seeds.data.breezy_pages import BREEZY_PAGE_SEEDS
 from app.seeds.data.career_pages import CAREER_PAGE_SEEDS
+from app.seeds.data.deel_pages import DEEL_PAGE_SEEDS
 from app.seeds.data.dover_pages import DOVER_PAGE_SEEDS
 from app.seeds.data.greenhouse_pages import GREENHOUSE_PAGE_SEEDS
 from app.seeds.data.hibob_pages import HIBOB_PAGE_SEEDS
@@ -85,6 +86,7 @@ UNSUPPORTED_ATS: list[tuple[str, str]] = [
     ("peopleforce.io", "people_force_pages.py"),
     ("jobs.sloneek.com", "sloneek_pages.py"),
     ("hireflyapp.com", "hirefly_pages.py"),
+    ("https://jobs.deel.com/", "deel_pages.py"),
 ]
 
 ALL_SEED_LISTS = [
@@ -92,6 +94,7 @@ ALL_SEED_LISTS = [
     BAMBOO_PAGE_SEEDS,
     BREEZY_PAGE_SEEDS,
     CAREER_PAGE_SEEDS,
+    DEEL_PAGE_SEEDS,
     DOVER_PAGE_SEEDS,
     GREENHOUSE_PAGE_SEEDS,
     HIBOB_PAGE_SEEDS,

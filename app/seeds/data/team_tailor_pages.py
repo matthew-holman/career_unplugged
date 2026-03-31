@@ -11836,4 +11836,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://resourcify.teamtailor.com/",
         "active": True,
     },
+    {
+        "company_name": "techster solutions",
+        "url": "https://www.techstersolutions.se/",
+        "active": True,
+    },
 ]

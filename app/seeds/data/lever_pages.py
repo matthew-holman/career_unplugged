@@ -1896,4 +1896,9 @@ LEVER_PAGE_SEEDS = [
     {"company_name": "wyld", "url": "https://jobs.lever.co/wyld", "active": True},
     {"company_name": "xometry", "url": "https://jobs.lever.co/xometry", "active": True},
     {"company_name": "yuno", "url": "https://jobs.lever.co/yuno", "active": True},
+    {
+        "company_name": "yuno",
+        "url": "https://jobs.lever.co/contentsquare/",
+        "active": True,
+    },
 ]

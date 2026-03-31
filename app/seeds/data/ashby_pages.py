@@ -1019,4 +1019,34 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/airspace-intelligence.com",
         "active": True,
     },
+    {
+        "company_name": "buffer",
+        "url": "https://jobs.ashbyhq.com/buffer",
+        "active": True,
+    },
+    {
+        "company_name": "buffer",
+        "url": "https://jobs.ashbyhq.com/oyster",
+        "active": True,
+    },
+    {
+        "company_name": "Close",
+        "url": "https://jobs.ashbyhq.com/close/",
+        "active": True,
+    },
+    {
+        "company_name": "deel",
+        "url": "https://jobs.ashbyhq.com/deel",
+        "active": True,
+    },
+    {
+        "company_name": "GitBook",
+        "url": "https://jobs.ashbyhq.com/GitBook/",
+        "active": True,
+    },
+    {
+        "company_name": "helpscout",
+        "url": "https://jobs.ashbyhq.com/helpscout",
+        "active": True,
+    },
 ]
