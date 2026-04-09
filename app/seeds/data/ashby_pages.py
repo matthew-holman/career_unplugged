@@ -1049,4 +1049,19 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/helpscout",
         "active": True,
     },
+    {
+        "company_name": "helpscout",
+        "url": "https://jobs.ashbyhq.com/sana-roles",
+        "active": True,
+    },
+    {
+        "company_name": "legora",
+        "url": "https://jobs.ashbyhq.com/legora",
+        "active": True,
+    },
+    {
+        "company_name": "redpine",
+        "url": "https://jobs.ashbyhq.com/redpine/",
+        "active": True,
+    },
 ]

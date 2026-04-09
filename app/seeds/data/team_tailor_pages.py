@@ -11841,4 +11841,79 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://www.techstersolutions.se/",
         "active": True,
     },
+    {
+        "company_name": "norion bank",
+        "url": "https://karriar.norionbank.se/",
+        "active": True,
+    },
+    {
+        "company_name": "opera",
+        "url": "https://jobs.opera.com/",
+        "active": True,
+    },
+    {
+        "company_name": "kry",
+        "url": "https://career.kry.se/",
+        "active": True,
+    },
+    {
+        "company_name": "lunar",
+        "url": "https://jobs.lunar.app/",
+        "active": True,
+    },
+    {
+        "company_name": "soundtrack",
+        "url": "https://careers.soundtrack.io/",
+        "active": True,
+    },
+    {
+        "company_name": "froda",
+        "url": "https://join.froda.se/",
+        "active": True,
+    },
+    {
+        "company_name": "carla",
+        "url": "https://careers.carla.se/",
+        "active": True,
+    },
+    {
+        "company_name": "qred",
+        "url": "https://jobs.qred.com/",
+        "active": True,
+    },
+    {
+        "company_name": "kustom",
+        "url": "https://kustom.teamtailor.com/",
+        "active": True,
+    },
+    {
+        "company_name": "upsales",
+        "url": "https://career.upsales.com/",
+        "active": True,
+    },
+    {
+        "company_name": "simployer",
+        "url": "https://careers.simployer.com/",
+        "active": True,
+    },
+    {
+        "company_name": "nextory",
+        "url": "https://career.nextory.com/",
+        "active": True,
+    },
+    {
+        "company_name": "yazen",
+        "url": "https://jobs.yazen.com/",
+        "active": True,
+    },
+    {
+        "company_name": "bits",
+        "url": "https://careers.bits.bi/",
+        "active": True,
+    },
+    {
+        "company_name": "steep",
+        "url": "https://careers.steep.app/",
+        "active": True,
+    },
 ]

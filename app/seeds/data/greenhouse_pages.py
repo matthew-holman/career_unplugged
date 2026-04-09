@@ -1650,4 +1650,24 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/automatticcareers",
         "active": True,
     },
+    {
+        "company_name": "oura",
+        "url": "https://job-boards.greenhouse.io/oura",
+        "active": True,
+    },
+    {
+        "company_name": "oura",
+        "url": "https://job-boards.eu.greenhouse.io/mentimeter",
+        "active": True,
+    },
+    {
+        "company_name": "yousician",
+        "url": "https://job-boards.greenhouse.io/yousician",
+        "active": True,
+    },
+    {
+        "company_name": "truecaller",
+        "url": "https://job-boards.greenhouse.io/truecaller",
+        "active": True,
+    },
 ]
