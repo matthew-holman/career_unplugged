@@ -5180,4 +5180,66 @@ PERSONIO_PAGE_SEEDS = [
         "url": "https://spread-gmbh.jobs.personio.de",
         "active": True,
     },
+    {
+        "company_name": "acsgroup",
+        "url": "https://acsgroup.jobs.personio.de",
+        "active": True,
+    },
+    {"company_name": "egym", "url": "https://egym.jobs.personio.de", "active": True},
+    {
+        "company_name": "flexoptix",
+        "url": "https://flexoptix.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "flexoptix",
+        "url": "https://flexoptix.jobs.personio.de",
+        "active": True,
+    },
+    {"company_name": "ftapi", "url": "https://ftapi.jobs.personio.de", "active": True},
+    {
+        "company_name": "giffits-gmbh",
+        "url": "https://giffits-gmbh.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "ionity-gmbh",
+        "url": "https://ionity-gmbh.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "metallbau-luehrmann-gmbh-2",
+        "url": "https://metallbau-luehrmann-gmbh-2.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "now-gmbh",
+        "url": "https://now-gmbh.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "p3-security",
+        "url": "https://p3-security.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "themain",
+        "url": "https://themain.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "timechimp",
+        "url": "https://timechimp.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "twojeys",
+        "url": "https://twojeys.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "workpath",
+        "url": "https://workpath.jobs.personio.de",
+        "active": True,
+    },
 ]

@@ -1901,4 +1901,89 @@ LEVER_PAGE_SEEDS = [
         "url": "https://jobs.lever.co/contentsquare/",
         "active": True,
     },
+    {
+        "company_name": "InfrastructureandCapitalProjects",
+        "url": "https://jobs.lever.co/InfrastructureandCapitalProjects",
+        "active": True,
+    },
+    {"company_name": "azul", "url": "https://jobs.lever.co/azul", "active": True},
+    {
+        "company_name": "bluelightconsulting",
+        "url": "https://jobs.lever.co/bluelightconsulting",
+        "active": True,
+    },
+    {"company_name": "crypto", "url": "https://jobs.lever.co/crypto", "active": True},
+    {"company_name": "dnb", "url": "https://jobs.lever.co/dnb", "active": True},
+    {
+        "company_name": "envato-2",
+        "url": "https://jobs.lever.co/envato-2",
+        "active": True,
+    },
+    {
+        "company_name": "h2eventgroup",
+        "url": "https://jobs.lever.co/h2eventgroup",
+        "active": True,
+    },
+    {"company_name": "hophr", "url": "https://jobs.lever.co/hophr", "active": True},
+    {
+        "company_name": "merlinlabs",
+        "url": "https://jobs.lever.co/merlinlabs",
+        "active": True,
+    },
+    {
+        "company_name": "octoenergy",
+        "url": "https://jobs.lever.co/octoenergy",
+        "active": True,
+    },
+    {
+        "company_name": "offchainlabs",
+        "url": "https://jobs.lever.co/offchainlabs",
+        "active": True,
+    },
+    {"company_name": "qonto", "url": "https://jobs.lever.co/qonto", "active": True},
+    {
+        "company_name": "remofirst",
+        "url": "https://jobs.lever.co/remofirst",
+        "active": True,
+    },
+    {
+        "company_name": "revealtech",
+        "url": "https://jobs.lever.co/revealtech",
+        "active": True,
+    },
+    {
+        "company_name": "rocketcommunications",
+        "url": "https://jobs.lever.co/rocketcommunications",
+        "active": True,
+    },
+    {
+        "company_name": "seven-starling",
+        "url": "https://jobs.lever.co/seven-starling",
+        "active": True,
+    },
+    {
+        "company_name": "shieldai",
+        "url": "https://jobs.lever.co/shieldai",
+        "active": True,
+    },
+    {
+        "company_name": "soniresources",
+        "url": "https://jobs.lever.co/soniresources",
+        "active": True,
+    },
+    {
+        "company_name": "trainsweateat",
+        "url": "https://jobs.lever.co/trainsweateat",
+        "active": True,
+    },
+    {
+        "company_name": "transmutex",
+        "url": "https://jobs.lever.co/transmutex",
+        "active": True,
+    },
+    {
+        "company_name": "weloglobal",
+        "url": "https://jobs.lever.co/weloglobal",
+        "active": True,
+    },
 ]

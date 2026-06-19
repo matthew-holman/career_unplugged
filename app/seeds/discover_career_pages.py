@@ -66,6 +66,7 @@ SUPPORTED_ATS: list[tuple[str, str]] = [
     ("teamtailor.com", "team_tailor_pages.py"),
     ("jobs.ashbyhq.com", "ashby_pages.py"),
     ("jobs.lever.co", "lever_pages.py"),
+    ("jobs.eu.lever.co", "lever_pages.py"),
     ("job-boards.greenhouse.io", "greenhouse_pages.py"),
     ("job-boards.eu.greenhouse.io", "greenhouse_pages.py"),
     ("jobs.personio.com", "personio_pages.py"),

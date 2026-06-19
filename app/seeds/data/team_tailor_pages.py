@@ -11916,4 +11916,94 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://careers.steep.app/",
         "active": True,
     },
+    {
+        "company_name": "aftral-isteli",
+        "url": "https://aftral-isteli.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "belros", "url": "https://belros.teamtailor.com", "active": True},
+    {
+        "company_name": "clickstalentbv-1749060007",
+        "url": "https://clickstalentbv-1749060007.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "dabble", "url": "https://dabble.teamtailor.com", "active": True},
+    {
+        "company_name": "eaglehubs",
+        "url": "https://eaglehubs.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "ekenhuset-1732012622",
+        "url": "https://ekenhuset-1732012622.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "falconmoving",
+        "url": "https://falconmoving.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "goldenhire",
+        "url": "https://goldenhire.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "gruppomontenegro",
+        "url": "https://gruppomontenegro.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "ictech", "url": "https://ictech.teamtailor.com", "active": True},
+    {
+        "company_name": "leboostcoworking",
+        "url": "https://leboostcoworking.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "miogruppen",
+        "url": "https://miogruppen.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "na", "url": "https://cashea.na.teamtailor.com", "active": True},
+    {
+        "company_name": "na",
+        "url": "https://crunchbase.na.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "na",
+        "url": "https://mindalterai.na.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "omsconnect-demo",
+        "url": "https://omsconnect-demo.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "orrogroup",
+        "url": "https://orrogroup.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "puntonet",
+        "url": "https://puntonet.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "telenortsspakistan-1750856773",
+        "url": "https://telenortsspakistan-1750856773.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "tusclasesparticulares",
+        "url": "https://tusclasesparticulares.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "twodaydenmark",
+        "url": "https://twodaydenmark.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "zitec", "url": "https://zitec.teamtailor.com", "active": True},
 ]

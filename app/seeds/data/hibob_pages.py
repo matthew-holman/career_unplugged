@@ -1095,4 +1095,275 @@ HIBOB_PAGE_SEEDS = [
         "url": "https://imexdental.careers.hibob.com",
         "active": True,
     },
+    {
+        "company_name": "careers",
+        "url": "https://cubicojobs.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "*", "url": "https://job-boards.greenhouse.io/*", "active": True},
+    {
+        "company_name": "123456789101010",
+        "url": "https://job-boards.greenhouse.io/123456789101010",
+        "active": True,
+    },
+    {
+        "company_name": "540",
+        "url": "https://job-boards.greenhouse.io/540",
+        "active": True,
+    },
+    {
+        "company_name": "abinbev",
+        "url": "https://job-boards.greenhouse.io/abinbev",
+        "active": True,
+    },
+    {
+        "company_name": "alarmcom",
+        "url": "https://job-boards.greenhouse.io/alarmcom",
+        "active": True,
+    },
+    {
+        "company_name": "alphasightsresumedrop",
+        "url": "https://job-boards.greenhouse.io/alphasightsresumedrop",
+        "active": True,
+    },
+    {
+        "company_name": "altentechnologyusa",
+        "url": "https://job-boards.greenhouse.io/altentechnologyusa",
+        "active": True,
+    },
+    {
+        "company_name": "alxafrica",
+        "url": "https://job-boards.greenhouse.io/alxafrica",
+        "active": True,
+    },
+    {
+        "company_name": "atlasxhm",
+        "url": "https://job-boards.greenhouse.io/atlasxhm",
+        "active": True,
+    },
+    {
+        "company_name": "audaxgroup",
+        "url": "https://job-boards.greenhouse.io/audaxgroup",
+        "active": True,
+    },
+    {
+        "company_name": "bluemoonmetals",
+        "url": "https://job-boards.greenhouse.io/bluemoonmetals",
+        "active": True,
+    },
+    {
+        "company_name": "claudecorps",
+        "url": "https://job-boards.greenhouse.io/claudecorps",
+        "active": True,
+    },
+    {
+        "company_name": "commvault",
+        "url": "https://job-boards.greenhouse.io/commvault",
+        "active": True,
+    },
+    {
+        "company_name": "crisprecruit",
+        "url": "https://job-boards.greenhouse.io/crisprecruit",
+        "active": True,
+    },
+    {
+        "company_name": "css",
+        "url": "https://job-boards.greenhouse.io/css",
+        "active": True,
+    },
+    {
+        "company_name": "darkwolfsolutions",
+        "url": "https://job-boards.greenhouse.io/darkwolfsolutions",
+        "active": True,
+    },
+    {
+        "company_name": "dept",
+        "url": "https://job-boards.greenhouse.io/dept",
+        "active": True,
+    },
+    {
+        "company_name": "donorbox",
+        "url": "https://job-boards.greenhouse.io/donorbox",
+        "active": True,
+    },
+    {
+        "company_name": "energyexemplarllc",
+        "url": "https://job-boards.greenhouse.io/energyexemplarllc",
+        "active": True,
+    },
+    {
+        "company_name": "eosfitness",
+        "url": "https://job-boards.greenhouse.io/eosfitness",
+        "active": True,
+    },
+    {
+        "company_name": "evio",
+        "url": "https://job-boards.greenhouse.io/evio",
+        "active": True,
+    },
+    {
+        "company_name": "extenteam",
+        "url": "https://job-boards.greenhouse.io/extenteam",
+        "active": True,
+    },
+    {
+        "company_name": "feverup",
+        "url": "https://job-boards.eu.greenhouse.io/feverup",
+        "active": True,
+    },
+    {
+        "company_name": "forter",
+        "url": "https://job-boards.greenhouse.io/forter",
+        "active": True,
+    },
+    {
+        "company_name": "freshprints",
+        "url": "https://job-boards.greenhouse.io/freshprints",
+        "active": True,
+    },
+    {
+        "company_name": "guidepoint",
+        "url": "https://job-boards.greenhouse.io/guidepoint",
+        "active": True,
+    },
+    {
+        "company_name": "hummingbirdregtech",
+        "url": "https://job-boards.greenhouse.io/hummingbirdregtech",
+        "active": True,
+    },
+    {
+        "company_name": "ibkr",
+        "url": "https://job-boards.greenhouse.io/ibkr",
+        "active": True,
+    },
+    {
+        "company_name": "immersive",
+        "url": "https://job-boards.greenhouse.io/immersive",
+        "active": True,
+    },
+    {
+        "company_name": "infinidat",
+        "url": "https://job-boards.greenhouse.io/infinidat",
+        "active": True,
+    },
+    {
+        "company_name": "inter",
+        "url": "https://job-boards.greenhouse.io/inter",
+        "active": True,
+    },
+    {
+        "company_name": "iovancebiotherapeutics",
+        "url": "https://job-boards.greenhouse.io/iovancebiotherapeutics",
+        "active": True,
+    },
+    {
+        "company_name": "jetbrains",
+        "url": "https://job-boards.eu.greenhouse.io/jetbrains",
+        "active": True,
+    },
+    {
+        "company_name": "kikoff",
+        "url": "https://job-boards.greenhouse.io/kikoff",
+        "active": True,
+    },
+    {
+        "company_name": "koboldmetals",
+        "url": "https://job-boards.greenhouse.io/koboldmetals",
+        "active": True,
+    },
+    {
+        "company_name": "leaseweb",
+        "url": "https://job-boards.greenhouse.io/leaseweb",
+        "active": True,
+    },
+    {
+        "company_name": "mavenclinic",
+        "url": "https://job-boards.greenhouse.io/mavenclinic",
+        "active": True,
+    },
+    {
+        "company_name": "mesh",
+        "url": "https://job-boards.greenhouse.io/mesh",
+        "active": True,
+    },
+    {
+        "company_name": "modernhealth",
+        "url": "https://job-boards.greenhouse.io/modernhealth",
+        "active": True,
+    },
+    {
+        "company_name": "radicalnumerics",
+        "url": "https://job-boards.greenhouse.io/radicalnumerics",
+        "active": True,
+    },
+    {
+        "company_name": "renttherunway",
+        "url": "https://job-boards.greenhouse.io/renttherunway",
+        "active": True,
+    },
+    {
+        "company_name": "saxbys",
+        "url": "https://job-boards.greenhouse.io/saxbys",
+        "active": True,
+    },
+    {
+        "company_name": "sayari",
+        "url": "https://job-boards.greenhouse.io/sayari",
+        "active": True,
+    },
+    {
+        "company_name": "scopely",
+        "url": "https://job-boards.greenhouse.io/scopely",
+        "active": True,
+    },
+    {
+        "company_name": "scoutmotors",
+        "url": "https://job-boards.greenhouse.io/scoutmotors",
+        "active": True,
+    },
+    {
+        "company_name": "studsinc",
+        "url": "https://job-boards.greenhouse.io/studsinc",
+        "active": True,
+    },
+    {
+        "company_name": "thefarmersdog",
+        "url": "https://job-boards.greenhouse.io/thefarmersdog",
+        "active": True,
+    },
+    {
+        "company_name": "thinkacademyus",
+        "url": "https://job-boards.greenhouse.io/thinkacademyus",
+        "active": True,
+    },
+    {
+        "company_name": "upside",
+        "url": "https://job-boards.greenhouse.io/upside",
+        "active": True,
+    },
+    {
+        "company_name": "vailclinicincdbavailhealthhospital",
+        "url": "https://job-boards.greenhouse.io/vailclinicincdbavailhealthhospital",
+        "active": True,
+    },
+    {
+        "company_name": "veterinaryemergencygroupst",
+        "url": "https://job-boards.greenhouse.io/veterinaryemergencygroupst",
+        "active": True,
+    },
+    {
+        "company_name": "vsco39",
+        "url": "https://job-boards.greenhouse.io/vsco39",
+        "active": True,
+    },
+    {
+        "company_name": "xai_private",
+        "url": "https://job-boards.greenhouse.io/xai_private",
+        "active": True,
+    },
+    {
+        "company_name": "yipitdata",
+        "url": "https://job-boards.greenhouse.io/yipitdata",
+        "active": True,
+    },
 ]

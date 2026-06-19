@@ -1064,4 +1064,132 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/redpine/",
         "active": True,
     },
+    {
+        "company_name": "Dominion%20Dynamics",
+        "url": "https://jobs.ashbyhq.com/Dominion%20Dynamics",
+        "active": True,
+    },
+    {
+        "company_name": "LatchBio",
+        "url": "https://jobs.ashbyhq.com/LatchBio",
+        "active": True,
+    },
+    {"company_name": "Perk", "url": "https://jobs.ashbyhq.com/Perk", "active": True},
+    {
+        "company_name": "Silver",
+        "url": "https://jobs.ashbyhq.com/Silver",
+        "active": True,
+    },
+    {
+        "company_name": "Solace",
+        "url": "https://jobs.ashbyhq.com/Solace",
+        "active": True,
+    },
+    {
+        "company_name": "ansiblehealth",
+        "url": "https://jobs.ashbyhq.com/ansiblehealth",
+        "active": True,
+    },
+    {"company_name": "arago", "url": "https://jobs.ashbyhq.com/arago", "active": True},
+    {
+        "company_name": "cantina.xyz",
+        "url": "https://jobs.ashbyhq.com/cantina.xyz",
+        "active": True,
+    },
+    {
+        "company_name": "doppel",
+        "url": "https://jobs.ashbyhq.com/doppel",
+        "active": True,
+    },
+    {
+        "company_name": "empirical",
+        "url": "https://jobs.ashbyhq.com/empirical",
+        "active": True,
+    },
+    {
+        "company_name": "evenup",
+        "url": "https://jobs.ashbyhq.com/evenup",
+        "active": True,
+    },
+    {
+        "company_name": "fluidstack",
+        "url": "https://jobs.ashbyhq.com/fluidstack",
+        "active": True,
+    },
+    {
+        "company_name": "glacis-ai",
+        "url": "https://jobs.ashbyhq.com/glacis-ai",
+        "active": True,
+    },
+    {
+        "company_name": "glimpse",
+        "url": "https://jobs.ashbyhq.com/glimpse",
+        "active": True,
+    },
+    {"company_name": "intus", "url": "https://jobs.ashbyhq.com/intus", "active": True},
+    {"company_name": "kodex", "url": "https://jobs.ashbyhq.com/kodex", "active": True},
+    {"company_name": "lgads", "url": "https://jobs.ashbyhq.com/lgads", "active": True},
+    {
+        "company_name": "lilt-production",
+        "url": "https://jobs.ashbyhq.com/lilt-production",
+        "active": True,
+    },
+    {
+        "company_name": "multiverse",
+        "url": "https://jobs.ashbyhq.com/multiverse",
+        "active": True,
+    },
+    {"company_name": "neara", "url": "https://jobs.ashbyhq.com/neara", "active": True},
+    {
+        "company_name": "noialabs",
+        "url": "https://jobs.ashbyhq.com/noialabs",
+        "active": True,
+    },
+    {
+        "company_name": "onecrew",
+        "url": "https://jobs.ashbyhq.com/onecrew",
+        "active": True,
+    },
+    {
+        "company_name": "partiful",
+        "url": "https://jobs.ashbyhq.com/partiful",
+        "active": True,
+    },
+    {
+        "company_name": "polymarket",
+        "url": "https://jobs.ashbyhq.com/polymarket",
+        "active": True,
+    },
+    {"company_name": "ramp", "url": "https://jobs.ashbyhq.com/ramp", "active": True},
+    {"company_name": "reevo", "url": "https://jobs.ashbyhq.com/reevo", "active": True},
+    {
+        "company_name": "riveron",
+        "url": "https://jobs.ashbyhq.com/riveron",
+        "active": True,
+    },
+    {
+        "company_name": "talentsafari",
+        "url": "https://jobs.ashbyhq.com/talentsafari",
+        "active": True,
+    },
+    {
+        "company_name": "universe-group",
+        "url": "https://jobs.ashbyhq.com/universe-group",
+        "active": True,
+    },
+    {
+        "company_name": "valiussciences",
+        "url": "https://jobs.ashbyhq.com/valiussciences",
+        "active": True,
+    },
+    {
+        "company_name": "versemedical",
+        "url": "https://jobs.ashbyhq.com/versemedical",
+        "active": True,
+    },
+    {
+        "company_name": "xnrgy-climate-systems",
+        "url": "https://jobs.ashbyhq.com/xnrgy-climate-systems",
+        "active": True,
+    },
 ]

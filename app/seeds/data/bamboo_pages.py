@@ -27405,4 +27405,104 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://argosmultilingual.bamboohr.com/",
         "active": True,
     },
+    {
+        "company_name": "alanbiller",
+        "url": "https://alanbiller.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "apolloelectric",
+        "url": "https://apolloelectric.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "battleface",
+        "url": "https://battleface.bamboohr.com",
+        "active": True,
+    },
+    {"company_name": "beehiiv", "url": "https://beehiiv.bamboohr.com", "active": True},
+    {
+        "company_name": "brantfordpoliceservice",
+        "url": "https://brantfordpoliceservice.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "cyberclan",
+        "url": "https://cyberclan.bamboohr.com",
+        "active": True,
+    },
+    {"company_name": "enfhs", "url": "https://enfhs.bamboohr.com", "active": True},
+    {
+        "company_name": "gratzpilates",
+        "url": "https://gratzpilates.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "gsnemail",
+        "url": "https://gsnemail.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "hatzelbuehler",
+        "url": "https://hatzelbuehler.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "icmarketsau",
+        "url": "https://icmarketsau.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "intellectix",
+        "url": "https://intellectix.bamboohr.com",
+        "active": True,
+    },
+    {"company_name": "koltin", "url": "https://koltin.bamboohr.com", "active": True},
+    {
+        "company_name": "mifinity",
+        "url": "https://mifinity.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "pinpointtesting",
+        "url": "https://pinpointtesting.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "precisionpointstaffing",
+        "url": "https://precisionpointstaffing.bamboohr.com",
+        "active": True,
+    },
+    {"company_name": "privacy", "url": "https://privacy.bamboohr.com", "active": True},
+    {
+        "company_name": "remixglobal",
+        "url": "https://remixglobal.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "rightmove",
+        "url": "https://rightmove.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "servpro9669",
+        "url": "https://servpro9669.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "stateraenergy",
+        "url": "https://stateraenergy.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "steponefinance",
+        "url": "https://steponefinance.bamboohr.com",
+        "active": True,
+    },
+    {"company_name": "trimoz", "url": "https://trimoz.bamboohr.com", "active": True},
+    {
+        "company_name": "youthdynamics",
+        "url": "https://youthdynamics.bamboohr.com",
+        "active": True,
+    },
 ]

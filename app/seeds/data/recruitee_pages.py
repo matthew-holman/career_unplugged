@@ -18500,4 +18500,19 @@ RECRUITEE_PAGE_SEEDS = [
     },
     {"company_name": "syone2", "url": "https://syone2.recruitee.com", "active": True},
     {"company_name": "zignaly", "url": "https://zignaly.recruitee.com", "active": True},
+    {
+        "company_name": "elephantdigital",
+        "url": "https://elephantdigital.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "piagroupnetherlands",
+        "url": "https://piagroupnetherlands.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "veocareers",
+        "url": "https://veocareers.recruitee.com",
+        "active": True,
+    },
 ]
