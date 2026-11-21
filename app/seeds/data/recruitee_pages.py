@@ -18515,4 +18515,46 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://veocareers.recruitee.com",
         "active": True,
     },
+    {"company_name": "aihr", "url": "https://aihr.recruitee.com", "active": True},
+    {"company_name": "aihr1", "url": "https://aihr1.recruitee.com", "active": True},
+    {
+        "company_name": "betomorrow",
+        "url": "https://betomorrow.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "cbsconsulting",
+        "url": "https://cbsconsulting.recruitee.com",
+        "active": True,
+    },
+    {"company_name": "eps", "url": "https://eps.recruitee.com", "active": True},
+    {
+        "company_name": "insigniagroup",
+        "url": "https://insigniagroup.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "marcusevanscareers",
+        "url": "https://marcusevanscareers.recruitee.com",
+        "active": True,
+    },
+    {"company_name": "neptun", "url": "https://neptun.recruitee.com", "active": True},
+    {"company_name": "nova", "url": "https://nova.recruitee.com", "active": True},
+    {
+        "company_name": "powerprozesse",
+        "url": "https://powerprozesse.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "sidensiannoreade",
+        "url": "https://sidensiannoreade.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "thesafetynetwork",
+        "url": "https://thesafetynetwork.recruitee.com",
+        "active": True,
+    },
+    {"company_name": "twenix", "url": "https://twenix.recruitee.com", "active": True},
+    {"company_name": "zenchef", "url": "https://zenchef.recruitee.com", "active": True},
 ]

@@ -42,7 +42,14 @@ class AshbyBoardScraper(AtsScraper):
                     return []
 
                 raw_json = match.group(1).strip()
-                json_data = json.loads(raw_json)
+                try:
+                    json_data = json.loads(raw_json)
+                except json.JSONDecodeError as exc:
+                    Log.warning(
+                        f"{self.__class__.__name__}: failed to parse JSON for "
+                        f"{self.career_page.url} — {exc}"
+                    )
+                    return []
                 if json_data and json_data.get(JSON_JOB_BOARD_KEY):
                     return json_data.get(JSON_JOB_BOARD_KEY)["jobPostings"]
 

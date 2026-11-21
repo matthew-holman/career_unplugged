@@ -1,15 +1,15 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import and_, func, or_
+from sqlalchemy import and_, func
 from sqlmodel import Session, col, select
 
+from app.handlers.job import eligible_remote_expr
 from app.job_scrapers.scraper import RemoteStatus
 from app.models.job import Job
 from app.models.user import User
 from app.models.user_job import UserJob
 from app.schemas.dashboard import JobSummary
-from app.utils.locations.europe_filter import EuropeFilter
 
 
 @dataclass
@@ -44,13 +44,6 @@ class DashboardHandler:
             for status, count in remote_counts
         }
 
-        eu_countries = sorted(EuropeFilter.EU_COUNTRIES)
-        eu_match = func.lower(col(Job.country)).in_(eu_countries)
-        eu_remote_filter = or_(
-            col(Job.true_remote).is_(True),
-            and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
-        )
-
         to_review = self.db_session.exec(
             select(func.count()).where(
                 and_(
@@ -60,7 +53,7 @@ class DashboardHandler:
             )
         ).one()
         eu_remote = self.db_session.exec(
-            select(func.count()).where(eu_remote_filter)
+            select(func.count()).where(eligible_remote_expr())
         ).one()
         sweden = self.db_session.exec(
             select(func.count()).where(func.lower(col(Job.country)) == "sweden")

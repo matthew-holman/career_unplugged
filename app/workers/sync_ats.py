@@ -91,7 +91,13 @@ def run_sync_ats_with_session(
             Log.warning(f"No supported ATS parser for {page.url}")
             continue
 
-        response = ats_scraper.scrape()
+        try:
+            response = ats_scraper.scrape()
+        except Exception as exc:
+            Log.error(
+                f"Unexpected error scraping {page.url} — skipping. {exc.__class__.__name__}: {exc}"
+            )
+            continue
         pages_synced += 1
         jobs_processed += len(response.jobs)
         jobs_to_save = build_jobs_to_save(response, career_page_id=page.id)

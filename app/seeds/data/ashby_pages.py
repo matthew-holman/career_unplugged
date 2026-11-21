@@ -1192,4 +1192,285 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/xnrgy-climate-systems",
         "active": True,
     },
+    {
+        "company_name": "3commas",
+        "url": "https://jobs.ashbyhq.com/3commas",
+        "active": True,
+    },
+    {
+        "company_name": "9-mothers",
+        "url": "https://jobs.ashbyhq.com/9-mothers",
+        "active": True,
+    },
+    {
+        "company_name": "Maticrobots",
+        "url": "https://jobs.ashbyhq.com/Maticrobots",
+        "active": True,
+    },
+    {
+        "company_name": "Sitemate",
+        "url": "https://jobs.ashbyhq.com/Sitemate",
+        "active": True,
+    },
+    {
+        "company_name": "The-Flex",
+        "url": "https://jobs.ashbyhq.com/The-Flex",
+        "active": True,
+    },
+    {
+        "company_name": "WestBridge%20Capital",
+        "url": "https://jobs.ashbyhq.com/WestBridge%20Capital",
+        "active": True,
+    },
+    {
+        "company_name": "aim-solutions",
+        "url": "https://jobs.ashbyhq.com/aim-solutions",
+        "active": True,
+    },
+    {
+        "company_name": "alchemy",
+        "url": "https://jobs.ashbyhq.com/alchemy",
+        "active": True,
+    },
+    {
+        "company_name": "apollo-information-systems",
+        "url": "https://jobs.ashbyhq.com/apollo-information-systems",
+        "active": True,
+    },
+    {
+        "company_name": "biodefense-policyorg",
+        "url": "https://jobs.ashbyhq.com/biodefense-policyorg",
+        "active": True,
+    },
+    {
+        "company_name": "bjakcareer",
+        "url": "https://jobs.ashbyhq.com/bjakcareer",
+        "active": True,
+    },
+    {
+        "company_name": "blumen",
+        "url": "https://jobs.ashbyhq.com/blumen",
+        "active": True,
+    },
+    {
+        "company_name": "chainalysis-careers",
+        "url": "https://jobs.ashbyhq.com/chainalysis-careers",
+        "active": True,
+    },
+    {
+        "company_name": "cloaked",
+        "url": "https://jobs.ashbyhq.com/cloaked",
+        "active": True,
+    },
+    {
+        "company_name": "codeway",
+        "url": "https://jobs.ashbyhq.com/codeway",
+        "active": True,
+    },
+    {
+        "company_name": "datasnipper.com",
+        "url": "https://jobs.ashbyhq.com/datasnipper.com",
+        "active": True,
+    },
+    {
+        "company_name": "deliveroo",
+        "url": "https://jobs.ashbyhq.com/deliveroo",
+        "active": True,
+    },
+    {
+        "company_name": "eightsleep",
+        "url": "https://jobs.ashbyhq.com/eightsleep",
+        "active": True,
+    },
+    {
+        "company_name": "encord",
+        "url": "https://jobs.ashbyhq.com/encord",
+        "active": True,
+    },
+    {"company_name": "enpal", "url": "https://jobs.ashbyhq.com/enpal", "active": True},
+    {
+        "company_name": "eye-security",
+        "url": "https://jobs.ashbyhq.com/eye-security",
+        "active": True,
+    },
+    {
+        "company_name": "fathom.video",
+        "url": "https://jobs.ashbyhq.com/fathom.video",
+        "active": True,
+    },
+    {
+        "company_name": "gen-digital",
+        "url": "https://jobs.ashbyhq.com/gen-digital",
+        "active": True,
+    },
+    {
+        "company_name": "generalintuition-medal",
+        "url": "https://jobs.ashbyhq.com/generalintuition-medal",
+        "active": True,
+    },
+    {
+        "company_name": "hargrove-firm",
+        "url": "https://jobs.ashbyhq.com/hargrove-firm",
+        "active": True,
+    },
+    {
+        "company_name": "harvey",
+        "url": "https://jobs.ashbyhq.com/harvey",
+        "active": True,
+    },
+    {
+        "company_name": "headway",
+        "url": "https://jobs.ashbyhq.com/headway",
+        "active": True,
+    },
+    {
+        "company_name": "heidihealth.com.au",
+        "url": "https://jobs.ashbyhq.com/heidihealth.com.au",
+        "active": True,
+    },
+    {
+        "company_name": "hubfit",
+        "url": "https://jobs.ashbyhq.com/hubfit",
+        "active": True,
+    },
+    {"company_name": "hypha", "url": "https://jobs.ashbyhq.com/hypha", "active": True},
+    {"company_name": "idler", "url": "https://jobs.ashbyhq.com/idler", "active": True},
+    {
+        "company_name": "javvy-coffee-company",
+        "url": "https://jobs.ashbyhq.com/javvy-coffee-company",
+        "active": True,
+    },
+    {
+        "company_name": "kissmyapps",
+        "url": "https://jobs.ashbyhq.com/kissmyapps",
+        "active": True,
+    },
+    {
+        "company_name": "ledger",
+        "url": "https://jobs.ashbyhq.com/ledger",
+        "active": True,
+    },
+    {
+        "company_name": "litellm",
+        "url": "https://jobs.ashbyhq.com/litellm",
+        "active": True,
+    },
+    {
+        "company_name": "localstack",
+        "url": "https://jobs.ashbyhq.com/localstack",
+        "active": True,
+    },
+    {
+        "company_name": "mdcalc",
+        "url": "https://jobs.ashbyhq.com/mdcalc",
+        "active": True,
+    },
+    {
+        "company_name": "meticulous",
+        "url": "https://jobs.ashbyhq.com/meticulous",
+        "active": True,
+    },
+    {"company_name": "modal", "url": "https://jobs.ashbyhq.com/modal", "active": True},
+    {
+        "company_name": "myTomorrows",
+        "url": "https://jobs.ashbyhq.com/myTomorrows",
+        "active": True,
+    },
+    {
+        "company_name": "nectar-social",
+        "url": "https://jobs.ashbyhq.com/nectar-social",
+        "active": True,
+    },
+    {
+        "company_name": "onhires",
+        "url": "https://jobs.ashbyhq.com/onhires",
+        "active": True,
+    },
+    {
+        "company_name": "paxos-technology-solutions",
+        "url": "https://jobs.ashbyhq.com/paxos-technology-solutions",
+        "active": True,
+    },
+    {
+        "company_name": "paymentology",
+        "url": "https://jobs.ashbyhq.com/paymentology",
+        "active": True,
+    },
+    {
+        "company_name": "phantom",
+        "url": "https://jobs.ashbyhq.com/phantom",
+        "active": True,
+    },
+    {
+        "company_name": "proxima-fusion",
+        "url": "https://jobs.ashbyhq.com/proxima-fusion",
+        "active": True,
+    },
+    {
+        "company_name": "quadrillion-labs",
+        "url": "https://jobs.ashbyhq.com/quadrillion-labs",
+        "active": True,
+    },
+    {
+        "company_name": "retell-ai",
+        "url": "https://jobs.ashbyhq.com/retell-ai",
+        "active": True,
+    },
+    {
+        "company_name": "sagetap",
+        "url": "https://jobs.ashbyhq.com/sagetap",
+        "active": True,
+    },
+    {
+        "company_name": "scribdinc",
+        "url": "https://jobs.ashbyhq.com/scribdinc",
+        "active": True,
+    },
+    {
+        "company_name": "sellfire",
+        "url": "https://jobs.ashbyhq.com/sellfire",
+        "active": True,
+    },
+    {
+        "company_name": "starbridge",
+        "url": "https://jobs.ashbyhq.com/starbridge",
+        "active": True,
+    },
+    {
+        "company_name": "stninc",
+        "url": "https://jobs.ashbyhq.com/stninc",
+        "active": True,
+    },
+    {
+        "company_name": "stuut-ai",
+        "url": "https://jobs.ashbyhq.com/stuut-ai",
+        "active": True,
+    },
+    {
+        "company_name": "tailor",
+        "url": "https://jobs.ashbyhq.com/tailor",
+        "active": True,
+    },
+    {
+        "company_name": "tavahealth",
+        "url": "https://jobs.ashbyhq.com/tavahealth",
+        "active": True,
+    },
+    {
+        "company_name": "techtorch",
+        "url": "https://jobs.ashbyhq.com/techtorch",
+        "active": True,
+    },
+    {
+        "company_name": "tenexlabs",
+        "url": "https://jobs.ashbyhq.com/tenexlabs",
+        "active": True,
+    },
+    {"company_name": "thndr", "url": "https://jobs.ashbyhq.com/thndr", "active": True},
+    {"company_name": "wayve", "url": "https://jobs.ashbyhq.com/wayve", "active": True},
+    {
+        "company_name": "workos",
+        "url": "https://jobs.ashbyhq.com/workos",
+        "active": True,
+    },
 ]

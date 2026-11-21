@@ -5242,4 +5242,155 @@ PERSONIO_PAGE_SEEDS = [
         "url": "https://workpath.jobs.personio.de",
         "active": True,
     },
+    {
+        "company_name": "42watt",
+        "url": "https://42watt.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "arvana",
+        "url": "https://arvana.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "asseco-solutions",
+        "url": "https://asseco-solutions.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "cureosity-gmbh",
+        "url": "https://cureosity-gmbh.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "desotec",
+        "url": "https://desotec.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "dialoghaus-hamburg",
+        "url": "https://dialoghaus-hamburg.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "eit-health",
+        "url": "https://eit-health.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "elona-health",
+        "url": "https://elona-health.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "founders-foundation-ggmbh",
+        "url": "https://founders-foundation-ggmbh.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "getec-holding",
+        "url": "https://getec-holding.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "homeserve",
+        "url": "https://homeserve.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "katjes",
+        "url": "https://katjes.jobs.personio.de",
+        "active": True,
+    },
+    {"company_name": "kbht", "url": "https://kbht.jobs.personio.de", "active": True},
+    {
+        "company_name": "kommunit",
+        "url": "https://kommunit.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "mercanis",
+        "url": "https://mercanis.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "ncc-guttermann",
+        "url": "https://ncc-guttermann.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "neoshare",
+        "url": "https://neoshare.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "omnora",
+        "url": "https://omnora.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "orchard-care-group",
+        "url": "https://orchard-care-group.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "pointsharp",
+        "url": "https://pointsharp.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "pragmaticminds",
+        "url": "https://pragmaticminds.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "publiccloudgroup",
+        "url": "https://publiccloudgroup.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "q-ant-gmbh",
+        "url": "https://q-ant-gmbh.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "reltix",
+        "url": "https://reltix.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "reps-gmbh",
+        "url": "https://reps-gmbh.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "rosental-organics-gmbh",
+        "url": "https://rosental-organics-gmbh.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "ske-engineering",
+        "url": "https://ske-engineering.jobs.personio.com",
+        "active": True,
+    },
+    {
+        "company_name": "stadtmarken",
+        "url": "https://stadtmarken.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "starface",
+        "url": "https://starface.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "vivy",
+        "url": "https://www.vivy.jobs.personio.de",
+        "active": True,
+    },
+    {
+        "company_name": "yogi-tea-gmbh",
+        "url": "https://yogi-tea-gmbh.jobs.personio.de",
+        "active": True,
+    },
 ]

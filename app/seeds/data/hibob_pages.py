@@ -1366,4 +1366,34 @@ HIBOB_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/yipitdata",
         "active": True,
     },
+    {
+        "company_name": "careers",
+        "url": "https://buckhill.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://talentsystems.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://projectivegroup.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://samskip.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://oviva.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://dixa.careers.hibob.com",
+        "active": True,
+    },
 ]

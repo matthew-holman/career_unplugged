@@ -12006,4 +12006,107 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "zitec", "url": "https://zitec.teamtailor.com", "active": True},
+    {
+        "company_name": "adaptiveteams",
+        "url": "https://adaptiveteams.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "aera", "url": "https://aera.teamtailor.com", "active": True},
+    {"company_name": "camca", "url": "https://camca.teamtailor.com", "active": True},
+    {
+        "company_name": "candeno",
+        "url": "https://candeno.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "capaloai",
+        "url": "https://capaloai.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "drlmarketing",
+        "url": "https://drlmarketing.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "elegancia-1739955737",
+        "url": "https://elegancia-1739955737.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "finteqhub",
+        "url": "https://finteqhub.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "flightstory",
+        "url": "https://flightstory.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "gcc", "url": "https://gcc.teamtailor.com", "active": True},
+    {
+        "company_name": "hydrogenrefuelingsolutions",
+        "url": "https://hydrogenrefuelingsolutions.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "knowmadmood",
+        "url": "https://knowmadmood.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "lespapillonsblancsdelacolline",
+        "url": "https://lespapillonsblancsdelacolline.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "lipariconsulting",
+        "url": "https://lipariconsulting.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "na",
+        "url": "https://convertros.na.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "na",
+        "url": "https://dresdenpartners.na.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "na", "url": "https://sqdm.na.teamtailor.com", "active": True},
+    {"company_name": "na", "url": "https://robot.na.teamtailor.com", "active": True},
+    {"company_name": "na", "url": "https://insense.na.teamtailor.com", "active": True},
+    {
+        "company_name": "na",
+        "url": "https://cqpartners.na.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "na", "url": "https://thaia.na.teamtailor.com", "active": True},
+    {
+        "company_name": "ogretmenbulun",
+        "url": "https://ogretmenbulun.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "telespazioiberica",
+        "url": "https://telespazioiberica.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "tillvaxthelsingborg-1734537019",
+        "url": "https://tillvaxthelsingborg-1734537019.teamtailor.com",
+        "active": True,
+    },
+    {"company_name": "tm-gs", "url": "https://tm-gs.teamtailor.com", "active": True},
+    {
+        "company_name": "toyotaconnected",
+        "url": "https://toyotaconnected.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "yseparis",
+        "url": "https://yseparis.teamtailor.com",
+        "active": True,
+    },
 ]

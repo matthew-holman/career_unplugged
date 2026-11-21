@@ -50,10 +50,18 @@ def test_sweden_remote_listing_scores_3() -> None:
     assert score == 3
 
 
-def test_germany_remote_listing_scores_3() -> None:
+def test_germany_remote_listing_is_restricted() -> None:
+    """Remote within another country usually requires living there."""
     job = _job(country="Germany", listing_remote=RemoteStatus.REMOTE)
+    score, reason = RemoteScorer.score(job, None)
+    assert score == 2
+    assert "Germany" in reason
+
+
+def test_non_eu_remote_listing_is_restricted() -> None:
+    job = _job(country="United Kingdom", listing_remote=RemoteStatus.REMOTE)
     score, _ = RemoteScorer.score(job, None)
-    assert score == 3
+    assert score == 2
 
 
 def test_hybrid_listing_scores_2() -> None:
@@ -237,3 +245,77 @@ def test_set_remote_score_0_sets_true_remote_false() -> None:
     job.set_remote_score(0, "Onsite listing")
     assert job.true_remote is False
     assert job.remote_score == 0
+
+
+# ---------------------------------------------------------------------------
+# Single-country restriction — remote in a country other than Sweden
+# ---------------------------------------------------------------------------
+
+
+def _germany_remote(title: str = "Engineering Manager") -> Job:
+    return _job(title=title, country="Germany", listing_remote=RemoteStatus.REMOTE)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "We are a remote-first company.",
+        "This is a fully remote position.",
+        "We are a distributed team.",
+        "This is a remote-friendly role.",
+        "Fully remote. You can work from anywhere in Germany.",
+        "We are a globally distributed company. This role is remote in Germany.",
+    ],
+)
+def test_working_style_signals_do_not_lift_country_restriction(text: str) -> None:
+    score, reason = RemoteScorer.score(_germany_remote(), text)
+    assert score == 2
+    assert "restricted to Germany" in reason
+
+
+def test_remote_in_title_does_not_lift_country_restriction() -> None:
+    score, _ = RemoteScorer.score(_germany_remote("Remote Backend Engineer"), None)
+    assert score == 2
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "We are remote-first and you can work from anywhere in Europe.",
+        "Fully remote: we hire across the EU.",
+        "This role is remote within Europe.",
+        "Remote, open to candidates in Sweden or Germany.",
+        "Fully remote, working in European time zones.",
+        "We are fully remote and location agnostic.",
+        "Fully remote. Candidates across EMEA welcome.",
+    ],
+)
+def test_eligible_region_lifts_country_restriction(text: str) -> None:
+    score, reason = RemoteScorer.score(_germany_remote(), text)
+    assert score >= 3
+    assert "open beyond Germany" in reason
+
+
+def test_region_in_title_lifts_country_restriction() -> None:
+    job = _germany_remote("Field CTO (Remote Europe)")
+    score, _ = RemoteScorer.score(job, None)
+    assert score >= 3
+
+
+def test_sweden_listing_keeps_full_description_score() -> None:
+    job = _job(country="Sweden", listing_remote=RemoteStatus.REMOTE)
+    score, _ = RemoteScorer.score(job, "This is a fully remote position.")
+    assert score == 5
+
+
+def test_pan_european_listing_keeps_full_description_score() -> None:
+    job = _job(country="European Union", listing_remote=RemoteStatus.REMOTE)
+    score, _ = RemoteScorer.score(job, "This is a fully remote position.")
+    assert score == 5
+
+
+def test_restricted_country_job_is_not_true_remote() -> None:
+    job = _germany_remote()
+    score, reason = RemoteScorer.score(job, "We are a remote-first company.")
+    job.set_remote_score(score, reason)
+    assert job.true_remote is False

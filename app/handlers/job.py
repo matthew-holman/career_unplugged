@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Sequence, TypeVar
 
-from sqlalchemy import Select, and_, func, or_
+from sqlalchemy import ColumnElement, Select, and_, func, or_
 from sqlmodel import Session, col, select
 
 from app.db.db import upsert
@@ -13,9 +13,24 @@ from app.models.job import Job, JobRead
 from app.models.job_tag import JobTag, TagCategory
 from app.models.user_job import UserJob
 from app.schemas.job import JobWithUserStateRead, UserJobStateRead, UserJobStateUpdate
-from app.utils.locations.europe_filter import EuropeFilter
 
 _SelectT = TypeVar("_SelectT", bound=tuple)
+
+
+def eligible_remote_expr() -> ColumnElement[bool]:
+    """Jobs the user can work remotely on from Sweden.
+
+    Uses the analyser's ``true_remote`` flag, plus Swedish REMOTE listings that
+    haven't been analysed yet. A REMOTE listing in another country is not enough
+    on its own: it usually requires living in that country.
+    """
+    return or_(
+        col(Job.true_remote).is_(True),
+        and_(
+            col(Job.listing_remote) == RemoteStatus.REMOTE,
+            func.lower(col(Job.country)) == "sweden",
+        ),
+    )
 
 
 def _apply_tag_filter(
@@ -221,13 +236,7 @@ class JobHandler:
             cutoff = datetime.now(timezone.utc) - timedelta(days=filters.recent_days)
             query = query.where(Job.created_at >= cutoff)
         if filters.eu_remote is True:
-            eu_countries = sorted(EuropeFilter.EU_COUNTRIES)
-            eu_match = func.lower(col(Job.country)).in_(eu_countries)
-            eu_remote = or_(
-                col(Job.true_remote).is_(True),
-                and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
-            )
-            query = query.where(eu_remote)
+            query = query.where(eligible_remote_expr())
         if filters.min_remote_score is not None:
             query = query.where(Job.remote_score >= filters.min_remote_score)
 
@@ -293,13 +302,7 @@ class JobHandler:
             cutoff = datetime.now(timezone.utc) - timedelta(days=filters.recent_days)
             query = query.where(Job.created_at >= cutoff)
         if filters.eu_remote is True:
-            eu_countries = sorted(EuropeFilter.EU_COUNTRIES)
-            eu_match = func.lower(col(Job.country)).in_(eu_countries)
-            eu_remote = or_(
-                col(Job.true_remote).is_(True),
-                and_(col(Job.listing_remote) == RemoteStatus.REMOTE, eu_match),
-            )
-            query = query.where(eu_remote)
+            query = query.where(eligible_remote_expr())
         if filters.min_remote_score is not None:
             query = query.where(Job.remote_score >= filters.min_remote_score)
 
