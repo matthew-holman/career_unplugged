@@ -26,7 +26,7 @@ class _FakeSession:
     def __init__(self, response: _FakeResponse) -> None:
         self._response = response
 
-    def get(self, url: str) -> _FakeResponse:
+    def get(self, url: str, **kwargs: object) -> _FakeResponse:
         return self._response
 
 

@@ -82,32 +82,24 @@ PREFERRED_LOCATIONS: set[str] = {
     "Malmö",
 }
 
-# this is a list of locations that the scraper will loop through
-# remote false will search for roles listed as onsite and hybrid,
-# remote true will search for remote
+# Locations the LinkedIn scraper searches, once each. Workplace type (remote,
+# hybrid, onsite) is not filtered here: LinkedIn's guest search ignores that
+# filter, so remoteness is scored by the job analyser instead.
 JOB_LOCATIONS: List[SearchLocation] = [
-    SearchLocation(location="Berlin, Germany", remote=False),
-    SearchLocation(location="Berlin, Germany", remote=True),
-    SearchLocation(location="Germany", remote=True),
-    SearchLocation(location="London Area, United Kingdom", remote=False),
-    SearchLocation(location="London Area, United Kingdom", remote=True),
-    SearchLocation(location="Amsterdam, North Holland, Netherlands", remote=False),
-    SearchLocation(location="Amsterdam, North Holland, Netherlands", remote=True),
-    SearchLocation(location="Sweden", remote=False),
-    SearchLocation(location="Gothenburg, Västra Götaland County, Sweden", remote=False),
-    SearchLocation(location="Gothenburg, Västra Götaland County, Sweden", remote=True),
-    SearchLocation(location="Malmo, Skåne County, Sweden", remote=False),
-    SearchLocation(location="Malmo, Skåne County, Sweden", remote=True),
-    SearchLocation(location="Stockholm, Stockholm County, Sweden", remote=False),
-    SearchLocation(location="Stockholm, Stockholm County, Sweden", remote=True),
-    SearchLocation(location="Sweden", remote=True),
-    SearchLocation(location="Denmark", remote=True),
-    SearchLocation(location="Norway", remote=True),
-    SearchLocation(location="Norway", remote=True),
-    SearchLocation(location="European Union", remote=True),
-    SearchLocation(location="Finland", remote=True),
-    SearchLocation(location="Helsinki Metropolitan Area", remote=True),
-    SearchLocation(location="EMEA", remote=True),
+    SearchLocation(location="Berlin, Germany"),
+    SearchLocation(location="Germany"),
+    SearchLocation(location="London Area, United Kingdom"),
+    SearchLocation(location="Amsterdam, North Holland, Netherlands"),
+    SearchLocation(location="Sweden"),
+    SearchLocation(location="Gothenburg, Västra Götaland County, Sweden"),
+    SearchLocation(location="Malmo, Skåne County, Sweden"),
+    SearchLocation(location="Stockholm, Stockholm County, Sweden"),
+    SearchLocation(location="Denmark"),
+    SearchLocation(location="Norway"),
+    SearchLocation(location="European Union"),
+    SearchLocation(location="Finland"),
+    SearchLocation(location="Helsinki Metropolitan Area"),
+    SearchLocation(location="EMEA"),
 ]
 
 # Tags are extracted during analysis from the job title + description.

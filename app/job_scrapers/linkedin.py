@@ -90,7 +90,11 @@ class LinkedInScraper(Scraper):
                 fetch_desc = scraper_input.linkedin_fetch_description
                 job_post = self._process_job(job_card, job_url, fetch_desc)
                 if job_post:
-                    job_post.remote_status = scraper_input.remote_status
+                    # LinkedIn's guest search mostly ignores the f_WT workplace
+                    # filter and its cards carry no workplace label, so the
+                    # status is unknown here. The analyser scores remoteness
+                    # from the title and description instead.
+                    job_post.remote_status = RemoteStatus.UNKNOWN
                     job_list.append(job_post)
                 if not self._should_continue(page, job_list, scraper_input):
                     break

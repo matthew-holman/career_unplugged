@@ -117,7 +117,6 @@ class JobResponse(BaseModel):
 
 class SearchLocation(BaseModel):
     location: str
-    remote: bool
 
 
 class Scraper:

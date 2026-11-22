@@ -12,7 +12,7 @@ from app.job_scrapers.ats_scraper_factory import (
     CareerPageDeactivatedError,
 )
 from app.job_scrapers.linkedin import LinkedInScraper
-from app.job_scrapers.scraper import JobType, RemoteStatus, ScraperInput
+from app.job_scrapers.scraper import JobType, ScraperInput
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job
@@ -35,35 +35,27 @@ def run_linkedin_scraper(db_session: Session, scraper: LinkedInScraper):
     for job_location in JOB_LOCATIONS:
         Log.info(f"Scraping jobs for {job_location.location}")
 
-        remote_statuses = [RemoteStatus.ONSITE, RemoteStatus.HYBRID]
-        if job_location.remote:
-            remote_statuses = [RemoteStatus.REMOTE]
+        scraper_input = ScraperInput(
+            search_term=linkedin_search_string(),
+            location=job_location.location,
+            job_type=JobType.FULL_TIME,
+            results_wanted=400,
+            hours_old=96,
+        )
 
-        for remote_status in remote_statuses:
-            Log.info(f"Scraping with remote status {remote_status.name}")
+        response = scraper.scrape(scraper_input=scraper_input)
 
-            scraper_input = ScraperInput(
-                search_term=linkedin_search_string(),
-                location=job_location.location,
-                job_type=JobType.FULL_TIME,
-                results_wanted=400,
-                hours_old=96,
-                remote_status=remote_status,
+        jobs_processed += len(response.jobs)
+        jobs_to_save = build_jobs_to_save(response)
+        if jobs_to_save:
+            jobs_saved += len(jobs_to_save)
+            pending_jobs.extend(jobs_to_save)
+            pending_jobs = flush_pending_jobs(
+                db_session,
+                job_handler,
+                pending_jobs,
+                batch_size=batch_size,
             )
-
-            response = scraper.scrape(scraper_input=scraper_input)
-
-            jobs_processed += len(response.jobs)
-            jobs_to_save = build_jobs_to_save(response)
-            if jobs_to_save:
-                jobs_saved += len(jobs_to_save)
-                pending_jobs.extend(jobs_to_save)
-                pending_jobs = flush_pending_jobs(
-                    db_session,
-                    job_handler,
-                    pending_jobs,
-                    batch_size=batch_size,
-                )
 
     flush_pending_jobs(
         db_session,

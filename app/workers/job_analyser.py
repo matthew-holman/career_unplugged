@@ -1,6 +1,10 @@
+import random
 import re
+import time
 
 from urllib.parse import urlparse, urlunparse
+
+import requests
 
 from bs4 import BeautifulSoup
 
@@ -23,17 +27,61 @@ from app.search_profile import (
     TECH_STACK_TAGS,
 )
 from app.settings import settings
-from app.utils.locations.remote_scorer import RemoteScorer
 from app.utils.ats_discovery import (
     discover_career_page,
     extract_slug_from_career_page_url,
 )
+from app.utils.locations.remote_scorer import RemoteScorer
 
+# Pause between LinkedIn page fetches, matching the LinkedIn sync scraper.
+# Without it the analyser fetches pages back to back and LinkedIn rate-limits it.
+LINKEDIN_FETCH_DELAY_SECONDS = (3.0, 7.0)
+FETCH_TIMEOUT_SECONDS = 15
+
+# Commit analysed jobs at least this often, so an interrupted run keeps its progress.
+ANALYSIS_COMMIT_EVERY = 50
+
+
+class RateLimitedError(Exception):
+    """The job page host is rate-limiting us; the run should stop."""
+
+
+class FetchFailedError(Exception):
+    """The job page could not be fetched; retry this job on a later run."""
+
+
+class _LinkedInThrottle:
+    """Sleep between consecutive LinkedIn requests (no wait before the first)."""
+
+    def __init__(self) -> None:
+        self._has_fetched = False
+
+    def wait(self, url: str) -> None:
+        if "linkedin.com" not in urlparse(url).netloc:
+            return
+        if self._has_fetched:
+            time.sleep(random.uniform(*LINKEDIN_FETCH_DELAY_SECONDS))
+        self._has_fetched = True
 
 
 def _fetch_job_page(session, job) -> str | None:
+    """Return the page HTML, or None if the page is gone (e.g. 404).
+
+    Raises RateLimitedError on HTTP 429 and FetchFailedError on network errors,
+    so the caller can leave the job unanalysed instead of scoring it without
+    its description.
+    """
     url = job.ats_source_url or job.linkedin_source_url
-    response = session.get(url)
+    try:
+        response = session.get(url, timeout=FETCH_TIMEOUT_SECONDS)
+    except requests.exceptions.RetryError as exc:
+        if "429" in str(exc):
+            raise RateLimitedError(url) from exc
+        raise FetchFailedError(url) from exc
+    except requests.exceptions.RequestException as exc:
+        raise FetchFailedError(url) from exc
+    if response.status_code == 429:
+        raise RateLimitedError(url)
     if response.status_code != 200:
         Log.warning(
             f"Failed to fetch description for {job.source} job {job.id} "
@@ -198,17 +246,31 @@ def run_analyser(force: bool = False) -> int:
         career_page_handler = CareerPageHandler(db_session)
         job_tag_handler = JobTagHandler(db_session)
         jobs = job_handler.get_jobs_for_analysis(force=force)
-        batch_size = settings.DB_BATCH_SIZE
+        batch_size = min(settings.DB_BATCH_SIZE, ANALYSIS_COMMIT_EVERY)
         pending_jobs: list = []
         jobs_processed = 0
         jobs_saved = 0
+        jobs_skipped = 0
 
         session = create_session(is_tls=False, has_retry=True, delay=15)
+        throttle = _LinkedInThrottle()
         for job in jobs:
+            throttle.wait(job.ats_source_url or job.linkedin_source_url or "")
+            try:
+                _apply_description_analysis(
+                    job, session, career_page_handler, job_handler, job_tag_handler
+                )
+            except RateLimitedError as exc:
+                Log.warning(
+                    f"Rate limited fetching {exc}; stopping. "
+                    f"{len(jobs) - jobs_processed - jobs_skipped} jobs left for the next run."
+                )
+                break
+            except FetchFailedError as exc:
+                jobs_skipped += 1
+                Log.warning(f"Could not fetch {exc}; leaving job {job.id} for later.")
+                continue
             jobs_processed += 1
-            _apply_description_analysis(
-                job, session, career_page_handler, job_handler, job_tag_handler
-            )
             if job.deleted_at is None:
                 jobs_saved += 1
                 pending_jobs.append(job)
@@ -226,7 +288,10 @@ def run_analyser(force: bool = False) -> int:
             batch_size=batch_size,
             force=True,
         )
-        Log.info(f"Analysis processed {jobs_processed} jobs, saved {jobs_saved} jobs.")
+        Log.info(
+            f"Analysis processed {jobs_processed} jobs, saved {jobs_saved} jobs, "
+            f"skipped {jobs_skipped} unfetchable jobs."
+        )
     return 0
 
 
