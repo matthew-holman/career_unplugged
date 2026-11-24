@@ -1,3 +1,6 @@
+from contextlib import nullcontext
+from typing import Iterator
+
 from sqlmodel import Session, select
 from starlette import status
 from starlette.testclient import TestClient
@@ -39,6 +42,20 @@ def test_sync_ats_endpoint_enqueues_run(
     assert run is not None
 
 
+def _use_test_session(monkeypatch, db_session: Session) -> None:
+    """Point the background task's own get_db() at the test session.
+
+    The task opens a fresh session, which can't see rows created inside the
+    test's (rolled-back) transaction. nullcontext stops the task's ``with``
+    block from closing the shared session.
+    """
+
+    def fake_get_db() -> Iterator[nullcontext[Session]]:
+        yield nullcontext(db_session)
+
+    monkeypatch.setattr(sync_tasks, "get_db", fake_get_db)
+
+
 def test_sync_ats_background_success(db_session: Session, monkeypatch) -> None:
     handler = WorkerRunHandler(db_session)
     run = handler.create_run("sync_ats")
@@ -50,6 +67,7 @@ def test_sync_ats_background_success(db_session: Session, monkeypatch) -> None:
     monkeypatch.setattr(
         sync_tasks, "run_sync_ats_with_session", fake_run_sync_ats_with_session
     )
+    _use_test_session(monkeypatch, db_session)
 
     sync_tasks.run_ats_sync_background(worker_run_id=run.id, request=AtsSyncRequest())
 
@@ -71,6 +89,7 @@ def test_sync_ats_background_failure(db_session: Session, monkeypatch) -> None:
     monkeypatch.setattr(
         sync_tasks, "run_sync_ats_with_session", fake_run_sync_ats_with_session
     )
+    _use_test_session(monkeypatch, db_session)
 
     sync_tasks.run_ats_sync_background(worker_run_id=run.id, request=AtsSyncRequest())
 

@@ -27,6 +27,9 @@ class LeverScraper(AtsScraper):
         html = str(soup).lower()
         if "lever-jobs-embed" in html or "lever.co" in html:
             return True
+        # Container the official Lever embed script renders jobs into.
+        if soup.select_one(".lever-jobs-container"):
+            return True
         return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:

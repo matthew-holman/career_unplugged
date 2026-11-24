@@ -24,7 +24,10 @@ class JobBase(BaseModel, table=False):  # type: ignore
     remote_score: int = Field(
         nullable=False,
         default=0,
-        description="Remote eligibility score 0-5. 5=remote-first, 4=EU remote, 3=likely remote, 2=hybrid/weak, 1=unclear, 0=onsite.",
+        description=(
+            "Remote eligibility score 0-5. 5=remote-first, 4=EU remote, "
+            "3=likely remote, 2=hybrid/weak, 1=unclear, 0=onsite."
+        ),
     )
     analysed: bool = Field(nullable=True, default=False)
     remote_flag_reason: str | None = Field(

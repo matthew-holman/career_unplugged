@@ -10,8 +10,8 @@ def test_personio_scraper() -> None:
     from app.job_scrapers.ats_scrapers.personio_scraper import PersonioScraper
 
     career_page = CareerPage(
-        company_name="tomtom",
-        url="https://deskbird.jobs.personio.com/",
+        company_name="1komma5grad",
+        url="https://1komma5grad.jobs.personio.com/",
         active=True,
     )
 

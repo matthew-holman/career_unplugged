@@ -11,15 +11,20 @@ class Personio:
 
     @staticmethod
     def extract_description(soup: BeautifulSoup, job: Job) -> str:
-        container = soup.select_one("div#job-details")
-        if container is None:
+        # Legacy markup used div#job-details; current markup splits the ad into
+        # .detail-content-block sections (title + rich-text description each).
+        containers = soup.select("div#job-details") or soup.select(
+            ".detail-content-block"
+        )
+        if not containers:
             return ""
 
-        for selector in ["form", "button", "script", "style"]:
-            for tag in container.select(selector):
-                tag.decompose()
+        for container in containers:
+            for selector in ["form", "button", "script", "style"]:
+                for tag in container.select(selector):
+                    tag.decompose()
 
-        text = container.get_text(" ", strip=True)
+        text = " ".join(container.get_text(" ", strip=True) for container in containers)
         text = " ".join(text.split()).strip()
         if not text:
             return ""

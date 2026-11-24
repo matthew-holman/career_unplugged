@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup, Tag
 from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.scraper import JobPost, Source
 
+_JOB_BOX_SELECTOR = 'a.job-box[href^="/job/"]'
+
 
 class PersonioScraper(AtsScraper):
     @property
@@ -24,6 +26,10 @@ class PersonioScraper(AtsScraper):
         if tab_container and tab_container.select_one("a.job-box-link"):
             return True
 
+        # Current Personio markup: <a class="... job-box" href="/job/{id}">
+        if soup.select_one(_JOB_BOX_SELECTOR):
+            return True
+
         return False
 
     def find_job_cards(self, soup: BeautifulSoup) -> Iterable[object]:
@@ -34,7 +40,10 @@ class PersonioScraper(AtsScraper):
             return list(cards)
 
         cards = container.select("a.job-box-link")
-        return list(cards)
+        if cards:
+            return list(cards)
+
+        return list(soup.select(_JOB_BOX_SELECTOR))
 
     def parse_job_card(self, card: object) -> JobPost | None:
         if not isinstance(card, Tag):
@@ -56,6 +65,12 @@ class PersonioScraper(AtsScraper):
             location_tag = card.select_one(".jb-description strong")
             location_raw = (
                 location_tag.get_text(" ", strip=True) if location_tag else None
+            )
+        if not location_raw:
+            # Current markup: meta items are location, employment type, contract.
+            meta_items = card.select(".jb-description > div")
+            location_raw = (
+                meta_items[0].get_text(" ", strip=True) if meta_items else None
             )
 
         job_url = urljoin(self.career_page.url, href)

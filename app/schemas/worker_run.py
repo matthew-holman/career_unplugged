@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict
 
 class WorkerRunRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+    id: int
     run_id: str
     worker_name: str
     status: str
