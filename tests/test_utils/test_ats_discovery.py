@@ -35,3 +35,14 @@ def test_normalize_ashby_urls() -> None:
 def test_normalize_unknown_or_missing_slug() -> None:
     assert discover_career_page("https://example.com/jobs/123") is None
     assert discover_career_page("https://job-boards.greenhouse.io/") is None
+
+
+def test_normalize_workable_urls() -> None:
+    result = discover_career_page("https://apply.workable.com/acme/j/ABC123/")
+    assert result is not None
+    assert result.url == "https://apply.workable.com/acme"
+    assert result.source == Source.WORKABLE
+
+
+def test_workable_shortlink_has_no_slug() -> None:
+    assert discover_career_page("https://apply.workable.com/j/ABC123") is None

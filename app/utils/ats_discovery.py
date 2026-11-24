@@ -6,6 +6,10 @@ from urllib.parse import urlparse
 from app.job_scrapers.ats_scrapers.bamboohr_scraper import BAMBOO_HOST_SUFFIX
 from app.job_scrapers.ats_scrapers.hibob_scraper import HIBOB_HOST_SUFFIX
 from app.job_scrapers.ats_scrapers.recruitee_scraper import RECRUITEE_HOST_SUFFIX
+from app.job_scrapers.ats_scrapers.workable_scraper import (
+    WORKABLE_HOST,
+    WORKABLE_RESERVED_SEGMENTS,
+)
 from app.job_scrapers.scraper import Source
 
 GREENHOUSE_HOSTS = {"job-boards.greenhouse.io", "job-boards.eu.greenhouse.io"}
@@ -14,6 +18,11 @@ HOST_SLUG_SOURCES: dict[str, Source] = {
     "jobs.lever.co": Source.LEVER,
     "job-boards.greenhouse.io": Source.GREENHOUSE_BOARD,
     "job-boards.eu.greenhouse.io": Source.GREENHOUSE_BOARD,
+    WORKABLE_HOST: Source.WORKABLE,
+}
+# Path segments that are never a company slug, per host.
+RESERVED_SLUG_SEGMENTS: dict[str, frozenset[str]] = {
+    WORKABLE_HOST: WORKABLE_RESERVED_SEGMENTS,
 }
 SUFFIX_SOURCES: tuple[tuple[str, Source, bool], ...] = (
     (".teamtailor.com", Source.TEAMTAILOR, True),
@@ -50,7 +59,7 @@ def discover_career_page(
 
     if host in HOST_SLUG_SOURCES:
         slug = _first_path_segment(parsed.path)
-        if not slug:
+        if not slug or _is_reserved_segment(host, slug):
             return None
         return CareerPageDiscoveryResult(
             url=f"https://{host}/{slug}",
@@ -76,7 +85,10 @@ def extract_slug_from_career_page_url(career_page_url: str) -> str | None:
             return base or None
 
     if host in HOST_SLUG_SOURCES:
-        return _first_path_segment(parsed.path)
+        slug = _first_path_segment(parsed.path)
+        if not slug or _is_reserved_segment(host, slug):
+            return None
+        return slug
 
     return None
 
@@ -84,3 +96,7 @@ def extract_slug_from_career_page_url(career_page_url: str) -> str | None:
 def _first_path_segment(path: str) -> str | None:
     parts = [segment for segment in path.split("/") if segment]
     return parts[0] if parts else None
+
+
+def _is_reserved_segment(host: str, segment: str) -> bool:
+    return segment.lower() in RESERVED_SLUG_SEGMENTS.get(host, frozenset())

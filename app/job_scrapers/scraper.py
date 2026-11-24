@@ -34,6 +34,7 @@ class Source(str, Enum):
     PERSONIO = "personio"
     HIBOB = "hibob"
     BAMBOO = "bamboo"
+    WORKABLE = "workable"
 
 
 class DescriptionFormat(Enum):

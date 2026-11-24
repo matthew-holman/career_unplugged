@@ -8,6 +8,7 @@ from app.job_analysis.description_extractors.linkedin import LinkedIn
 from app.job_analysis.description_extractors.personio import Personio
 from app.job_analysis.description_extractors.recruitee import Recruitee
 from app.job_analysis.description_extractors.teamtailor import Teamtailor
+from app.job_analysis.description_extractors.workable import Workable
 
 DescriptionExtractorFactory.register(GreenHouseBoard)
 DescriptionExtractorFactory.register(LinkedIn)
@@ -18,3 +19,4 @@ DescriptionExtractorFactory.register(Recruitee)
 DescriptionExtractorFactory.register(Personio)
 DescriptionExtractorFactory.register(HiBob)
 DescriptionExtractorFactory.register(BambooHr)
+DescriptionExtractorFactory.register(Workable)

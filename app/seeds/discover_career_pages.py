@@ -74,12 +74,12 @@ SUPPORTED_ATS: list[tuple[str, str]] = [
     ("recruitee.com", "recruitee_pages.py"),
     ("bamboohr.com", "bamboo_pages.py"),
     ("hibob.com", "hibob_pages.py"),
+    ("apply.workable.com", "workable_pages.py"),
 ]
 
 # ATS platforms that have seed files but no scraper yet.
 # Discovering more companies here helps prioritise which scraper to build next.
 UNSUPPORTED_ATS: list[tuple[str, str]] = [
-    ("apply.workable.com", "workable_pages.py"),
     ("app.dover.com", "dover_pages.py"),
     ("breezy.hr", "breezy_pages.py"),
     ("join.com", "join_pages.py"),
@@ -187,9 +187,7 @@ _UNSUPPORTED_SUBDOMAIN_ROOTS: frozenset[str] = frozenset(
 )
 
 # Path-based unsupported ATS where the first path segment is the company slug.
-_UNSUPPORTED_PATH_ROOTS: frozenset[str] = frozenset(
-    {"apply.workable.com", "app.dover.com", "hireflyapp.com"}
-)
+_UNSUPPORTED_PATH_ROOTS: frozenset[str] = frozenset({"app.dover.com", "hireflyapp.com"})
 
 
 def _canonical_unsupported(raw_url: str, query_domain: str) -> str | None:

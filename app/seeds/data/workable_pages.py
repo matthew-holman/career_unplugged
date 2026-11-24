@@ -381,7 +381,6 @@ WORKABLE_PAGE_SEEDS = [
         "url": "https://apply.workable.com/itsacheckmate-dot-com",
         "active": True,
     },
-    {"company_name": "j", "url": "https://apply.workable.com/j", "active": True},
     {
         "company_name": "jasarapmc",
         "url": "https://apply.workable.com/jasarapmc",

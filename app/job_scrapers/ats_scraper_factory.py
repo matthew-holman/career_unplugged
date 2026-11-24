@@ -19,6 +19,7 @@ from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 from app.job_scrapers.ats_scrapers.personio_scraper import PersonioScraper
 from app.job_scrapers.ats_scrapers.recruitee_scraper import RecruiteeScraper
 from app.job_scrapers.ats_scrapers.teamtailor_scraper import TeamTailorScraper
+from app.job_scrapers.ats_scrapers.workable_scraper import WorkableScraper
 from app.log import Log
 from app.models.career_page import CareerPage
 
@@ -33,6 +34,8 @@ _DEACTIVATE_REDIRECT_HOST_SUFFIXES = ("recruitee.com",)
 
 class AtsScraperFactory:
     SCRAPERS: List[type[AtsScraper]] = [
+        # Host-matched first so HTML-sniffing scrapers can't claim Workable boards.
+        WorkableScraper,
         AshbyBoardScraper,
         GreenHouseBoardScraper,
         GreenHouseEmbedScraper,
