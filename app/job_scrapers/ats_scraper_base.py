@@ -22,6 +22,13 @@ from app.log import Log
 from app.models.career_page import CareerPage
 from app.utils.locations.location_parser import LocationParser
 
+# A full browser UA: Cloudflare-fronted career sites (e.g. many Jobylon
+# boards) return 403 for a bare "Mozilla/5.0", which deactivates the page.
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+)
+
 
 class AtsScraper:
     """
@@ -132,7 +139,7 @@ class AtsScraper:
         return_errors: bool = False,
         headers: dict[str, str] | None = None,
     ) -> Optional[Response]:
-        request_headers = {"User-Agent": "Mozilla/5.0"}
+        request_headers = {"User-Agent": DEFAULT_USER_AGENT}
         if headers:
             request_headers.update(headers)
         try:

@@ -15,6 +15,7 @@ from app.job_scrapers.ats_scrapers.greenhouse_embedded_scraper import (
     GreenHouseEmbedScraper,
 )
 from app.job_scrapers.ats_scrapers.hibob_scraper import HiBobScraper
+from app.job_scrapers.ats_scrapers.jobylon_scraper import JobylonScraper
 from app.job_scrapers.ats_scrapers.lever_scraper import LeverScraper
 from app.job_scrapers.ats_scrapers.personio_scraper import PersonioScraper
 from app.job_scrapers.ats_scrapers.recruitee_scraper import RecruiteeScraper
@@ -36,6 +37,8 @@ class AtsScraperFactory:
     SCRAPERS: List[type[AtsScraper]] = [
         # Host-matched first so HTML-sniffing scrapers can't claim Workable boards.
         WorkableScraper,
+        # Matches only an inline jbl_*_id embedder config or a cdn.jobylon.com iframe.
+        JobylonScraper,
         AshbyBoardScraper,
         GreenHouseBoardScraper,
         GreenHouseEmbedScraper,

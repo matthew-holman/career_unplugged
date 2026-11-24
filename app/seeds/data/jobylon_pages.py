@@ -80,10 +80,14 @@ JOBYLON_PAGE_SEEDS = [
         "url": "https://koenigsegg.jobylon.com",
         "active": True,
     },
-    {"company_name": "kubota", "url": "https://kubota.jobylon.com", "active": True},
+    {
+        "company_name": "kubota",
+        "url": "https://kubota.jobylon.com/vacancies/",
+        "active": True,
+    },
     {
         "company_name": "kvernelandgroup",
-        "url": "https://kvernelandgroup.jobylon.com",
+        "url": "https://kvernelandgroup.jobylon.com/vacancies/",
         "active": True,
     },
     {"company_name": "lindab", "url": "https://lindab.jobylon.com", "active": True},

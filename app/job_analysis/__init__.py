@@ -3,6 +3,7 @@ from app.job_analysis.description_extractors.ashby_board import AshbyBoard
 from app.job_analysis.description_extractors.bamboohr import BambooHr
 from app.job_analysis.description_extractors.greenhouse_board import GreenHouseBoard
 from app.job_analysis.description_extractors.hibob import HiBob
+from app.job_analysis.description_extractors.jobylon import Jobylon
 from app.job_analysis.description_extractors.lever_board import LeverBoard
 from app.job_analysis.description_extractors.linkedin import LinkedIn
 from app.job_analysis.description_extractors.personio import Personio
@@ -20,3 +21,4 @@ DescriptionExtractorFactory.register(Personio)
 DescriptionExtractorFactory.register(HiBob)
 DescriptionExtractorFactory.register(BambooHr)
 DescriptionExtractorFactory.register(Workable)
+DescriptionExtractorFactory.register(Jobylon)
