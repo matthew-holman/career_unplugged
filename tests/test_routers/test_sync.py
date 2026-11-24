@@ -2,6 +2,7 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.testclient import TestClient
 
+import app.routers.sync as sync_router
 import app.workers.sync_tasks as sync_tasks
 
 from app.handlers.worker_run import WorkerRunHandler
@@ -10,18 +11,30 @@ from app.schemas.sync import AtsSyncRequest
 
 
 def test_sync_ats_endpoint_enqueues_run(
-    authed_client: TestClient, db_session: Session
+    authed_client: TestClient, db_session: Session, monkeypatch
 ) -> None:
+    # TestClient runs background tasks inline, so without this stub the test
+    # performs a real, networked ATS sync against the dev database.
+    queued: list[dict[str, object]] = []
+
+    def fake_run_ats_sync_background(**kwargs: object) -> None:
+        queued.append(kwargs)
+
+    monkeypatch.setattr(
+        sync_router, "run_ats_sync_background", fake_run_ats_sync_background
+    )
+
     response = authed_client.post("/sync/ats", json={})
     assert response.status_code == status.HTTP_200_OK
+    assert len(queued) == 1
 
     payload = response.json()
     assert payload["worker_name"] == "sync_ats"
     assert payload["status"] == WorkerRunStatus.RUNNING.value
-    assert payload["id"]
+    assert payload["run_id"]
 
     run = db_session.exec(
-        select(WorkerRun).where(WorkerRun.id == payload["id"])
+        select(WorkerRun).where(WorkerRun.run_id == payload["run_id"])
     ).first()
     assert run is not None
 
