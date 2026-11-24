@@ -2,17 +2,76 @@ from __future__ import annotations
 
 import re
 
+from urllib.parse import urlparse
+
 from bs4 import BeautifulSoup, NavigableString, Tag
 
+from app.job_scrapers.ats_scraper_base import AtsScraper
+from app.job_scrapers.ats_scrapers.recruitee_scraper import recruitee_board_host
 from app.job_scrapers.scraper import Source
+from app.log import Log
 from app.models import Job
+
+_DESCRIPTION_SECTIONS = ("description", "requirements")
 
 
 class Recruitee:
+    """
+    Prefers the offer API, GET https://{slug}.recruitee.com/api/offers/{offer},
+    because custom-layout boards don't use the standard "Job description"
+    headings. Falls back to parsing the job page.
+    """
+
     source = Source.RECRUITEE
 
     @staticmethod
     def extract_description(soup: BeautifulSoup, job: Job) -> str:
+        api_url = Recruitee.build_api_url(job.ats_source_url or "")
+        if api_url:
+            description = Recruitee._fetch_api_description(api_url)
+            if description:
+                return description
+        return Recruitee._extract_page_description(soup)
+
+    @staticmethod
+    def build_api_url(job_url: str) -> str | None:
+        host = recruitee_board_host(job_url)
+        if not host:
+            return None
+        parts = [segment for segment in urlparse(job_url).path.split("/") if segment]
+        # Expected path: /o/{offer_slug}
+        if len(parts) < 2 or parts[0] != "o":
+            return None
+        return f"https://{host}/api/offers/{parts[1]}"
+
+    @staticmethod
+    def _fetch_api_description(api_url: str) -> str:
+        response = AtsScraper._fetch_page(api_url)
+        if not response:
+            return ""
+        try:
+            payload: object = response.json()
+        except ValueError:
+            Log.warning(f"Recruitee description extractor: invalid JSON from {api_url}")
+            return ""
+        return Recruitee.description_from_payload(payload)
+
+    @staticmethod
+    def description_from_payload(payload: object) -> str:
+        if not isinstance(payload, dict):
+            return ""
+        offer = payload.get("offer")
+        if not isinstance(offer, dict):
+            return ""
+        sections: list[str] = []
+        for key in _DESCRIPTION_SECTIONS:
+            value = offer.get(key)
+            if isinstance(value, str) and value.strip():
+                sections.append(value.strip())
+        return "\n".join(sections)
+
+    @staticmethod
+    def _extract_page_description(soup: BeautifulSoup) -> str:
         heading = Recruitee._find_heading(soup)
         if heading is None:
             return ""
