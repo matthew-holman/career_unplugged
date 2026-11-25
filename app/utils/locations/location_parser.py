@@ -5,6 +5,9 @@ import re
 from app.utils.locations.country_resolver import CountryResolver
 from app.utils.locations.europe_filter import EuropeFilter
 
+# A bare two-letter country/state code such as "BE" or "TX".
+_COUNTRY_CODE = re.compile(r"[A-Z]{2}")
+
 
 class LocationParser:
     @classmethod
@@ -97,7 +100,17 @@ class LocationParser:
         cleaned = cls.normalize_location(cleaned)
 
         lowered = cleaned.lower()
-        ignore_tokens = {"head office", "hq", "global", "multiple locations"}
+        ignore_tokens = {
+            "head office",
+            "hq",
+            "global",
+            "multiple locations",
+            "worldwide",
+            "world wide",
+            "anywhere",
+            "anywhere in the world",
+            "international",
+        }
         if lowered in ignore_tokens:
             return ""
 
@@ -144,6 +157,13 @@ class LocationParser:
             return None, None
 
         city, country = cls._parse_single_location_candidate(primary)
+        if (
+            city
+            and _COUNTRY_CODE.fullmatch(city)
+            and not CountryResolver.resolve_city_country(city)
+        ):
+            # "BE-Belgium" -> ("BE", "Belgium"): a code is not a city ("DC" is).
+            city = None
         if city:
             city = CountryResolver.resolve_alias(city)
         return city, country
@@ -159,6 +179,13 @@ class LocationParser:
         # remove markers (do not remove commas/semicolons)
         # NOTE: order matters: handle multi-word before single-word
         patterns = [
+            r"\b100\s*%\s*",
+            r"\bwork\s+from\s+home\b",
+            r"\bwfh\b",
+            r"\bremote[-\s]+based\b",
+            r"\bremote\s+(?:in|within)\s+(?:the\s+)?",
+            r"\bor\s+remote\b",
+            r"\bremote\s+or\b",
             r"\bfully\s+remote\b",
             r"\bremote[-\s]?first\b",
             r"\bon[-\s]?site\b",
@@ -172,6 +199,9 @@ class LocationParser:
         ]
         for pattern in patterns:
             text = re.sub(pattern, "", text, flags=re.IGNORECASE)
+
+        # ISO code prefixes ("BE-Belgium", "US-TX") separate like a comma.
+        text = re.sub(r"\b([A-Z]{2})-(?=[A-Z])", r"\1, ", text)
 
         # normalise dashes and comma spacing; keep ';' as separator.
         # Only a dash with whitespace on a side separates parts: hyphens inside
@@ -252,9 +282,10 @@ class LocationParser:
             if not left and not right:
                 return None, None
 
-            # 1) Classic "City, Country"
-            if right and CountryResolver.is_country(right):
-                return left, right
+            # 1) Classic "City, Country" (country names and aliases like "USA")
+            right_country = CountryResolver.canonical_country(right)
+            if right_country:
+                return left, right_country
 
             # 1b) "City, Region" / "City, Österreich"
             right_region = CountryResolver.resolve_region(right)
@@ -264,10 +295,11 @@ class LocationParser:
             # 1c) "Country, City" ("Cyprus, Ypsonas"): keep the city only if it
             #     resolves to the same country. Country names only: English
             #     county names are also North American places ("Surrey, BC").
-            if left and CountryResolver.is_country(left):
-                left_country = CountryResolver.resolve_region(left) or left
-                right_country = CountryResolver.resolve_city_country(right)
-                return (right if right_country == left_country else None), left_country
+            left_country = CountryResolver.canonical_country(left)
+            if left_country:
+                right_city_country = CountryResolver.resolve_city_country(right)
+                same = right_city_country == left_country
+                return (right if same else None), left_country
 
             # 2) Left is a city/location -> resolve to country
             if left:

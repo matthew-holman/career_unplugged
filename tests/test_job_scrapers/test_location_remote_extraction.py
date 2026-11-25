@@ -116,3 +116,53 @@ def test_ambiguous_place_names_do_not_resolve_to_europe(
     )
 
     assert location is None or location.country != wrong_country
+
+
+@pytest.mark.parametrize(
+    "hint, expected_city, expected_country",
+    [
+        ("Remote - US", None, "United States"),
+        ("USA (Remote)", None, "United States"),
+        ("U.S. Remote", None, "United States"),
+        ("Remote in the United Kingdom", None, "United Kingdom"),
+        ("Work from Home - US", None, "United States"),
+        ("Remote Based - US", None, "United States"),
+        # ISO-prefixed: the code is not a city.
+        ("BE-Belgium-Remote", None, "Belgium"),
+        ("US-TX-Remote", None, "United States"),
+        # Abbreviation cities are kept.
+        ("NYC, US", "NYC", "United States"),
+        ("DC, United States", "DC", "United States"),
+        # Country aliases on the right are normalised.
+        ("Berlin, Belgien", "Berlin", "Belgium"),
+    ],
+)
+def test_remote_phrasing_in_location_hints(
+    hint: str, expected_city: str | None, expected_country: str
+) -> None:
+    location, _ = AtsScraper.extract_location_and_remote_status(
+        card_text="Engineer", location_hint=hint
+    )
+
+    assert location is not None
+    assert location.city == expected_city
+    assert location.country == expected_country
+
+
+@pytest.mark.parametrize(
+    "hint", ["Remote", "Remote, Global", "Anywhere", "Remote (Worldwide)"]
+)
+def test_location_free_hints_are_not_logged(
+    hint: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    warnings: list[str] = []
+    monkeypatch.setattr(
+        "app.job_scrapers.ats_scraper_base.Log.warning", warnings.append
+    )
+
+    location, _ = AtsScraper.extract_location_and_remote_status(
+        card_text="Engineer", location_hint=hint
+    )
+
+    assert location is None
+    assert warnings == []

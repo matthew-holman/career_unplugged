@@ -1088,18 +1088,82 @@ class CountryResolver:
         "remote(europe)": "Europe",
     }
 
-    # Localised country names and sub-national regions (states, provinces,
+    # Other names for a country: local-language names and abbreviations.
+    # Treated exactly like the English country name.
+    COUNTRY_ALIASES: dict[str, str] = {
+        # Andorra
+        "andorra": "Andorra",
+        # Austria
+        "oesterreich": "Austria",
+        "österreich": "Austria",
+        # Belgium
+        "belgie": "Belgium",
+        "belgien": "Belgium",
+        "belgique": "Belgium",
+        "belgië": "Belgium",
+        # Czech Republic
+        "cesko": "Czech Republic",
+        "czechia": "Czech Republic",
+        "česko": "Czech Republic",
+        # Denmark
+        "danmark": "Denmark",
+        # Finland
+        "suomi": "Finland",
+        # France
+        "frankreich": "France",
+        # Germany
+        "allemagne": "Germany",
+        "deutschland": "Germany",
+        "duitsland": "Germany",
+        # Italy
+        "italia": "Italy",
+        "italie": "Italy",
+        "italien": "Italy",
+        # Monaco
+        "monaco": "Monaco",
+        # Netherlands
+        "holland": "Netherlands",
+        "nederland": "Netherlands",
+        "nederlands": "Netherlands",
+        "niederlande": "Netherlands",
+        # Norway
+        "norge": "Norway",
+        # Poland
+        "polen": "Poland",
+        "polska": "Poland",
+        # Romania
+        "românia": "Romania",
+        "roumanie": "Romania",
+        "rumänien": "Romania",
+        # Spain
+        "espagne": "Spain",
+        "españa": "Spain",
+        "spanien": "Spain",
+        # Sweden
+        "sverige": "Sweden",
+        # Switzerland
+        "schweiz": "Switzerland",
+        "suisse": "Switzerland",
+        "svizzera": "Switzerland",
+        # United Kingdom
+        "gb": "United Kingdom",
+        "great britain": "United Kingdom",
+        # United States
+        "u.s": "United States",
+        "u.s.": "United States",
+        "u.s.a.": "United States",
+        "united states of america": "United States",
+        "us": "United States",
+        "usa": "United States",
+    }
+
+    # Sub-national regions (states, provinces,
     # counties). These resolve to a country but are never a city, so
     # "Speyer, Rheinland-Pfalz" parses as (Speyer, Germany). Matched on the
     # whole string only: some English counties are also US city names
     # ("Norfolk VA"), so they must not match as single tokens.
     REGION_TO_COUNTRY: dict[str, str] = {
-        # Andorra / Monaco
-        "andorra": "Andorra",
-        "monaco": "Monaco",
         # Austria
-        "österreich": "Austria",
-        "oesterreich": "Austria",
         "tirol": "Austria",
         "tyrol": "Austria",
         "steiermark": "Austria",
@@ -1115,38 +1179,25 @@ class CountryResolver:
         "salzburgerland": "Austria",
         "burgenland": "Austria",
         # Belgium
-        "belgie": "Belgium",
-        "belgië": "Belgium",
-        "belgien": "Belgium",
-        "belgique": "Belgium",
         "wallonia": "Belgium",
         "wallonie": "Belgium",
         "flanders": "Belgium",
         "vlaanderen": "Belgium",
         # Czech Republic
-        "czechia": "Czech Republic",
-        "česko": "Czech Republic",
-        "cesko": "Czech Republic",
         "central bohemia": "Czech Republic",
         # Denmark
-        "danmark": "Denmark",
         "central denmark region": "Denmark",
         # Estonia
         "harjumaa": "Estonia",
         # Finland
-        "suomi": "Finland",
         "keski-suomi": "Finland",
         # France
-        "frankreich": "France",
         "hauts-de-france": "France",
         "île-de-france": "France",
         "ile-de-france": "France",
         "ile de france": "France",
         "île de france": "France",
         # Germany
-        "deutschland": "Germany",
-        "duitsland": "Germany",
-        "allemagne": "Germany",
         "baden-württemberg": "Germany",
         "baden-wurttemberg": "Germany",
         "bayern": "Germany",
@@ -1185,14 +1236,7 @@ class CountryResolver:
         "sligo": "Ireland",
         "westmeath": "Ireland",
         # Italy
-        "italia": "Italy",
-        "italien": "Italy",
-        "italie": "Italy",
         # Netherlands
-        "nederland": "Netherlands",
-        "nederlands": "Netherlands",
-        "niederlande": "Netherlands",
-        "holland": "Netherlands",
         "randstad": "Netherlands",
         "brabant": "Netherlands",
         "noord-brabant": "Netherlands",
@@ -1210,10 +1254,7 @@ class CountryResolver:
         "drenthe": "Netherlands",
         "regio drenthe": "Netherlands",
         # Norway
-        "norge": "Norway",
         # Poland
-        "polen": "Poland",
-        "polska": "Poland",
         "śląskie": "Poland",
         "slaskie": "Poland",
         "mazowieckie": "Poland",
@@ -1223,13 +1264,7 @@ class CountryResolver:
         "dolnośląskie": "Poland",
         "wielkopolskie": "Poland",
         # Romania
-        "rumänien": "Romania",
-        "românia": "Romania",
-        "roumanie": "Romania",
         # Spain
-        "españa": "Spain",
-        "spanien": "Spain",
-        "espagne": "Spain",
         "islas baleares": "Spain",
         "illes balears": "Spain",
         "gipuzkoa": "Spain",
@@ -1239,16 +1274,10 @@ class CountryResolver:
         "andalucía": "Spain",
         "andalusia": "Spain",
         # Sweden
-        "sverige": "Sweden",
         # Switzerland
-        "schweiz": "Switzerland",
-        "suisse": "Switzerland",
-        "svizzera": "Switzerland",
         # Ukraine
         "zakarpattia": "Ukraine",
         # United Kingdom
-        "great britain": "United Kingdom",
-        "gb": "United Kingdom",
         "england": "United Kingdom",
         "north england": "United Kingdom",
         "scotland": "United Kingdom",
@@ -1385,30 +1414,39 @@ class CountryResolver:
     @classmethod
     def resolve_region(cls, location: str | None) -> str | None:
         """
-        Country for a country name, localised country name or region
+        Country for a country name, country alias or region
         ("Österreich", "Bayern", "Zuid-Holland"), else None. Whole-string match.
         """
         if not location:
             return None
         normalized = location.strip().lower()
-        return cls.REGION_TO_COUNTRY.get(normalized) or cls._country_names().get(
+        return cls.REGION_TO_COUNTRY.get(normalized) or cls.canonical_country(
+            normalized
+        )
+
+    @classmethod
+    def canonical_country(cls, location: str | None) -> str | None:
+        """
+        English name for a country name or alias ("USA", "Belgien"), else None.
+        Regions do not count: "Surrey" is not a country.
+        """
+        if not location:
+            return None
+        normalized = location.strip().lower()
+        return cls._country_names().get(normalized) or cls.COUNTRY_ALIASES.get(
             normalized
         )
 
     @classmethod
     @cache
     def _country_names(cls) -> dict[str, str]:
-        names = {*cls.CITY_TO_COUNTRY.values(), *cls.REGION_TO_COUNTRY.values()}
+        names = {
+            *cls.CITY_TO_COUNTRY.values(),
+            *cls.COUNTRY_ALIASES.values(),
+            *cls.REGION_TO_COUNTRY.values(),
+        }
         return {name.lower(): name for name in names}
 
     @classmethod
     def is_country(cls, location: str | None) -> bool:
-        if not location:
-            return False
-
-        normalized = location.strip().lower()
-        if not normalized:
-            return False
-
-        countries = {country.lower() for country in cls.CITY_TO_COUNTRY.values()}
-        return normalized in countries
+        return cls.canonical_country(location) is not None

@@ -232,7 +232,8 @@ class AtsScraper:
             if city or country:
                 return Location(city=city, country=country), remote_status
 
-        if location_hint:
+        # Hints with no place in them ("Remote", "Worldwide") are not failures.
+        if location_hint and LocationParser.clean_location_hint(location_hint):
             Log.warning(
                 "unable to find location based on location hint " f"{location_hint}"
             )
