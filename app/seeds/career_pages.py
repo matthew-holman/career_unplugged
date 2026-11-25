@@ -1,4 +1,5 @@
 # app/seed/career_pages_seeder.py
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 
 from sqlmodel import Session, select
@@ -45,20 +46,34 @@ class CareerPageSeeder:
 
     def run(self) -> None:
         for seed_page_list in SEED_LISTS:
-            for seed in seed_page_list:
-                url = seed["url"].rstrip("/")  # type: ignore[attr-defined]
-                existing = self.db_session.exec(
-                    select(CareerPage).where(CareerPage.url == url)
-                ).first()
-
-                if existing is None:
-                    self.db_session.add(CareerPage(**{**seed, "url": url}))
-                    continue
-
-                # Only backfill missing fields; do not overwrite user edits.
-                if existing.company_name is None and seed.get("company_name"):
-                    existing.company_name = seed["company_name"]
-
-                self.db_session.add(existing)
-
+            self.seed(seed_page_list)
         self.db_session.commit()
+
+    def seed(self, seeds: Iterable[Mapping[str, object]]) -> int:
+        """
+        Insert seeds whose URL is not in the database yet; backfill a missing
+        company name on existing pages. Does not commit. Returns the number of
+        pages inserted.
+        """
+        created = 0
+        for seed in seeds:
+            raw_url = seed.get("url")
+            if not isinstance(raw_url, str):
+                continue
+            url = raw_url.rstrip("/")
+            existing = self.db_session.exec(
+                select(CareerPage).where(CareerPage.url == url)
+            ).first()
+
+            if existing is None:
+                self.db_session.add(CareerPage(**{**seed, "url": url}))
+                created += 1
+                continue
+
+            # Only backfill missing fields; do not overwrite user edits.
+            company_name = seed.get("company_name")
+            if existing.company_name is None and isinstance(company_name, str):
+                existing.company_name = company_name
+
+            self.db_session.add(existing)
+        return created

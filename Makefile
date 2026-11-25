@@ -57,6 +57,9 @@ create-user:
 seed-career-pages:
 	poetry run python3 -m app.workers.seed_career_pages
 
+discover-career-pages:
+	poetry run python3 -m app.seeds.discover_career_pages $(args)
+
 backfill-job-career-page:
 	poetry run python3 -m app.workers.backfill_job_career_page
 

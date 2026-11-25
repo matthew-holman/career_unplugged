@@ -1,18 +1,28 @@
 #!/usr/bin/env python3
 """Discover new career pages on known ATS platforms via urlscan.io.
 
-Queries urlscan.io for pages indexed on each ATS domain, canonicalises the
-URLs, deduplicates against the existing seed files, and prints ready-to-paste
-seed list entries.
+Runs three stages in order:
 
-Supported ATS systems are printed with the correct seed format for the
-relevant seed file.  Unsupported systems are grouped separately so you can
-assess which new scrapers are worth building.
+1. Discover: query urlscan.io for pages indexed on each ATS domain,
+   canonicalise the URLs and drop any already in a seed file.
+2. Write: append the new pages to their seed files in app/seeds/data/.
+3. Seed: insert the new supported-ATS pages into the database (what
+   ``app.workers.seed_career_pages`` does, for just the new pages).
+
+Pages on unsupported ATS platforms are written to their seed files but not
+seeded, since no scraper can sync them yet. A high count there marks a good
+candidate for a new scraper.
 
 Usage
 -----
-    # All supported platforms
+    # All supported platforms: discover, update seed files, seed the database
     poetry run python -m app.seeds.discover_career_pages
+
+    # Only print what would be added; change nothing
+    poetry run python -m app.seeds.discover_career_pages --dry-run
+
+    # Update seed files but leave the database alone
+    poetry run python -m app.seeds.discover_career_pages --skip-db
 
     # Add unsupported platforms too (surfaces new scraper candidates)
     poetry run python -m app.seeds.discover_career_pages --all
@@ -36,6 +46,8 @@ from urllib.parse import urlparse
 
 import requests
 
+from app.db.db import get_db
+from app.seeds.career_pages import CareerPageSeeder
 from app.seeds.data.ashby_pages import ASHBY_PAGE_SEEDS
 from app.seeds.data.bamboo_pages import BAMBOO_PAGE_SEEDS
 from app.seeds.data.breezy_pages import BREEZY_PAGE_SEEDS
@@ -55,6 +67,7 @@ from app.seeds.data.rippling_pages import RIPPLING_PAGE_SEEDS
 from app.seeds.data.sloneek_pages import SLONEEK_PAGE_SEEDS
 from app.seeds.data.team_tailor_pages import TEAM_TAILOR_PAGE_SEEDS
 from app.seeds.data.workable_pages import WORKABLE_PAGE_SEEDS
+from app.seeds.seed_file_writer import SeedEntry, SeedFileError, append_seed_entries
 from app.settings import settings
 from app.utils.ats_discovery import discover_career_page
 
@@ -323,7 +336,7 @@ def _print_supported(results: dict[str, list[tuple[str, str, str]]]) -> None:
     total = sum(len(v) for v in results.values())
     print(f"\n{_DIVIDER}")
     print(f"SUPPORTED ATS — {total} new career pages")
-    print("Paste entries into the indicated seed file")
+    print("Seed file entries to add")
     print(_DIVIDER)
     for seed_file, entries in sorted(results.items()):
         if not entries:
@@ -352,9 +365,39 @@ def _print_unsupported(results: dict[str, list[tuple[str, str, str]]]) -> None:
             )
 
 
-def main() -> None:
+DiscoveryResults = dict[str, list[tuple[str, str, str]]]
+
+
+def write_seed_files(results: DiscoveryResults) -> dict[str, list[SeedEntry]]:
+    """Stage 2: append discovered pages to their seed files."""
+    written: dict[str, list[SeedEntry]] = {}
+    for seed_file, found in sorted(results.items()):
+        entries = [SeedEntry(company_name=slug, url=url) for url, slug, _ in found]
+        try:
+            added = append_seed_entries(seed_file, entries)
+        except SeedFileError as exc:
+            print(f"  [error] {exc}; {seed_file} left unchanged")
+            continue
+        if added:
+            print(f"  {seed_file}: +{len(added)}")
+            written[seed_file] = added
+    return written
+
+
+def seed_database(entries: list[SeedEntry]) -> int:
+    """Stage 3: insert the new pages into the database. Returns pages created."""
+    with next(get_db()) as db_session:
+        created = CareerPageSeeder(db_session).seed(e.as_seed() for e in entries)
+        db_session.commit()
+    return created
+
+
+def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Discover new career pages on known ATS platforms via urlscan.io"
+        description=(
+            "Discover new career pages on known ATS platforms via urlscan.io, "
+            "add them to the seed files and seed the database"
+        )
     )
     parser.add_argument(
         "--domain",
@@ -373,38 +416,74 @@ def main() -> None:
         dest="include_unsupported",
         help="Also scan unsupported ATS domains to surface new scraper candidates",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Only print discovered pages; do not touch seed files or the database",
+    )
+    parser.add_argument(
+        "--skip-db",
+        action="store_true",
+        help="Update seed files but do not seed the database",
+    )
+    return parser.parse_args()
 
-    existing = _build_existing_urls()
-    print(f"Loaded {len(existing)} existing seed URLs")
 
+def _select_ats(
+    args: argparse.Namespace,
+) -> tuple[list[tuple[str, str]], list[tuple[str, str]]]:
     supported_ats = SUPPORTED_ATS
     unsupported_ats = UNSUPPORTED_ATS if args.include_unsupported else []
-
     if args.domain:
         supported_ats = [(d, f) for d, f in SUPPORTED_ATS if d == args.domain]
         unsupported_ats = [(d, f) for d, f in UNSUPPORTED_ATS if d == args.domain]
-        if not supported_ats and not unsupported_ats:
-            print(f"Domain '{args.domain}' not found in either ATS list.")
-            return
+    return supported_ats, unsupported_ats
 
-    keyword = args.keyword
-    print(f"Keyword filter: {keyword!r}\n")
 
+def main() -> None:
+    args = _parse_args()
+    supported_ats, unsupported_ats = _select_ats(args)
+    if not supported_ats and not unsupported_ats:
+        print(f"Domain '{args.domain}' not found in either ATS list.")
+        return
+
+    existing = _build_existing_urls()
+    print(f"Loaded {len(existing)} existing seed URLs")
+    print(f"Keyword filter: {args.keyword!r}\n")
+
+    # Stage 1: discover
+    supported_results: DiscoveryResults = {}
+    unsupported_results: DiscoveryResults = {}
     if supported_ats:
         print("Scanning supported ATS platforms...")
-        supported_results = discover(supported_ats, keyword, existing, supported=True)
+        supported_results = discover(
+            supported_ats, args.keyword, existing, supported=True
+        )
         _print_supported(supported_results)
-
-    if True:
+    if unsupported_ats:
         print("\nScanning unsupported ATS platforms...")
         unsupported_results = discover(
-            unsupported_ats, keyword, existing, supported=False
+            unsupported_ats, args.keyword, existing, supported=False
         )
         _print_unsupported(unsupported_results)
 
-    if not supported_ats and not unsupported_ats:
-        print("Nothing to scan.")
+    if args.dry_run:
+        print("\nDry run: seed files and database left unchanged.")
+        return
+
+    # Stage 2: write seed files
+    print(f"\n{_DIVIDER}\nUpdating seed files\n{_DIVIDER}")
+    written_supported = write_seed_files(supported_results)
+    write_seed_files(unsupported_results)
+
+    # Stage 3: seed the database (supported platforms only)
+    new_supported = [e for entries in written_supported.values() for e in entries]
+    if args.skip_db or not new_supported:
+        reason = "--skip-db" if args.skip_db else "no new supported pages"
+        print(f"\nDatabase not seeded ({reason}).")
+        return
+    created = seed_database(new_supported)
+    print(f"\nSeeded {created} new career pages into the database.")
 
 
 if __name__ == "__main__":
