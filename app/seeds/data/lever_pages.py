@@ -2109,4 +2109,9 @@ LEVER_PAGE_SEEDS = [
     {"company_name": "uft", "url": "https://jobs.lever.co/uft", "active": True},
     {"company_name": "veepee", "url": "https://jobs.lever.co/veepee", "active": True},
     {"company_name": "veo", "url": "https://jobs.lever.co/veo", "active": True},
+    {
+        "company_name": "robots.txt",
+        "url": "https://jobs.lever.co/robots.txt",
+        "active": True,
+    },
 ]

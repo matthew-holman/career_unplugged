@@ -1396,4 +1396,150 @@ HIBOB_PAGE_SEEDS = [
         "url": "https://dixa.careers.hibob.com",
         "active": True,
     },
+    {
+        "company_name": "careers",
+        "url": "https://aplmedia.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://apnic.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://biocair.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://fiveai.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://gielissen.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://globaldairytrade.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://grundium.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://hibob-e013d08dd01044.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://hyvegroup.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://interwell.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://jp95.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://junglecreations.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://matchwornshirt.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://mobilede.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://onwardmedical.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://optalysys-f033ff1fc1.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "careers", "url": "https://pdp.careers.hibob.com", "active": True},
+    {
+        "company_name": "careers",
+        "url": "https://reform.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://sapiens.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://shionogibv.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://skim.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://slideinsurance.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://slyp.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://spandigital.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://sustainablead-0787aa.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://unique.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://verderliquids.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://volocopter.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://zerradc.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "careers",
+        "url": "https://zodiamarkets.careers.hibob.com",
+        "active": True,
+    },
 ]
