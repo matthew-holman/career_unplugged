@@ -53,6 +53,9 @@ class LocationParser:
         if re.search(r"\b(eu|emea|europe|european union)\b", lowered):
             return True
 
+        if ";" in cleaned:
+            return any(cls.is_location_hint_valid(part) for part in cleaned.split(";"))
+
         # Handle comma forms by checking both sides against our two primitives:
         # - is_country(token): token is a country name
         # - resolve_country(token): token is a city/location and returns its country
@@ -60,8 +63,9 @@ class LocationParser:
             left, right = (p.strip() for p in cleaned.split(",", 1))
             if (
                 (right and CountryResolver.is_country(right))
-                or (left and CountryResolver.resolve_country(left) is not None)
                 or (right and CountryResolver.resolve_country(right) is not None)
+                or (left and CountryResolver.is_country(left))
+                or (left and CountryResolver.resolve_city_country(left) is not None)
             ):
                 return True
 
@@ -78,9 +82,9 @@ class LocationParser:
         # Normalize whitespace first
         cleaned = " ".join(hint.split())
 
-        # Remove parenthetical qualifiers: "(remote)", "(hybrid)", "(onsite)", etc.
-        # This removes any (...) including surrounding whitespace
-        cleaned = re.sub(r"\s*\([^)]*\)", "", cleaned)
+        # Remove parenthetical qualifiers: "(remote)", "(hybrid)", "(DE)", etc.,
+        # but keep ones naming a location: "Remote (Europe)" -> "Remote, Europe".
+        cleaned = re.sub(r"\s*\(([^)]*)\)", cls._keep_location_parenthetical, cleaned)
 
         # Normalize separators
         cleaned = re.sub(r"[·|/]+", ", ", cleaned)
@@ -98,6 +102,13 @@ class LocationParser:
             return ""
 
         return cleaned
+
+    @staticmethod
+    def _keep_location_parenthetical(match: re.Match[str]) -> str:
+        inner = match.group(1).strip()
+        if CountryResolver.resolve_region(inner):
+            return f", {inner}"
+        return ""
 
     @classmethod
     def parse_location(
@@ -162,9 +173,11 @@ class LocationParser:
         for pattern in patterns:
             text = re.sub(pattern, "", text, flags=re.IGNORECASE)
 
-        # normalise dashes and comma spacing; keep ';' as separator
+        # normalise dashes and comma spacing; keep ';' as separator.
+        # Only a dash with whitespace on a side separates parts: hyphens inside
+        # names ("Baden-Württemberg", "Stoke-on-Trent") are kept.
         text = text.replace("—", "-").replace("–", "-")
-        text = re.sub(r"\s*[-]\s*", " - ", text)
+        text = re.sub(r"\s+-\s*|\s*-\s+", ", ", text)
         text = re.sub(r"\s*,\s*", ", ", text)
         text = re.sub(r"\s{2,}", " ", text).strip()
 
@@ -243,15 +256,28 @@ class LocationParser:
             if right and CountryResolver.is_country(right):
                 return left, right
 
+            # 1b) "City, Region" / "City, Österreich"
+            right_region = CountryResolver.resolve_region(right)
+            if right_region:
+                return left, right_region
+
+            # 1c) "Country, City" ("Cyprus, Ypsonas"): keep the city only if it
+            #     resolves to the same country. Country names only: English
+            #     county names are also North American places ("Surrey, BC").
+            if left and CountryResolver.is_country(left):
+                left_country = CountryResolver.resolve_region(left) or left
+                right_country = CountryResolver.resolve_city_country(right)
+                return (right if right_country == left_country else None), left_country
+
             # 2) Left is a city/location -> resolve to country
             if left:
-                resolved_left_country = CountryResolver.resolve_country(left)
+                resolved_left_country = CountryResolver.resolve_city_country(left)
                 if resolved_left_country:
                     return left, resolved_left_country
 
             # 3) Right is a city/location -> resolve to country (salvage odd formats)
             if right:
-                resolved_right_country = CountryResolver.resolve_country(right)
+                resolved_right_country = CountryResolver.resolve_city_country(right)
                 if resolved_right_country:
                     return right, resolved_right_country
 
@@ -261,6 +287,10 @@ class LocationParser:
         token = cls._clean_atom(candidate)
         if not token:
             return None, None
+
+        region_country = CountryResolver.resolve_region(token)
+        if region_country:
+            return None, region_country
 
         resolved_country = CountryResolver.resolve_country(token)
         if resolved_country:

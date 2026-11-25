@@ -54,3 +54,65 @@ def test_hint_ignored_when_not_location_like() -> None:
     assert location.city == "Berlin"
     assert location.country == "Germany"
     assert remote_status == RemoteStatus.ONSITE
+
+
+@pytest.mark.parametrize(
+    "hint, expected_city, expected_country",
+    [
+        # Hyphenated names are not split into "Baden - Württemberg".
+        ("Karlsruhe, Baden-Württemberg", "Karlsruhe", "Germany"),
+        ("Stoke-on-Trent, Staffordshire", "Stoke-on-Trent", "United Kingdom"),
+        # Regions and localised country names resolve to a country, not a city.
+        ("Speyer, Rheinland-Pfalz", "Speyer", "Germany"),
+        ("Graz, Österreich", "Graz", "Austria"),
+        ("Zwolle, Overijssel", "Zwolle", "Netherlands"),
+        ("Bukarest, Rumänien", "Bukarest", "Romania"),
+        ("Northern Ireland", None, "United Kingdom"),
+        ("Czechia", None, "Czech Republic"),
+        # "Country, City"
+        ("Cyprus, Ypsonas", "Ypsonas", "Cyprus"),
+        # Spaced dashes separate parts.
+        ("The Hague - hybrid", "The Hague", "Netherlands"),
+        ("Germany - Krumbach | Hybrid", "Krumbach", "Germany"),
+        # Location parentheticals are kept, others dropped.
+        ("Remote (Europe)", None, "Europe"),
+        ("Dorchester (GB)", "Dorchester", "United Kingdom"),
+        ("Köln (DE) / Bonn (DE)", "Cologne", "Germany"),
+        # Token matching keeps accented letters.
+        ("Kirchheim bei München", "Kirchheim bei München", "Germany"),
+        # ';'-separated country lists.
+        ("Austria; Germany", None, "Austria"),
+        ("Germany (Remote); Poland (Remote)", None, "Germany"),
+    ],
+)
+def test_european_location_hints(
+    hint: str, expected_city: str | None, expected_country: str
+) -> None:
+    location, _ = AtsScraper.extract_location_and_remote_status(
+        card_text="Engineer", location_hint=hint
+    )
+
+    assert location is not None
+    assert location.city == expected_city
+    assert location.country == expected_country
+
+
+@pytest.mark.parametrize(
+    "hint, wrong_country",
+    [
+        # English county names that are also North American places.
+        ("Surrey, British Columbia", "United Kingdom"),
+        ("Norfolk VA", "United Kingdom"),
+        ("Kent, WA", "United Kingdom"),
+        # Spanish towns sharing a name with Latin American cities are not added.
+        ("Granada, Nicaragua", "Spain"),
+    ],
+)
+def test_ambiguous_place_names_do_not_resolve_to_europe(
+    hint: str, wrong_country: str
+) -> None:
+    location, _ = AtsScraper.extract_location_and_remote_status(
+        card_text="Engineer", location_hint=hint
+    )
+
+    assert location is None or location.country != wrong_country

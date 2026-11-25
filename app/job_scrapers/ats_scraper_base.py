@@ -231,13 +231,11 @@ class AtsScraper:
             city, country = cls.parse_location(location_candidate)
             if city or country:
                 return Location(city=city, country=country), remote_status
+
+        if location_hint:
             Log.warning(
                 "unable to find location based on location hint " f"{location_hint}"
             )
-
-        Log.warning(
-            "unable to find location based on location hint " f"{location_hint}"
-        )
 
         return None, remote_status
 

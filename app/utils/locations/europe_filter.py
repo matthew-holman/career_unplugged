@@ -60,6 +60,8 @@ class EuropeFilter:
         "georgia",
         "armenia",
         "azerbaijan",
+        "andorra",
+        "monaco",
     }
 
     # Regional / pan-European markers
