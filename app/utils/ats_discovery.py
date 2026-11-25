@@ -34,7 +34,7 @@ SUFFIX_SOURCES: tuple[tuple[str, Source, bool], ...] = (
     (".personio.com", Source.PERSONIO, False),
     (".personio.de", Source.PERSONIO, False),
     (HIBOB_HOST_SUFFIX, Source.HIBOB, False),
-    (BAMBOO_HOST_SUFFIX, Source.HIBOB, False),
+    (BAMBOO_HOST_SUFFIX, Source.BAMBOO, False),
     (JOBYLON_HOST_SUFFIX, Source.JOBYLON, False),
 )
 # Hosts under a SUFFIX_SOURCES suffix that belong to the ATS itself, not to a

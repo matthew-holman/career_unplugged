@@ -61,6 +61,13 @@ def test_normalize_jobylon_subdomain_board() -> None:
     assert extract_slug_from_career_page_url(result.url) == "lindab"
 
 
+def test_bamboohr_board_has_bamboo_source() -> None:
+    result = discover_career_page("https://acme.bamboohr.com/careers/42")
+    assert result is not None
+    assert result.url == "https://acme.bamboohr.com"
+    assert result.source == Source.BAMBOO
+
+
 @pytest.mark.parametrize(
     "url",
     [
