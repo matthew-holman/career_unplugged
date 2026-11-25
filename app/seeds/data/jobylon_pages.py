@@ -7,7 +7,7 @@ JOBYLON_PAGE_SEEDS = [
     {
         "company_name": "jobylon",
         "url": "https://www.jobylon.com/careers",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "arkwright",
@@ -150,4 +150,9 @@ JOBYLON_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "fora", "url": "https://fora.jobylon.com", "active": True},
+    {
+        "company_name": "actureintern",
+        "url": "https://actureintern.jobylon.com",
+        "active": True,
+    },
 ]

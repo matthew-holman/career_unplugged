@@ -129,8 +129,11 @@ class CareerPageHandler:
         self.db_session.refresh(page)
         return CareerPageRead.model_validate(page)
 
-    def deactivate(self, career_page: CareerPage, status_code: int) -> None:
+    def deactivate(
+        self, career_page: CareerPage, status_code: int | None = None
+    ) -> None:
         career_page.active = False
         career_page.deactivated_at = datetime.now(timezone.utc)
-        career_page.last_status_code = status_code
+        if status_code is not None:
+            career_page.last_status_code = status_code
         self.db_session.add(career_page)

@@ -67,7 +67,7 @@ BREEZY_PAGE_SEEDS = [
         "url": "https://american-logistics-authority.breezy.hr",
         "active": True,
     },
-    {"company_name": "app", "url": "https://app.breezy.hr", "active": True},
+    {"company_name": "app", "url": "https://app.breezy.hr", "active": False},
     {"company_name": "arpio", "url": "https://arpio.breezy.hr", "active": True},
     {
         "company_name": "arts-science-undergraduate-society",
@@ -846,7 +846,7 @@ BREEZY_PAGE_SEEDS = [
     {
         "company_name": "onboarding",
         "url": "https://api.onboarding.breezy.hr",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "ontrac-solutions-llc",

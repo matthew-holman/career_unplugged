@@ -2799,7 +2799,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://wiremind-1714146283.teamtailor.com",
         "active": True,
     },
-    {"company_name": "www", "url": "https://www.teamtailor.com", "active": True},
+    {"company_name": "www", "url": "https://www.teamtailor.com", "active": False},
     {
         "company_name": "xataio-1680192386",
         "url": "https://xataio-1680192386.teamtailor.com",
@@ -4341,7 +4341,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "support",
         "url": "https://support.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "swedbankpay",
@@ -4464,7 +4464,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "_collab-edge",
         "url": "https://_collab-edge._tls.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "_collab-edge",
@@ -4474,7 +4474,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "_cuplogin",
         "url": "https://_cuplogin._tcp.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "_cuplogin",
@@ -4761,12 +4761,12 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "analytics",
         "url": "https://analytics.na.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "analytics",
         "url": "https://analytics.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "andritzdigitalfactory",
@@ -4843,16 +4843,16 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "api",
         "url": "https://api.eu-north.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "api", "url": "https://api.na.teamtailor.com", "active": True},
+    {"company_name": "api", "url": "https://api.na.teamtailor.com", "active": False},
     {
         "company_name": "app",
         "url": "https://app.eu-north.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "app", "url": "https://app.na.teamtailor.com", "active": True},
-    {"company_name": "app", "url": "https://app.teamtailor.com", "active": True},
+    {"company_name": "app", "url": "https://app.na.teamtailor.com", "active": False},
+    {"company_name": "app", "url": "https://app.teamtailor.com", "active": False},
     {
         "company_name": "appsilon-1739358905",
         "url": "https://appsilon-1739358905.teamtailor.com",
@@ -4908,9 +4908,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "assets",
         "url": "https://assets.cdn.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "assets", "url": "https://assets.teamtailor.com", "active": True},
+    {"company_name": "assets", "url": "https://assets.teamtailor.com", "active": False},
     {
         "company_name": "assist24group",
         "url": "https://assist24group.teamtailor.com",
@@ -5262,7 +5262,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://blendowgroup.teamtailor.com",
         "active": True,
     },
-    {"company_name": "blog", "url": "https://blog.teamtailor.com", "active": True},
+    {"company_name": "blog", "url": "https://blog.teamtailor.com", "active": False},
     {
         "company_name": "blomquist",
         "url": "https://blomquist.teamtailor.com",
@@ -6045,7 +6045,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "discover",
         "url": "https://discover.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "distrokid",
@@ -6059,7 +6059,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "doclab", "url": "https://doclab.teamtailor.com", "active": True},
-    {"company_name": "docs", "url": "https://docs.teamtailor.com", "active": True},
+    {"company_name": "docs", "url": "https://docs.teamtailor.com", "active": False},
     {
         "company_name": "docupartnerab",
         "url": "https://docupartnerab.teamtailor.com",
@@ -6109,19 +6109,23 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://dykarbarensandhamn.teamtailor.com",
         "active": True,
     },
-    {"company_name": "e", "url": "https://e.email.teamtailor.com", "active": True},
+    {"company_name": "e", "url": "https://e.email.teamtailor.com", "active": False},
     {
         "company_name": "e",
         "url": "https://e.mail.errors.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "e",
         "url": "https://e.message.eu2.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "e", "url": "https://e.message.na.teamtailor.com", "active": True},
-    {"company_name": "e", "url": "https://e.message.teamtailor.com", "active": True},
+    {
+        "company_name": "e",
+        "url": "https://e.message.na.teamtailor.com",
+        "active": False,
+    },
+    {"company_name": "e", "url": "https://e.message.teamtailor.com", "active": False},
     {
         "company_name": "eaglerocket",
         "url": "https://eaglerocket.teamtailor.com",
@@ -6235,12 +6239,12 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "ember",
         "url": "https://ember.cdn.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "ember2",
         "url": "https://ember2.cdn.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "embv", "url": "https://embv.teamtailor.com", "active": True},
     {
@@ -6314,7 +6318,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://errors-wl.teamtailor.com",
         "active": True,
     },
-    {"company_name": "errors", "url": "https://errors.teamtailor.com", "active": True},
+    {"company_name": "errors", "url": "https://errors.teamtailor.com", "active": False},
     {
         "company_name": "erstadiakoni",
         "url": "https://erstadiakoni.teamtailor.com",
@@ -6340,7 +6344,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "eu-north",
         "url": "https://eu-north.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "eu-render",
@@ -6348,7 +6352,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "eu", "url": "https://eu.teamtailor.com", "active": True},
-    {"company_name": "eu2", "url": "https://eu2.teamtailor.com", "active": True},
+    {"company_name": "eu2", "url": "https://eu2.teamtailor.com", "active": False},
     {
         "company_name": "everfresh",
         "url": "https://everfresh.teamtailor.com",
@@ -6385,9 +6389,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "ext-na", "url": "https://ext-na.teamtailor.com", "active": True},
-    {"company_name": "ext", "url": "https://ext.eu2.teamtailor.com", "active": True},
-    {"company_name": "ext", "url": "https://ext.na.teamtailor.com", "active": True},
-    {"company_name": "ext", "url": "https://ext.teamtailor.com", "active": True},
+    {"company_name": "ext", "url": "https://ext.eu2.teamtailor.com", "active": False},
+    {"company_name": "ext", "url": "https://ext.na.teamtailor.com", "active": False},
+    {"company_name": "ext", "url": "https://ext.teamtailor.com", "active": False},
     {"company_name": "extssl", "url": "https://extssl.teamtailor.com", "active": True},
     {
         "company_name": "eyesandmorebelgiebv",
@@ -6472,7 +6476,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "finance-integrations",
         "url": "https://finance-integrations.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "finixio",
@@ -6563,7 +6567,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "fonts",
         "url": "https://fonts.cdn.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "foodwestoy",
@@ -6899,7 +6903,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "hbv", "url": "https://hbv.teamtailor.com", "active": True},
-    {"company_name": "hcm", "url": "https://hcm.na.teamtailor.com", "active": True},
+    {"company_name": "hcm", "url": "https://hcm.na.teamtailor.com", "active": False},
     {
         "company_name": "hdrpartners",
         "url": "https://hdrpartners.teamtailor.com",
@@ -6941,7 +6945,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://helleborusskolan.teamtailor.com",
         "active": True,
     },
-    {"company_name": "hello", "url": "https://hello.teamtailor.com", "active": True},
+    {"company_name": "hello", "url": "https://hello.teamtailor.com", "active": False},
     {
         "company_name": "helmeeimaging",
         "url": "https://helmeeimaging.teamtailor.com",
@@ -6973,7 +6977,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "highlights",
         "url": "https://highlights.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "highsoft",
@@ -7245,12 +7249,12 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "insights-eu",
         "url": "https://insights-eu.ecs.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "insights-na",
         "url": "https://insights-na.ecs.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "insights-staging-aws",
@@ -7260,7 +7264,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "insights",
         "url": "https://insights.na.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "insikta",
@@ -8031,7 +8035,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "media",
         "url": "https://media.cdn.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "medicago",
@@ -8258,7 +8262,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://mystore.teamtailor.com",
         "active": True,
     },
-    {"company_name": "na", "url": "https://na.teamtailor.com", "active": True},
+    {"company_name": "na", "url": "https://na.teamtailor.com", "active": False},
     {
         "company_name": "nabuminds",
         "url": "https://nabuminds.teamtailor.com",
@@ -8700,7 +8704,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "partner",
         "url": "https://partner.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "partnerd",
@@ -9412,7 +9416,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "scripts",
         "url": "https://scripts.cdn.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "scrive-1581940106",
@@ -9741,7 +9745,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "staging-assets",
         "url": "https://staging-assets.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "stardust",
@@ -9753,7 +9757,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://startupextreme.teamtailor.com",
         "active": True,
     },
-    {"company_name": "status", "url": "https://status.teamtailor.com", "active": True},
+    {"company_name": "status", "url": "https://status.teamtailor.com", "active": False},
     {
         "company_name": "stelltec",
         "url": "https://stelltec.teamtailor.com",
@@ -10334,7 +10338,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://truckforce.teamtailor.com",
         "active": True,
     },
-    {"company_name": "trust", "url": "https://trust.teamtailor.com", "active": True},
+    {"company_name": "trust", "url": "https://trust.teamtailor.com", "active": False},
     {
         "company_name": "tsugamiamerica",
         "url": "https://tsugamiamerica.teamtailor.com",
@@ -10348,26 +10352,30 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "tt-converter",
         "url": "https://tt-converter.eu2.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "tt-converter",
         "url": "https://tt-converter.na.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "tt-parser-ecs",
         "url": "https://tt-parser-ecs.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "tt", "url": "https://tt.eu-north.teamtailor.com", "active": True},
+    {
+        "company_name": "tt",
+        "url": "https://tt.eu-north.teamtailor.com",
+        "active": False,
+    },
     {
         "company_name": "tt",
         "url": "https://tt.eu-render.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "tt", "url": "https://tt.na.teamtailor.com", "active": True},
-    {"company_name": "tt", "url": "https://tt.teamtailor.com", "active": True},
+    {"company_name": "tt", "url": "https://tt.na.teamtailor.com", "active": False},
+    {"company_name": "tt", "url": "https://tt.teamtailor.com", "active": False},
     {
         "company_name": "tunstallgermany",
         "url": "https://tunstallgermany.teamtailor.com",
@@ -10499,7 +10507,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "updates",
         "url": "https://updates.teamtailor.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "uppstuk",
@@ -10857,7 +10865,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://waylandadditive.teamtailor.com",
         "active": True,
     },
-    {"company_name": "web", "url": "https://web.teamtailor.com", "active": True},
+    {"company_name": "web", "url": "https://web.teamtailor.com", "active": False},
     {
         "company_name": "webglobe",
         "url": "https://webglobe.teamtailor.com",
@@ -11039,9 +11047,9 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "www",
         "url": "https://www.eu-north.teamtailor.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "www", "url": "https://www.na.teamtailor.com", "active": True},
+    {"company_name": "www", "url": "https://www.na.teamtailor.com", "active": False},
     {"company_name": "xait", "url": "https://xait.teamtailor.com", "active": True},
     {"company_name": "xperta", "url": "https://xperta.teamtailor.com", "active": True},
     {
@@ -11742,7 +11750,7 @@ TEAM_TAILOR_PAGE_SEEDS = [
         "url": "https://advancedelectronicscompany.teamtailor.com",
         "active": True,
     },
-    {"company_name": "api", "url": "https://api.teamtailor.com", "active": True},
+    {"company_name": "api", "url": "https://api.teamtailor.com", "active": False},
     {
         "company_name": "compaypayroll",
         "url": "https://compaypayroll.teamtailor.com",
@@ -12107,6 +12115,11 @@ TEAM_TAILOR_PAGE_SEEDS = [
     {
         "company_name": "yseparis",
         "url": "https://yseparis.teamtailor.com",
+        "active": True,
+    },
+    {
+        "company_name": "waterdrop-1732181682",
+        "url": "https://waterdrop-1732181682.teamtailor.com",
         "active": True,
     },
 ]

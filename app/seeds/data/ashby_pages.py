@@ -1473,4 +1473,15 @@ ASHBY_PAGE_SEEDS = [
         "url": "https://jobs.ashbyhq.com/workos",
         "active": True,
     },
+    {"company_name": "*", "url": "https://jobs.ashbyhq.com/*", "active": True},
+    {
+        "company_name": "justplay-gmbh",
+        "url": "https://jobs.ashbyhq.com/justplay-gmbh",
+        "active": True,
+    },
+    {
+        "company_name": "lumbra",
+        "url": "https://jobs.ashbyhq.com/lumbra",
+        "active": True,
+    },
 ]

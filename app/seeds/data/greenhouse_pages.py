@@ -2245,4 +2245,9 @@ GREENHOUSE_PAGE_SEEDS = [
         "url": "https://job-boards.greenhouse.io/zocalohealth",
         "active": True,
     },
+    {
+        "company_name": "*",
+        "url": "https://job-boards.eu.greenhouse.io/*",
+        "active": True,
+    },
 ]

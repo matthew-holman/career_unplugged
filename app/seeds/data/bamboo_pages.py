@@ -1482,7 +1482,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://apgecommerce.bamboohr.com",
         "active": True,
     },
-    {"company_name": "api", "url": "https://api.bamboohr.com", "active": True},
+    {"company_name": "api", "url": "https://api.bamboohr.com", "active": False},
     {
         "company_name": "apichaya",
         "url": "https://apichaya.bamboohr.com",
@@ -1509,7 +1509,7 @@ BAMBOO_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "apoqlar", "url": "https://apoqlar.bamboohr.com", "active": True},
-    {"company_name": "app", "url": "https://app.bamboohr.com", "active": True},
+    {"company_name": "app", "url": "https://app.bamboohr.com", "active": False},
     {
         "company_name": "appalachian",
         "url": "https://appalachian.bamboohr.com",
@@ -3644,7 +3644,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "ca-central-1",
         "url": "https://ca-central-1.int.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "caahep", "url": "https://caahep.bamboohr.com", "active": True},
     {"company_name": "caanv", "url": "https://caanv.bamboohr.com", "active": True},
@@ -4245,17 +4245,17 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "cdn3",
         "url": "https://cdn3.community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "cdn4",
         "url": "https://cdn4.community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "cdn7",
         "url": "https://cdn7.community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "cdpl", "url": "https://cdpl.bamboohr.com", "active": True},
     {"company_name": "cdsi", "url": "https://cdsi.bamboohr.com", "active": True},
@@ -5450,7 +5450,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "community",
         "url": "https://community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "communityactionskagit",
@@ -5729,7 +5729,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "content",
         "url": "https://content.bhrpendo.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "contentguru",
@@ -6495,7 +6495,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "data",
         "url": "https://data.bhrpendo.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "data4", "url": "https://data4.bamboohr.com", "active": True},
     {"company_name": "databox", "url": "https://databox.bamboohr.com", "active": True},
@@ -6595,12 +6595,12 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "dc4",
         "url": "https://dc4.community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "dc7",
         "url": "https://dc7.community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "dcara", "url": "https://dcara.bamboohr.com", "active": True},
     {"company_name": "dcbel", "url": "https://dcbel.bamboohr.com", "active": True},
@@ -6817,7 +6817,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "developer",
         "url": "https://developer.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "developers",
@@ -7797,18 +7797,18 @@ BAMBOO_PAGE_SEEDS = [
     },
     {"company_name": "elvh", "url": "https://elvh.bamboohr.com", "active": True},
     {"company_name": "em", "url": "https://em.bamboohr.com", "active": True},
-    {"company_name": "email", "url": "https://email.app.bamboohr.com", "active": True},
+    {"company_name": "email", "url": "https://email.app.bamboohr.com", "active": False},
     {
         "company_name": "email",
         "url": "https://email.community.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "email",
         "url": "https://email.dev.app.bamboohr.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "email", "url": "https://email.wp.bamboohr.com", "active": True},
+    {"company_name": "email", "url": "https://email.wp.bamboohr.com", "active": False},
     {
         "company_name": "emanagementagency",
         "url": "https://emanagementagency.bamboohr.com",
@@ -8280,7 +8280,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "eu-west-1",
         "url": "https://eu-west-1.int.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "eugenecascadescoast",
@@ -11150,7 +11150,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://helixleisure.bamboohr.com",
         "active": True,
     },
-    {"company_name": "hello", "url": "https://hello.bamboohr.com", "active": True},
+    {"company_name": "hello", "url": "https://hello.bamboohr.com", "active": False},
     {
         "company_name": "hellochef",
         "url": "https://hellochef.bamboohr.com",
@@ -11182,7 +11182,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://helmsandsons.bamboohr.com",
         "active": True,
     },
-    {"company_name": "help", "url": "https://help.bamboohr.com", "active": True},
+    {"company_name": "help", "url": "https://help.bamboohr.com", "active": False},
     {
         "company_name": "helpcloud",
         "url": "https://helpcloud.bamboohr.com",
@@ -12239,7 +12239,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "insights",
         "url": "https://insights.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "insightsdrivenresearch",
@@ -14628,7 +14628,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://magnumphotos.bamboohr.com",
         "active": True,
     },
-    {"company_name": "mail", "url": "https://mail.act.bamboohr.com", "active": True},
+    {"company_name": "mail", "url": "https://mail.act.bamboohr.com", "active": False},
     {
         "company_name": "mailchannels",
         "url": "https://mailchannels.bamboohr.com",
@@ -19338,7 +19338,7 @@ BAMBOO_PAGE_SEEDS = [
     },
     {"company_name": "quvia", "url": "https://quvia.bamboohr.com", "active": True},
     {"company_name": "qvt", "url": "https://qvt.bamboohr.com", "active": True},
-    {"company_name": "r", "url": "https://r.hr.bamboohr.com", "active": True},
+    {"company_name": "r", "url": "https://r.hr.bamboohr.com", "active": False},
     {"company_name": "r2net", "url": "https://r2net.bamboohr.com", "active": True},
     {"company_name": "rabbies", "url": "https://rabbies.bamboohr.com", "active": True},
     {
@@ -19742,7 +19742,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://relaxgaming.bamboohr.com",
         "active": True,
     },
-    {"company_name": "relay", "url": "https://relay.app.bamboohr.com", "active": True},
+    {"company_name": "relay", "url": "https://relay.app.bamboohr.com", "active": False},
     {"company_name": "relayr", "url": "https://relayr.bamboohr.com", "active": True},
     {
         "company_name": "reliablemn",
@@ -22223,7 +22223,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://statsbomb.bamboohr.com",
         "active": True,
     },
-    {"company_name": "status", "url": "https://status.bamboohr.com", "active": True},
+    {"company_name": "status", "url": "https://status.bamboohr.com", "active": False},
     {"company_name": "statwax", "url": "https://statwax.bamboohr.com", "active": True},
     {
         "company_name": "stclairsrc",
@@ -24375,7 +24375,7 @@ BAMBOO_PAGE_SEEDS = [
         "url": "https://trussvet.bamboohr.com",
         "active": True,
     },
-    {"company_name": "trust", "url": "https://trust.bamboohr.com", "active": True},
+    {"company_name": "trust", "url": "https://trust.bamboohr.com", "active": False},
     {
         "company_name": "trustana",
         "url": "https://trustana.bamboohr.com",
@@ -24821,7 +24821,7 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "us-east-2",
         "url": "https://us-east-2.int.bamboohr.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "usaforunhcr",
@@ -26162,7 +26162,7 @@ BAMBOO_PAGE_SEEDS = [
     {"company_name": "wusc", "url": "https://wusc.bamboohr.com", "active": True},
     {"company_name": "wwhf", "url": "https://wwhf.bamboohr.com", "active": True},
     {"company_name": "wwnc", "url": "https://wwnc.bamboohr.com", "active": True},
-    {"company_name": "www", "url": "https://www.bamboohr.com", "active": True},
+    {"company_name": "www", "url": "https://www.bamboohr.com", "active": False},
     {"company_name": "wyo", "url": "https://wyo.bamboohr.com", "active": True},
     {
         "company_name": "wyomingbusiness",
@@ -26438,7 +26438,7 @@ BAMBOO_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "frpd", "url": "https://frpd.bamboohr.com", "active": True},
-    {"company_name": "secure", "url": "https://secure.bamboohr.com", "active": True},
+    {"company_name": "secure", "url": "https://secure.bamboohr.com", "active": False},
     {"company_name": "ofti", "url": "https://ofti.bamboohr.com", "active": True},
     {
         "company_name": "anchorloans",
@@ -27865,6 +27865,32 @@ BAMBOO_PAGE_SEEDS = [
     {
         "company_name": "wiresalad",
         "url": "https://wiresalad.bamboohr.com",
+        "active": True,
+    },
+    {"company_name": "amba1", "url": "https://amba1.bamboohr.com", "active": True},
+    {
+        "company_name": "brandaddition",
+        "url": "https://brandaddition.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "itmethods",
+        "url": "https://itmethods.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "primarycompanies",
+        "url": "https://primarycompanies.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "regalmoving",
+        "url": "https://regalmoving.bamboohr.com",
+        "active": True,
+    },
+    {
+        "company_name": "southbase",
+        "url": "https://southbase.bamboohr.com",
         "active": True,
     },
 ]

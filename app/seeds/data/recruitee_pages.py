@@ -248,7 +248,7 @@ RECRUITEE_PAGE_SEEDS = [
     },
     {"company_name": "pvcase", "url": "https://pvcase.recruitee.com", "active": True},
     {"company_name": "rebuy", "url": "https://rebuy.recruitee.com", "active": True},
-    {"company_name": "recruitee", "url": "https://recruitee.com", "active": True},
+    {"company_name": "recruitee", "url": "https://recruitee.com", "active": False},
     {"company_name": "sequra", "url": "https://sequra.recruitee.com", "active": True},
     {
         "company_name": "snapsoft",
@@ -265,7 +265,11 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://strategyeng.recruitee.com",
         "active": True,
     },
-    {"company_name": "support", "url": "https://support.recruitee.com", "active": True},
+    {
+        "company_name": "support",
+        "url": "https://support.recruitee.com",
+        "active": False,
+    },
     {
         "company_name": "techwolf",
         "url": "https://techwolf.recruitee.com",
@@ -1192,7 +1196,7 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://apoverlag.recruitee.com",
         "active": True,
     },
-    {"company_name": "app", "url": "https://app.recruitee.com", "active": True},
+    {"company_name": "app", "url": "https://app.recruitee.com", "active": False},
     {
         "company_name": "appetiser",
         "url": "https://appetiser.recruitee.com",
@@ -1500,7 +1504,7 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://ats-onboarding.recruitee.com",
         "active": True,
     },
-    {"company_name": "ats", "url": "https://ats.recruitee.com", "active": True},
+    {"company_name": "ats", "url": "https://ats.recruitee.com", "active": False},
     {"company_name": "attendi", "url": "https://attendi.recruitee.com", "active": True},
     {
         "company_name": "atventure",
@@ -2301,7 +2305,7 @@ RECRUITEE_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "bloem", "url": "https://bloem.recruitee.com", "active": True},
-    {"company_name": "blog", "url": "https://blog.recruitee.com", "active": True},
+    {"company_name": "blog", "url": "https://blog.recruitee.com", "active": False},
     {
         "company_name": "blooberteam",
         "url": "https://blooberteam.recruitee.com",
@@ -4184,7 +4188,7 @@ RECRUITEE_PAGE_SEEDS = [
     },
     {"company_name": "ddock", "url": "https://ddock.recruitee.com", "active": True},
     {"company_name": "ddx", "url": "https://ddx.recruitee.com", "active": True},
-    {"company_name": "de", "url": "https://de.new-site.recruitee.com", "active": True},
+    {"company_name": "de", "url": "https://de.new-site.recruitee.com", "active": False},
     {
         "company_name": "dealershipdevelopment",
         "url": "https://dealershipdevelopment.recruitee.com",
@@ -4433,7 +4437,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "devtest",
         "url": "https://devtest.s3.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "devumi1", "url": "https://devumi1.recruitee.com", "active": True},
     {
@@ -4625,7 +4629,7 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://doclerholding.recruitee.com",
         "active": True,
     },
-    {"company_name": "docs", "url": "https://docs.recruitee.com", "active": True},
+    {"company_name": "docs", "url": "https://docs.recruitee.com", "active": False},
     {
         "company_name": "doctenagmbh",
         "url": "https://doctenagmbh.recruitee.com",
@@ -5678,7 +5682,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "feedback",
         "url": "https://feedback.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "feedingsouthflorida",
@@ -6018,7 +6022,7 @@ RECRUITEE_PAGE_SEEDS = [
     },
     {"company_name": "foxtek", "url": "https://foxtek.recruitee.com", "active": True},
     {"company_name": "fpcrisk", "url": "https://fpcrisk.recruitee.com", "active": True},
-    {"company_name": "fr", "url": "https://fr.new-site.recruitee.com", "active": True},
+    {"company_name": "fr", "url": "https://fr.new-site.recruitee.com", "active": False},
     {
         "company_name": "framcareers",
         "url": "https://framcareers.recruitee.com",
@@ -8112,7 +8116,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "integrations",
         "url": "https://integrations.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "intelligentstaffinginc",
@@ -8446,7 +8450,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "jobs",
         "url": "https://jobs.tripclick.pro.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "jobsatibg",
@@ -9161,7 +9165,11 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://landienglish.recruitee.com",
         "active": True,
     },
-    {"company_name": "landing", "url": "https://landing.recruitee.com", "active": True},
+    {
+        "company_name": "landing",
+        "url": "https://landing.recruitee.com",
+        "active": False,
+    },
     {
         "company_name": "landisubjectenglish",
         "url": "https://landisubjectenglish.recruitee.com",
@@ -11085,7 +11093,7 @@ RECRUITEE_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "nioz", "url": "https://nioz.recruitee.com", "active": True},
-    {"company_name": "nl", "url": "https://nl.new-site.recruitee.com", "active": True},
+    {"company_name": "nl", "url": "https://nl.new-site.recruitee.com", "active": False},
     {"company_name": "nlc", "url": "https://nlc.recruitee.com", "active": True},
     {
         "company_name": "nlmentalcaregroup",
@@ -11322,7 +11330,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "old-blog",
         "url": "https://old-blog.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {"company_name": "oldael", "url": "https://oldael.recruitee.com", "active": True},
     {"company_name": "olenex", "url": "https://olenex.recruitee.com", "active": True},
@@ -12803,7 +12811,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "recruitment",
         "url": "https://recruitment.sro.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "recruitzio",
@@ -13284,8 +13292,8 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://rwdsystemreinigunggmbh.recruitee.com",
         "active": True,
     },
-    {"company_name": "s", "url": "https://s.recruitee.com", "active": True},
-    {"company_name": "s3", "url": "https://s3.recruitee.com", "active": True},
+    {"company_name": "s", "url": "https://s.recruitee.com", "active": False},
+    {"company_name": "s3", "url": "https://s3.recruitee.com", "active": False},
     {"company_name": "s4d", "url": "https://s4d.recruitee.com", "active": True},
     {
         "company_name": "saaletreu",
@@ -13711,8 +13719,12 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://secure-backup.recruitee.com",
         "active": True,
     },
-    {"company_name": "secure", "url": "https://secure.recruitee.com", "active": True},
-    {"company_name": "secure", "url": "https://secure.s.recruitee.com", "active": True},
+    {"company_name": "secure", "url": "https://secure.recruitee.com", "active": False},
+    {
+        "company_name": "secure",
+        "url": "https://secure.s.recruitee.com",
+        "active": False,
+    },
     {
         "company_name": "securifybv",
         "url": "https://securifybv.recruitee.com",
@@ -14529,7 +14541,7 @@ RECRUITEE_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "stasinc", "url": "https://stasinc.recruitee.com", "active": True},
-    {"company_name": "status", "url": "https://status.recruitee.com", "active": True},
+    {"company_name": "status", "url": "https://status.recruitee.com", "active": False},
     {
         "company_name": "statuscag",
         "url": "https://statuscag.recruitee.com",
@@ -16351,7 +16363,11 @@ RECRUITEE_PAGE_SEEDS = [
         "active": True,
     },
     {"company_name": "upcloud", "url": "https://upcloud.recruitee.com", "active": True},
-    {"company_name": "updates", "url": "https://updates.recruitee.com", "active": True},
+    {
+        "company_name": "updates",
+        "url": "https://updates.recruitee.com",
+        "active": False,
+    },
     {"company_name": "uplink", "url": "https://uplink.recruitee.com", "active": True},
     {"company_name": "upnext", "url": "https://upnext.recruitee.com", "active": True},
     {"company_name": "upside", "url": "https://upside.recruitee.com", "active": True},
@@ -17142,7 +17158,7 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "weglot",
         "url": "https://weglot.new-site.recruitee.com",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "wegnerstahrpartner",
@@ -18007,10 +18023,10 @@ RECRUITEE_PAGE_SEEDS = [
     {
         "company_name": "www",
         "url": "https://www.old-blog.recruitee.com",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "www", "url": "https://www.recruitee.com", "active": True},
-    {"company_name": "www", "url": "https://www.s3.recruitee.com", "active": True},
+    {"company_name": "www", "url": "https://www.recruitee.com", "active": False},
+    {"company_name": "www", "url": "https://www.s3.recruitee.com", "active": False},
     {
         "company_name": "wwwrignet",
         "url": "https://wwwrignet.recruitee.com",
@@ -18318,7 +18334,7 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://coterraenergy.recruitee.com",
         "active": True,
     },
-    {"company_name": "api", "url": "https://api.recruitee.com", "active": True},
+    {"company_name": "api", "url": "https://api.recruitee.com", "active": False},
     {"company_name": "auth", "url": "https://auth.recruitee.com", "active": True},
     {"company_name": "behind", "url": "https://behind.recruitee.com", "active": True},
     {
@@ -18462,7 +18478,7 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://roberthalfjob.recruitee.com",
         "active": True,
     },
-    {"company_name": "s", "url": "https://feedback.s.recruitee.com", "active": True},
+    {"company_name": "s", "url": "https://feedback.s.recruitee.com", "active": False},
     {
         "company_name": "digitalhoneycomb",
         "url": "https://digitalhoneycomb.recruitee.com",

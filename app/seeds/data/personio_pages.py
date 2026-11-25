@@ -5393,4 +5393,9 @@ PERSONIO_PAGE_SEEDS = [
         "url": "https://yogi-tea-gmbh.jobs.personio.de",
         "active": True,
     },
+    {
+        "company_name": "tangelo-games",
+        "url": "https://tangelo-games.jobs.personio.com",
+        "active": True,
+    },
 ]

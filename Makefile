@@ -63,6 +63,9 @@ discover-career-pages:
 backfill-job-career-page:
 	poetry run python3 -m app.workers.backfill_job_career_page
 
+deactivate-vendor-career-pages:
+	poetry run python3 -m app.workers.deactivate_vendor_career_pages $(args)
+
 backfill-city-aliases:
 	poetry run python3 -m app.workers.backfill_city_aliases
 

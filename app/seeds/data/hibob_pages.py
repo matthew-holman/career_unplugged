@@ -115,7 +115,7 @@ HIBOB_PAGE_SEEDS = [
         "url": "https://bwwater-makingwaves.careers.hibob.com",
         "active": True,
     },
-    {"company_name": "careers", "url": "https://careers.hibob.com", "active": True},
+    {"company_name": "careers", "url": "https://careers.hibob.com", "active": False},
     {
         "company_name": "carringtonwest",
         "url": "https://carringtonwest.careers.hibob.com",

@@ -56,9 +56,9 @@ PEOPLE_FORCE_PAGE_SEEDS = [
     {
         "company_name": "prod-gcp",
         "url": "https://app.prod-gcp.peopleforce.io",
-        "active": True,
+        "active": False,
     },
-    {"company_name": "www", "url": "https://www.peopleforce.io", "active": True},
+    {"company_name": "www", "url": "https://www.peopleforce.io", "active": False},
     {
         "company_name": "airlogix",
         "url": "https://airlogix.peopleforce.io",
@@ -84,7 +84,7 @@ PEOPLE_FORCE_PAGE_SEEDS = [
     {
         "company_name": "feedback",
         "url": "https://feedback.peopleforce.io",
-        "active": True,
+        "active": False,
     },
     {
         "company_name": "gamemod",
