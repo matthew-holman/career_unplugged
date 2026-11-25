@@ -75,6 +75,9 @@ SUPPORTED_ATS: list[tuple[str, str]] = [
     ("bamboohr.com", "bamboo_pages.py"),
     ("hibob.com", "hibob_pages.py"),
     ("apply.workable.com", "workable_pages.py"),
+    # Only {company}.jobylon.com boards are found here; boards embedded on a
+    # company's own domain have to be added by hand.
+    ("jobylon.com", "jobylon_pages.py"),
 ]
 
 # ATS platforms that have seed files but no scraper yet.
@@ -83,7 +86,6 @@ UNSUPPORTED_ATS: list[tuple[str, str]] = [
     ("app.dover.com", "dover_pages.py"),
     ("breezy.hr", "breezy_pages.py"),
     ("join.com", "join_pages.py"),
-    ("jobylon.com", "jobylon_pages.py"),
     ("peopleforce.io", "people_force_pages.py"),
     ("jobs.sloneek.com", "sloneek_pages.py"),
     ("hireflyapp.com", "hirefly_pages.py"),
@@ -183,7 +185,7 @@ def _canonical_supported(raw_url: str) -> str | None:
 
 # Subdomain-based unsupported ATS: the company slug IS the subdomain.
 _UNSUPPORTED_SUBDOMAIN_ROOTS: frozenset[str] = frozenset(
-    {"breezy.hr", "jobylon.com", "peopleforce.io"}
+    {"breezy.hr", "peopleforce.io"}
 )
 
 # Path-based unsupported ATS where the first path segment is the company slug.
@@ -196,7 +198,7 @@ def _canonical_unsupported(raw_url: str, query_domain: str) -> str | None:
 
     For path-based platforms (apply.workable.com, join.com, …) returns
     scheme + host + /company-slug.
-    For subdomain-based platforms (breezy.hr, jobylon.com, …) returns
+    For subdomain-based platforms (breezy.hr, peopleforce.io, …) returns
     scheme + host (the subdomain IS the company identifier).
     """
     try:

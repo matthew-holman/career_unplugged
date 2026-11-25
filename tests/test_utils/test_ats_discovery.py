@@ -1,5 +1,10 @@
+import pytest
+
 from app.job_scrapers.scraper import Source
-from app.utils.ats_discovery import discover_career_page
+from app.utils.ats_discovery import (
+    discover_career_page,
+    extract_slug_from_career_page_url,
+)
 
 
 def test_normalize_teamtailor_urls() -> None:
@@ -46,3 +51,26 @@ def test_normalize_workable_urls() -> None:
 
 def test_workable_shortlink_has_no_slug() -> None:
     assert discover_career_page("https://apply.workable.com/j/ABC123") is None
+
+
+def test_normalize_jobylon_subdomain_board() -> None:
+    result = discover_career_page("https://lindab.jobylon.com/jobs/123-lindab-x/")
+    assert result is not None
+    assert result.url == "https://lindab.jobylon.com"
+    assert result.source == Source.JOBYLON
+    assert extract_slug_from_career_page_url(result.url) == "lindab"
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        # LinkedIn apply links: the job page does not name the company board.
+        "https://emp.jobylon.com/jobs/312345-acme-backend-engineer/",
+        "https://cdn.jobylon.com/jobs/companies/123/embed/v5/",
+        "https://www.jobylon.com/careers",
+        "https://jobylon.com/",
+    ],
+)
+def test_jobylon_own_hosts_are_not_boards(url: str) -> None:
+    assert discover_career_page(url) is None
+    assert extract_slug_from_career_page_url(url) is None

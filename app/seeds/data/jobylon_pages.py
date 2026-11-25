@@ -133,33 +133,21 @@ JOBYLON_PAGE_SEEDS = [
     {"company_name": "rhmdc", "url": "https://werkenbijrhmdc.nl", "active": True},
     {"company_name": "volth2", "url": "https://werkenbijvolth2.com", "active": True},
     {"company_name": "comp biomed", "url": "https://www.compbiomed.eu", "active": True},
-    {"company_name": "meca", "url": "https://www.meca.se", "active": True},
     {"company_name": "seoplatsen", "url": "https://www.seoplatsen.se", "active": True},
     {
         "company_name": "werkenbijdetussenvoorziening",
         "url": "https://www.werkenbijdetussenvoorziening.nl",
         "active": True,
     },
-    {"company_name": "emp", "url": "https://emp.jobylon.com", "active": True},
     {
         "company_name": "svensktsportforum",
         "url": "https://svensktsportforum.jobylon.com",
         "active": True,
     },
-    {"company_name": "www", "url": "https://www.jobylon.com", "active": True},
     {
         "company_name": "aftonbladet",
         "url": "https://aftonbladet.jobylon.com",
         "active": True,
     },
-    {"company_name": "cdn", "url": "https://cdn.jobylon.com", "active": True},
-    {"company_name": "email", "url": "https://email.jobylon.com", "active": True},
     {"company_name": "fora", "url": "https://fora.jobylon.com", "active": True},
-    {"company_name": "media-eu", "url": "https://media-eu.jobylon.com", "active": True},
-    {"company_name": "roadmap", "url": "https://roadmap.jobylon.com", "active": True},
-    {
-        "company_name": "static-eu",
-        "url": "https://static-eu.jobylon.com",
-        "active": True,
-    },
 ]

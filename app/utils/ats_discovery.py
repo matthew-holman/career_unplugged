@@ -5,6 +5,10 @@ from urllib.parse import urlparse
 
 from app.job_scrapers.ats_scrapers.bamboohr_scraper import BAMBOO_HOST_SUFFIX
 from app.job_scrapers.ats_scrapers.hibob_scraper import HIBOB_HOST_SUFFIX
+from app.job_scrapers.ats_scrapers.jobylon_scraper import (
+    JOBYLON_HOST_SUFFIX,
+    JOBYLON_RESERVED_HOSTS,
+)
 from app.job_scrapers.ats_scrapers.recruitee_scraper import RECRUITEE_HOST_SUFFIX
 from app.job_scrapers.ats_scrapers.workable_scraper import (
     WORKABLE_HOST,
@@ -31,7 +35,11 @@ SUFFIX_SOURCES: tuple[tuple[str, Source, bool], ...] = (
     (".personio.de", Source.PERSONIO, False),
     (HIBOB_HOST_SUFFIX, Source.HIBOB, False),
     (BAMBOO_HOST_SUFFIX, Source.HIBOB, False),
+    (JOBYLON_HOST_SUFFIX, Source.JOBYLON, False),
 )
+# Hosts under a SUFFIX_SOURCES suffix that belong to the ATS itself, not to a
+# company board (e.g. emp.jobylon.com, where LinkedIn apply links point).
+RESERVED_HOSTS: frozenset[str] = JOBYLON_RESERVED_HOSTS
 
 
 @dataclass(frozen=True)
@@ -52,6 +60,8 @@ def discover_career_page(
         return None
 
     host = parsed.netloc.lower()
+    if host in RESERVED_HOSTS:
+        return None
     for suffix, source, trailing_slash in SUFFIX_SOURCES:
         if host.endswith(suffix):
             url = f"https://{host}/" if trailing_slash else f"https://{host}"
@@ -79,6 +89,8 @@ def extract_slug_from_career_page_url(career_page_url: str) -> str | None:
         return None
 
     host = parsed.netloc.lower()
+    if host in RESERVED_HOSTS:
+        return None
     for suffix, _, _ in SUFFIX_SOURCES:
         if host.endswith(suffix):
             base = host[: -len(suffix)]

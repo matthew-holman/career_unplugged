@@ -14,6 +14,20 @@ from app.log import Log
 
 JOBYLON_CDN_HOST = "cdn.jobylon.com"
 JOBYLON_JOBS_HOST = "emp.jobylon.com"
+JOBYLON_HOST_SUFFIX = ".jobylon.com"
+# Jobylon's own hosts. Every other {company}.jobylon.com subdomain is a hosted
+# company board.
+JOBYLON_RESERVED_HOSTS = frozenset(
+    {
+        JOBYLON_CDN_HOST,
+        JOBYLON_JOBS_HOST,
+        "email.jobylon.com",
+        "media-eu.jobylon.com",
+        "roadmap.jobylon.com",
+        "static-eu.jobylon.com",
+        "www.jobylon.com",
+    }
+)
 # Server-rendered list embed. Unlike v2 (Angular + JS object literal) it renders
 # every job as plain HTML and honours the same filter params as the embedder.
 JOBYLON_LIST_VERSION = "v5"
