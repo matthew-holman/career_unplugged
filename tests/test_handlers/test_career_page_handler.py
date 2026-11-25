@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from sqlmodel import Session
 
 from app.handlers.career_page import CareerPageHandler
-from app.models.career_page import CareerPage
+from app.models.career_page import CareerPage, CareerPageRelevance
 
 
 def test_select_for_sync_max_age_hours(db_session: Session) -> None:
@@ -78,3 +78,68 @@ def test_select_for_sync_ids_respects_active(db_session: Session) -> None:
     )
     assert len(results) == 1
     assert results[0].id == inactive_page.id
+
+
+def test_select_for_sync_holds_back_low_relevance_pages(db_session: Session) -> None:
+    now = datetime.now(timezone.utc)
+    pages = {
+        "target-recent": (CareerPageRelevance.TARGET, now),
+        "unknown-recent": (CareerPageRelevance.UNKNOWN, now),
+        "outside-recent": (CareerPageRelevance.OUTSIDE_EUROPE, now - timedelta(days=5)),
+        "outside-stale": (CareerPageRelevance.OUTSIDE_EUROPE, now - timedelta(days=40)),
+        "outside-never": (CareerPageRelevance.OUTSIDE_EUROPE, None),
+        "europe-recent": (CareerPageRelevance.EUROPE_ONSITE, now - timedelta(days=2)),
+        "europe-stale": (CareerPageRelevance.EUROPE_ONSITE, now - timedelta(days=8)),
+    }
+    for name, (relevance, synced_at) in pages.items():
+        db_session.add(
+            CareerPage(
+                company_name=name,
+                url=f"https://{name}.example.com",
+                relevance=relevance,
+                last_synced_at=synced_at,
+            )
+        )
+    db_session.commit()
+
+    handler = CareerPageHandler(db_session)
+    results = handler.select_for_sync(
+        career_page_ids=None,
+        max_age_hours=None,
+        include_inactive=False,
+        relevance_rescan_days={
+            CareerPageRelevance.EUROPE_ONSITE: 7,
+            CareerPageRelevance.OUTSIDE_EUROPE: 30,
+        },
+    )
+    assert {page.company_name for page in results} == {
+        "target-recent",
+        "unknown-recent",
+        "outside-stale",
+        "outside-never",
+        "europe-stale",
+    }
+
+    all_results = handler.select_for_sync(
+        career_page_ids=None, max_age_hours=None, include_inactive=False
+    )
+    assert len(all_results) == len(pages)
+
+
+def test_select_for_sync_ids_ignore_relevance(db_session: Session) -> None:
+    page = CareerPage(
+        url="https://ignored.example.com",
+        relevance=CareerPageRelevance.OUTSIDE_EUROPE,
+        last_synced_at=datetime.now(timezone.utc),
+    )
+    db_session.add(page)
+    db_session.commit()
+
+    handler = CareerPageHandler(db_session)
+    results = handler.select_for_sync(
+        career_page_ids=[page.id],
+        max_age_hours=None,
+        include_inactive=False,
+        relevance_rescan_days={CareerPageRelevance.OUTSIDE_EUROPE: 30},
+    )
+    assert [result.id for result in results] == [page.id]

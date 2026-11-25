@@ -16,7 +16,9 @@ from app.job_scrapers.ats_scraper_factory import (
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job
+from app.search_profile import RELEVANCE_RESCAN_DAYS
 from app.settings import settings
+from app.utils.locations.page_relevance import classify_career_page
 from app.workers.job_analyser import run_analyser
 from app.workers.sync_common import (
     build_jobs_to_save,
@@ -30,6 +32,7 @@ def run_sync_ats(
     career_page_ids: list[int] | None = None,
     max_age_hours: int | None = None,
     include_inactive: bool = False,
+    include_low_relevance: bool = False,
 ) -> dict[str, Any]:
     load_dotenv()
     Log.setup(application_name="sync_ats")
@@ -40,6 +43,7 @@ def run_sync_ats(
             career_page_ids=career_page_ids,
             max_age_hours=max_age_hours,
             include_inactive=include_inactive,
+            include_low_relevance=include_low_relevance,
         )
 
 
@@ -49,6 +53,7 @@ def run_sync_ats_with_session(
     career_page_ids: list[int] | None = None,
     max_age_hours: int | None = None,
     include_inactive: bool = False,
+    include_low_relevance: bool = False,
 ) -> dict[str, Any]:
     job_handler = JobHandler(db_session)
     page_handler = CareerPageHandler(db_session)
@@ -61,11 +66,13 @@ def run_sync_ats_with_session(
     jobs_saved = 0
     pages_synced = 0
     pages_deactivated = 0
+    pages_reclassified = 0
 
     career_pages = page_handler.select_for_sync(
         career_page_ids=career_page_ids,
         max_age_hours=max_age_hours,
         include_inactive=include_inactive,
+        relevance_rescan_days=None if include_low_relevance else RELEVANCE_RESCAN_DAYS,
     )
     pages_selected = len(career_pages)
 
@@ -111,6 +118,14 @@ def run_sync_ats_with_session(
                 batch_size=batch_size,
             )
 
+        previous_relevance = page.relevance
+        if page.apply_scanned_relevance(classify_career_page(response.jobs)):
+            pages_reclassified += 1
+            Log.info(
+                f"Career page {page.url} relevance "
+                f"{previous_relevance.value} -> {page.relevance.value}"
+            )
+
         page.last_synced_at = datetime.now(timezone.utc)
         pending_pages.append(page)
         pending_pages = flush_pending_pages(
@@ -137,6 +152,7 @@ def run_sync_ats_with_session(
         "pages_selected": pages_selected,
         "pages_synced": pages_synced,
         "pages_deactivated": pages_deactivated,
+        "pages_reclassified": pages_reclassified,
         "jobs_processed": jobs_processed,
         "jobs_saved": jobs_saved,
     }

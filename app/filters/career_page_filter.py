@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from app.models.career_page import CareerPageRelevance
+
 
 class CareerPageFilter(BaseModel):
     company_name: str | None = None
@@ -12,3 +14,5 @@ class CareerPageFilter(BaseModel):
     deactivated_at_gte: datetime | None = None
     deactivated_at_lte: datetime | None = None
     last_status_code: int | None = None
+    relevance: CareerPageRelevance | None = None
+    relevance_locked: bool | None = None

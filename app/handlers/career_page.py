@@ -1,12 +1,17 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Sequence
+from typing import List, Mapping, Optional, Sequence
 
-from sqlalchemy import desc, func, nulls_last, or_
+from sqlalchemy import and_, desc, func, nulls_last, or_
 from sqlmodel import Session, col, select
 
 from app.filters.career_page_filter import CareerPageFilter
-from app.models.career_page import CareerPage, CareerPageCreate, CareerPageRead
+from app.models.career_page import (
+    CareerPage,
+    CareerPageCreate,
+    CareerPageRead,
+    CareerPageRelevance,
+)
 
 
 @dataclass
@@ -68,6 +73,10 @@ class CareerPageHandler:
             "last_status_code": lambda value: (
                 col(CareerPage.last_status_code) == value
             ),
+            "relevance": lambda value: col(CareerPage.relevance) == value,
+            "relevance_locked": lambda value: (
+                col(CareerPage.relevance_locked) == value
+            ),
         }
 
         for field_name, value in provided.items():
@@ -85,7 +94,14 @@ class CareerPageHandler:
         career_page_ids: List[int] | None,
         max_age_hours: int | None,
         include_inactive: bool,
+        relevance_rescan_days: Mapping[CareerPageRelevance, int] | None = None,
     ) -> List[CareerPage]:
+        """Select pages to scan.
+
+        ``relevance_rescan_days`` holds back pages of the given relevance
+        until that many days after their last sync. It does not apply when
+        ``career_page_ids`` names the pages.
+        """
         query = select(CareerPage)
         if not include_inactive:
             query = query.where(col(CareerPage.active).is_(True))
@@ -100,6 +116,22 @@ class CareerPageHandler:
                 or_(
                     col(CareerPage.last_synced_at).is_(None),
                     col(CareerPage.last_synced_at) < cutoff,
+                )
+            )
+
+        if relevance_rescan_days:
+            now = datetime.now(timezone.utc)
+            query = query.where(
+                or_(
+                    col(CareerPage.relevance).not_in(list(relevance_rescan_days)),
+                    col(CareerPage.last_synced_at).is_(None),
+                    *(
+                        and_(
+                            col(CareerPage.relevance) == relevance,
+                            col(CareerPage.last_synced_at) < now - timedelta(days=days),
+                        )
+                        for relevance, days in relevance_rescan_days.items()
+                    ),
                 )
             )
 

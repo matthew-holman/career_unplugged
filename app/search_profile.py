@@ -2,6 +2,7 @@
 from typing import List
 
 from app.job_scrapers.scraper import SearchLocation
+from app.models.career_page import CareerPageRelevance
 
 """
 Default job search profile.
@@ -80,6 +81,19 @@ PREFERRED_LOCATIONS: set[str] = {
     "Lerum",
     "Partille",
     "Malmö",
+}
+
+# A career page with any job in one of these countries is always relevant,
+# whether or not the job is remote.
+TARGET_COUNTRIES: set[str] = {"Sweden"}
+
+# Days to wait before scanning a career page again, by relevance. Relevance
+# missing here means "scan on every sync". Pages are re-checked eventually,
+# because a company's hiring locations change.
+RELEVANCE_RESCAN_DAYS: dict[CareerPageRelevance, int] = {
+    CareerPageRelevance.EUROPE_ONSITE: 7,
+    CareerPageRelevance.REMOTE_OUTSIDE_EUROPE: 7,
+    CareerPageRelevance.OUTSIDE_EUROPE: 30,
 }
 
 # Locations the LinkedIn scraper searches, once each. Workplace type (remote,

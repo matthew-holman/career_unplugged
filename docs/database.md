@@ -15,6 +15,10 @@ PostgreSQL via SQLModel. `job`, `user` and `worker_run` inherit `created_at`,
 **`career_page`**: ATS career pages being scraped
 - `id`, `company_name`, `url` (unique), `active` (bool)
 - `deactivated_at`, `last_status_code`, `last_synced_at`
+- `relevance` (`CareerPageRelevance`): set by each ATS scan from where the
+  page's jobs are (`app/utils/locations/page_relevance.py`). The ATS sync only
+  rescans low-relevance pages every `RELEVANCE_RESCAN_DAYS`
+  (`app/search_profile.py`). `relevance_locked` pins a manually set value.
 
 **`user`**: `id`, `name`, `email` (unique, indexed)
 
@@ -40,6 +44,8 @@ PostgreSQL via SQLModel. `job`, `user` and `worker_run` inherit `created_at`,
 - `WorkerRunStatus`: PENDING, RUNNING, SUCCEEDED, FAILED
 - `JobType`: FULL_TIME, PART_TIME, INTERNSHIP, CONTRACT, TEMPORARY
 - `TagCategory`: TECH_STACK, ROLE_TYPE
+- `CareerPageRelevance`: UNKNOWN, TARGET, REMOTE_OUTSIDE_EUROPE, EUROPE_ONSITE,
+  OUTSIDE_EUROPE
 
 ## Soft Deletes
 
