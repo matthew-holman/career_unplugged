@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Discover new career pages on known ATS platforms via urlscan.io.
+"""Discover new career pages on known ATS platforms.
 
 Runs three stages in order:
 
-1. Discover: query urlscan.io for pages indexed on each ATS domain,
-   canonicalise the URLs and drop any already in a seed file.
+1. Discover: query each URL source (urlscan.io, Common Crawl, crt.sh; see
+   ``app.seeds.discovery_sources``) for URLs on each ATS domain,
+   canonicalise them, drop vendor hosts and any page already in a seed file.
 2. Write: append the new pages to their seed files in app/seeds/data/.
 3. Seed: insert the new supported-ATS pages into the database (what
    ``app.workers.seed_career_pages`` does, for just the new pages).
@@ -31,6 +32,10 @@ Usage
     poetry run python -m app.seeds.discover_career_pages --keyword gothenburg
     poetry run python -m app.seeds.discover_career_pages --keyword malmö
 
+    # Only some sources (default: all)
+    poetry run python -m app.seeds.discover_career_pages --source commoncrawl
+    poetry run python -m app.seeds.discover_career_pages --source crtsh --source urlscan
+
     # Single ATS domain only
     poetry run python -m app.seeds.discover_career_pages --domain teamtailor.com
 """
@@ -43,8 +48,6 @@ import time
 from collections import defaultdict
 from typing import cast
 from urllib.parse import urlparse
-
-import requests
 
 from app.db.db import get_db
 from app.seeds.career_pages import CareerPageSeeder
@@ -67,11 +70,14 @@ from app.seeds.data.rippling_pages import RIPPLING_PAGE_SEEDS
 from app.seeds.data.sloneek_pages import SLONEEK_PAGE_SEEDS
 from app.seeds.data.team_tailor_pages import TEAM_TAILOR_PAGE_SEEDS
 from app.seeds.data.workable_pages import WORKABLE_PAGE_SEEDS
+from app.seeds.discovery_sources import (
+    SOURCES,
+    SUBDOMAIN_ATS_ROOTS,
+    UrlSource,
+    is_vendor_host,
+)
 from app.seeds.seed_file_writer import SeedEntry, SeedFileError, append_seed_entries
-from app.settings import settings
 from app.utils.ats_discovery import discover_career_page
-
-URLSCAN_SEARCH_URL = "https://urlscan.io/api/v1/search/"
 
 # ATS platforms that have a scraper in app/job_scrapers/ats_scrapers/.
 # Tuple: (urlscan_query_domain, seed_file_hint)
@@ -135,56 +141,6 @@ def _build_existing_urls() -> set[str]:
         for seed_list in ALL_SEED_LISTS
         for seed in seed_list
     }
-
-
-def _fetch_urlscan(domain: str, keyword: str | None, size: int = 500) -> set[str]:
-    """Return raw page URLs indexed by urlscan.io for a domain.
-
-    ``keyword`` filters results to pages whose indexed URL contains that string.
-    Pass ``"*"`` (or omit) to return all results for the domain without any
-    keyword clause — the API key is still sent if configured, which raises the
-    result-count ceiling even for plain domain queries.
-    """
-    query = f"domain:{domain}"
-
-    # "*" means "give me everything" — skip the keyword clause entirely rather
-    # than producing a malformed task.url:*** expression.
-    effective_keyword = keyword if keyword and keyword.strip("*") else None
-    uses_wildcard = effective_keyword is not None
-
-    if effective_keyword:
-        # Leading/trailing wildcards require an authenticated request.
-        query += f" AND task.url:*{effective_keyword}*"
-
-    params: dict[str, str | int] = {"q": query, "size": size}
-
-    # Send the API key whenever it is available: it raises rate limits and
-    # result-count ceilings even for non-wildcard queries, and is required
-    # when the query contains wildcards.
-    headers: dict[str, str] = {}
-    if settings.URL_SCAN_API_KEY:
-        headers["API-Key"] = settings.URL_SCAN_API_KEY
-    elif uses_wildcard:
-        print(
-            "  [error] wildcard keyword queries require a urlscan.io API key. "
-            "Set URL_SCAN_API_KEY in your .env file."
-        )
-        return set()
-
-    try:
-        resp = requests.get(URLSCAN_SEARCH_URL, params=params, headers=headers, timeout=15)  # type: ignore[arg-type]
-        resp.raise_for_status()
-    except requests.RequestException as exc:
-        print(f"  [warn] urlscan error ({domain}): {exc}")
-        return set()
-
-    urls: set[str] = set()
-    for entry in resp.json().get("results", []):
-        for field in ("task", "page"):
-            url = entry.get(field, {}).get("url", "")
-            if url:
-                urls.add(url)
-    return urls
 
 
 def _canonical_supported(raw_url: str) -> str | None:
@@ -257,18 +213,7 @@ def _company_slug(canonical_url: str) -> str:
     host = parsed.netloc.lower()
 
     # For subdomain-based: strip the ATS root, use leftmost subdomain label.
-    ats_roots = [
-        "teamtailor.com",
-        "jobs.personio.com",
-        "jobs.personio.de",
-        "recruitee.com",
-        "bamboohr.com",
-        "hibob.com",
-        "breezy.hr",
-        "jobylon.com",
-        "peopleforce.io",
-    ]
-    for root in ats_roots:
+    for root in SUBDOMAIN_ATS_ROOTS:
         if host.endswith("." + root):
             subdomain = host[: -(len(root) + 1)]
             # Take the leftmost label (ignore www / careers prefix)
@@ -286,33 +231,46 @@ def _company_slug(canonical_url: str) -> str:
     return host
 
 
+def _fetch_all_sources(
+    domain: str, keyword: str | None, sources: dict[str, UrlSource]
+) -> set[str]:
+    """Union of raw URLs from every selected source for one ATS domain."""
+    raw_urls: set[str] = set()
+    for name, fetch in sources.items():
+        print(f"  Scanning {domain} via {name}...", end=" ", flush=True)
+        urls = fetch(domain, keyword)
+        print(f"{len(urls)} raw URLs")
+        raw_urls |= urls
+        # Be polite to free tiers between sources and domains
+        time.sleep(1)
+    return raw_urls
+
+
 def discover(
     ats_list: list[tuple[str, str]],
     keyword: str | None,
     existing: set[str],
     *,
     supported: bool,
+    sources: dict[str, UrlSource] | None = None,
 ) -> dict[str, list[tuple[str, str, str]]]:
     """
-    For each ATS domain, fetch urlscan results and return new career pages.
+    For each ATS domain, fetch URLs from each source and return new career pages.
 
     Returns a dict keyed by seed_file_hint → list of (canonical_url, slug, query_domain).
     """
+    sources = SOURCES if sources is None else sources
     found: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
     seen_canonicals: set[str] = set(existing)
 
     for query_domain, seed_file in ats_list:
-        print(f"  Scanning {query_domain}...", end=" ", flush=True)
-        raw_urls = _fetch_urlscan(query_domain, keyword)
-        print(f"{len(raw_urls)} raw URLs")
-
-        for raw in raw_urls:
+        for raw in _fetch_all_sources(query_domain, keyword, sources):
             if supported:
                 canonical = _canonical_supported(raw)
             else:
                 canonical = _canonical_unsupported(raw, query_domain)
 
-            if not canonical:
+            if not canonical or is_vendor_host(canonical):
                 continue
 
             canonical = canonical.rstrip("/")
@@ -322,9 +280,6 @@ def discover(
             seen_canonicals.add(canonical)
             slug = _company_slug(canonical)
             found[seed_file].append((canonical, slug, query_domain))
-
-        # Be polite to urlscan.io free tier
-        time.sleep(1)
 
     return found
 
@@ -396,6 +351,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Discover new career pages on known ATS platforms via urlscan.io, "
+            "Common Crawl and crt.sh, "
             "add them to the seed files and seed the database"
         )
     )
@@ -406,8 +362,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--keyword",
         help=(
-            "Filter urlscan results by keyword in indexed URL "
-            "(e.g. gothenburg, malmö, sweden)"
+            "Only keep URLs containing this keyword " "(e.g. gothenburg, malmö, sweden)"
         ),
     )
     parser.add_argument(
@@ -415,6 +370,16 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         dest="include_unsupported",
         help="Also scan unsupported ATS domains to surface new scraper candidates",
+    )
+    parser.add_argument(
+        "--source",
+        action="append",
+        choices=sorted(SOURCES),
+        dest="sources",
+        help=(
+            "URL source to query; repeat to use several "
+            "(default: all of %(choices)s)"
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -447,8 +412,10 @@ def main() -> None:
         print(f"Domain '{args.domain}' not found in either ATS list.")
         return
 
+    sources = {name: SOURCES[name] for name in args.sources or SOURCES}
     existing = _build_existing_urls()
     print(f"Loaded {len(existing)} existing seed URLs")
+    print(f"Sources: {', '.join(sources)}")
     print(f"Keyword filter: {args.keyword!r}\n")
 
     # Stage 1: discover
@@ -457,13 +424,17 @@ def main() -> None:
     if supported_ats:
         print("Scanning supported ATS platforms...")
         supported_results = discover(
-            supported_ats, args.keyword, existing, supported=True
+            supported_ats, args.keyword, existing, supported=True, sources=sources
         )
         _print_supported(supported_results)
     if unsupported_ats:
         print("\nScanning unsupported ATS platforms...")
         unsupported_results = discover(
-            unsupported_ats, args.keyword, existing, supported=False
+            unsupported_ats,
+            args.keyword,
+            existing,
+            supported=False,
+            sources=sources,
         )
         _print_unsupported(unsupported_results)
 
