@@ -11,6 +11,7 @@ from app.models.career_page import (
     CareerPageCreate,
     CareerPageRead,
     CareerPageRelevance,
+    CareerPageScraperStatus,
 )
 
 
@@ -77,6 +78,7 @@ class CareerPageHandler:
             "relevance_locked": lambda value: (
                 col(CareerPage.relevance_locked) == value
             ),
+            "scraper_status": lambda value: col(CareerPage.scraper_status) == value,
         }
 
         for field_name, value in provided.items():
@@ -95,11 +97,14 @@ class CareerPageHandler:
         max_age_hours: int | None,
         include_inactive: bool,
         relevance_rescan_days: Mapping[CareerPageRelevance, int] | None = None,
+        unsupported_recheck_days: int | None = None,
     ) -> List[CareerPage]:
         """Select pages to scan.
 
         ``relevance_rescan_days`` holds back pages of the given relevance
-        until that many days after their last sync. It does not apply when
+        until that many days after their last sync, and
+        ``unsupported_recheck_days`` holds back pages no scraper matched until
+        that many days after the check. Neither applies when
         ``career_page_ids`` names the pages.
         """
         query = select(CareerPage)
@@ -132,6 +137,19 @@ class CareerPageHandler:
                         )
                         for relevance, days in relevance_rescan_days.items()
                     ),
+                )
+            )
+
+        if unsupported_recheck_days is not None:
+            recheck_cutoff = datetime.now(timezone.utc) - timedelta(
+                days=unsupported_recheck_days
+            )
+            query = query.where(
+                or_(
+                    col(CareerPage.scraper_status)
+                    != CareerPageScraperStatus.UNSUPPORTED,
+                    col(CareerPage.scraper_checked_at).is_(None),
+                    col(CareerPage.scraper_checked_at) < recheck_cutoff,
                 )
             )
 

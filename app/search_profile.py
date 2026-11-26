@@ -96,6 +96,11 @@ RELEVANCE_RESCAN_DAYS: dict[CareerPageRelevance, int] = {
     CareerPageRelevance.OUTSIDE_EUROPE: 30,
 }
 
+# Days before the ATS sync fetches a page no scraper matched again. Re-checks
+# pick up companies that move to a supported ATS. Run the sync with
+# ``include_unsupported`` to re-check them all now (after adding a scraper, say).
+UNSUPPORTED_RECHECK_DAYS = 90
+
 # Locations the LinkedIn scraper searches, once each. Workplace type (remote,
 # hybrid, onsite) is not filtered here: LinkedIn's guest search ignores that
 # filter, so remoteness is scored by the job analyser instead.

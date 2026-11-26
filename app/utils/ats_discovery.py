@@ -42,6 +42,85 @@ SUFFIX_SOURCES: tuple[tuple[str, Source, bool], ...] = (
 RESERVED_HOSTS: frozenset[str] = JOBYLON_RESERVED_HOSTS
 
 
+# First host label of a company's own careers site: careers.acme.com.
+CAREER_HOST_LABELS: frozenset[str] = frozenset(
+    {
+        "career",
+        "careers",
+        "job",
+        "jobb",
+        "jobs",
+        "join",
+        "joinus",
+        "karriere",
+        "karriar",
+        "recruiting",
+        "talent",
+        "vacancies",
+        "work",
+        "workwithus",
+    }
+)
+# Path segment of a company's careers section: acme.com/careers.
+CAREER_PATH_SEGMENTS: frozenset[str] = frozenset(
+    {
+        "career",
+        "careers",
+        "join-us",
+        "joinus",
+        "jobb",
+        "jobs",
+        "karriar",
+        "karriere",
+        "lediga-jobb",
+        "open-positions",
+        "stellenangebote",
+        "vacancies",
+        "work-with-us",
+    }
+)
+# How deep into the path a careers segment may sit (/en/careers counts).
+_MAX_CAREER_SEGMENT_DEPTH = 2
+# Hosts shared by many companies (ATS vendors, job boards). A careers-like host
+# label or path on these names the vendor, not a company site.
+SHARED_JOB_HOST_DOMAINS: frozenset[str] = frozenset(
+    {
+        "adp.com",
+        "ashbyhq.com",
+        "bamboohr.com",
+        "breezy.hr",
+        "dover.com",
+        "glassdoor.com",
+        "greenhouse.io",
+        "hibob.com",
+        "icims.com",
+        "indeed.com",
+        "jobvite.com",
+        "jobylon.com",
+        "join.com",
+        "lever.co",
+        "linkedin.com",
+        "myworkdayjobs.com",
+        "myworkdaysite.com",
+        "oraclecloud.com",
+        "personio.com",
+        "personio.de",
+        "pinpointhq.com",
+        "recruitee.com",
+        "rippling.com",
+        "smartrecruiters.com",
+        "stepstone.de",
+        "successfactors.com",
+        "successfactors.eu",
+        "taleo.net",
+        "teamtailor.com",
+        "ultipro.com",
+        "welcometothejungle.com",
+        "workable.com",
+    }
+)
+
+
 @dataclass(frozen=True)
 class CareerPageDiscoveryResult:
     url: str
@@ -79,6 +158,41 @@ def discover_career_page(
     return None
 
 
+def discover_custom_career_page(external_apply_url: str) -> str | None:
+    """Guess a company's own careers page from a job URL off the known ATS hosts.
+
+    ``careers.acme.com/jobs/123`` gives ``https://careers.acme.com`` and
+    ``acme.com/en/careers/123`` gives ``https://acme.com/en/careers``. Returns
+    None when the URL does not look like a careers site, or is on a shared ATS
+    or job board host. Whether a scraper can read the page is only known once
+    the ATS sync fetches it.
+    """
+    try:
+        parsed = urlparse(external_apply_url)
+        host = (parsed.hostname or "").lower()
+    except ValueError:
+        return None
+
+    if parsed.scheme not in {"http", "https"} or not host:
+        return None
+    if _is_shared_job_host(host):
+        return None
+
+    labels = host.split(".")
+    if labels[0] == "www":
+        labels = labels[1:]
+    if len(labels) >= 3 and labels[0] in CAREER_HOST_LABELS:
+        return f"https://{host}"
+
+    segments = [segment for segment in parsed.path.split("/") if segment]
+    for depth, segment in enumerate(segments[:_MAX_CAREER_SEGMENT_DEPTH]):
+        if segment.lower() in CAREER_PATH_SEGMENTS:
+            path = "/".join(segments[: depth + 1])
+            return f"https://{host}/{path}"
+
+    return None
+
+
 def extract_slug_from_career_page_url(career_page_url: str) -> str | None:
     try:
         parsed = urlparse(career_page_url)
@@ -112,3 +226,10 @@ def _first_path_segment(path: str) -> str | None:
 
 def _is_reserved_segment(host: str, segment: str) -> bool:
     return segment.lower() in RESERVED_SLUG_SEGMENTS.get(host, frozenset())
+
+
+def _is_shared_job_host(host: str) -> bool:
+    return any(
+        host == domain or host.endswith(f".{domain}")
+        for domain in SHARED_JOB_HOST_DOMAINS
+    )

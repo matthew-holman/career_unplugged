@@ -10,13 +10,18 @@ from app.handlers.job import JobHandler
 from app.job_scrapers.ats_scraper_factory import (
     AtsScraperFactory,
     CareerPageDeactivatedError,
+    NoScraperMatchedError,
 )
 from app.job_scrapers.linkedin import LinkedInScraper
 from app.job_scrapers.scraper import JobType, ScraperInput
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job
-from app.search_profile import JOB_LOCATIONS, linkedin_search_string
+from app.search_profile import (
+    JOB_LOCATIONS,
+    UNSUPPORTED_RECHECK_DAYS,
+    linkedin_search_string,
+)
 from app.settings import settings
 from app.workers.sync_common import (
     build_jobs_to_save,
@@ -78,7 +83,12 @@ def run_ats_scrapers(db_session: Session):
     jobs_saved = 0
 
     page_handler = CareerPageHandler(db_session)
-    career_pages = page_handler.get_all_active()
+    career_pages = page_handler.select_for_sync(
+        career_page_ids=None,
+        max_age_hours=None,
+        include_inactive=False,
+        unsupported_recheck_days=UNSUPPORTED_RECHECK_DAYS,
+    )
 
     for page in career_pages:
         Log.info(f"Processing {page.company_name or page.url}")
@@ -97,13 +107,23 @@ def run_ats_scrapers(db_session: Session):
                 f"with status {exc.status_code}"
             )
             continue
+        except NoScraperMatchedError:
+            page.record_scraper_check(supported=False, checked_at=datetime.utcnow())
+            pending_pages.append(page)
+            pending_pages = flush_pending_pages(
+                db_session,
+                pending_pages,
+                batch_size=batch_size,
+            )
+            continue
         except KeyboardInterrupt:
             Log.error(f"KeyboardInterrupt while fetching: {page.url}")
             raise
 
         if not ats_scraper:
-            Log.warning(f"No supported ATS parser for {page.url}")
+            Log.warning(f"Could not fetch career page {page.url}")
             continue
+        page.record_scraper_check(supported=True, checked_at=datetime.utcnow())
 
         # I don't want to be blocked or limited.
         sleep(settings.ATS_SCRAPER_DELAY_SECONDS)

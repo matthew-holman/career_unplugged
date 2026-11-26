@@ -4,6 +4,7 @@ from app.job_scrapers.ats_scraper_base import AtsScraper
 from app.job_scrapers.ats_scraper_factory import (
     AtsScraperFactory,
     CareerPageDeactivatedError,
+    NoScraperMatchedError,
 )
 from app.job_scrapers.ats_scrapers.ashby_board_scraper import AshbyBoardScraper
 from app.job_scrapers.ats_scrapers.hibob_scraper import HiBobScraper
@@ -151,3 +152,17 @@ def test_get_ats_scraper_does_not_deactivate_on_none_response(monkeypatch):
     assert career_page.active is True
     assert career_page.deactivated_at is None
     assert career_page.last_status_code is None
+
+
+def test_get_ats_scraper_raises_when_no_scraper_matches(monkeypatch):
+    monkeypatch.setattr(
+        AtsScraper,
+        "_fetch_page",
+        lambda url, **kwargs: _FakeResponse("<html><body>Join us</body></html>"),
+    )
+    career_page = CareerPage(company_name="acme", url="https://acme.com/careers")
+
+    with pytest.raises(NoScraperMatchedError):
+        AtsScraperFactory.get_ats_scraper(career_page)
+
+    assert career_page.active is True

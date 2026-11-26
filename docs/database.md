@@ -19,6 +19,13 @@ PostgreSQL via SQLModel. `job`, `user` and `worker_run` inherit `created_at`,
   page's jobs are (`app/utils/locations/page_relevance.py`). The ATS sync only
   rescans low-relevance pages every `RELEVANCE_RESCAN_DAYS`
   (`app/search_profile.py`). `relevance_locked` pins a manually set value.
+- `scraper_status` (`CareerPageScraperStatus`: `UNCHECKED` / `SUPPORTED` /
+  `UNSUPPORTED`) and `scraper_checked_at`: set by each ATS scan that fetches the
+  page. Pages no scraper matched are only re-fetched every
+  `UNSUPPORTED_RECHECK_DAYS`, or on a sync with `include_unsupported`. Custom
+  careers sites found through LinkedIn apply links
+  (`discover_custom_career_page` in `app/utils/ats_discovery.py`) start
+  `UNCHECKED`.
 
 **`user`**: `id`, `name`, `email` (unique, indexed)
 

@@ -30,6 +30,10 @@ class CareerPageDeactivatedError(Exception):
     status_code: int
 
 
+class NoScraperMatchedError(Exception):
+    """The career page was fetched, but no ATS scraper can read it."""
+
+
 _DEACTIVATE_REDIRECT_HOST_SUFFIXES = ("recruitee.com",)
 
 
@@ -52,6 +56,11 @@ class AtsScraperFactory:
 
     @classmethod
     def get_ats_scraper(cls, career_page: CareerPage) -> Optional[AtsScraper]:
+        """Return the scraper for a page, or None if the page could not be fetched.
+
+        Raises CareerPageDeactivatedError when the page is gone and
+        NoScraperMatchedError when it was fetched but no scraper supports it.
+        """
         if not career_page.active:
             return None
         try:
@@ -75,7 +84,7 @@ class AtsScraperFactory:
                 Log.info(f"Matched {scraper_cls.__name__} for {career_page.url}")
                 return scraper_cls(career_page, initial_response=response)
         Log.warning(f"No ATS scraper matched for {career_page.url}")
-        return None
+        raise NoScraperMatchedError(career_page.url)
 
     @classmethod
     def _deactivation_status(

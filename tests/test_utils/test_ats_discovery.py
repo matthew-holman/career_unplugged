@@ -3,6 +3,7 @@ import pytest
 from app.job_scrapers.scraper import Source
 from app.utils.ats_discovery import (
     discover_career_page,
+    discover_custom_career_page,
     extract_slug_from_career_page_url,
 )
 
@@ -81,3 +82,38 @@ def test_bamboohr_board_has_bamboo_source() -> None:
 def test_jobylon_own_hosts_are_not_boards(url: str) -> None:
     assert discover_career_page(url) is None
     assert extract_slug_from_career_page_url(url) is None
+
+
+@pytest.mark.parametrize(
+    ("apply_url", "expected"),
+    [
+        ("https://careers.acme.com/jobs/123-engineer", "https://careers.acme.com"),
+        ("https://jobs.acme.co.uk/?ref=linkedin", "https://jobs.acme.co.uk"),
+        ("https://www.acme.com/careers/123?utm=x", "https://www.acme.com/careers"),
+        ("https://acme.com/en/Careers/123", "https://acme.com/en/Careers"),
+        ("https://acme.se/lediga-jobb/456", "https://acme.se/lediga-jobb"),
+    ],
+)
+def test_discover_custom_career_page(apply_url: str, expected: str) -> None:
+    assert discover_custom_career_page(apply_url) == expected
+
+
+@pytest.mark.parametrize(
+    "apply_url",
+    [
+        # Shared ATS and job board hosts name the vendor, not the company.
+        "https://acme.wd3.myworkdayjobs.com/careers/job/123",
+        "https://jobs.smartrecruiters.com/Acme/123",
+        "https://boards.greenhouse.io/acme/jobs/123",
+        "https://careers-acme.icims.com/jobs/123",
+        "https://www.linkedin.com/jobs/view/123",
+        # Nothing careers-like in the host or near the top of the path.
+        "https://acme.com/apply?id=123",
+        "https://acme.com/a/b/careers/123",
+        "https://jobs.com/123",
+        "mailto:jobs@acme.com",
+        "not a url",
+    ],
+)
+def test_discover_custom_career_page_rejects(apply_url: str) -> None:
+    assert discover_custom_career_page(apply_url) is None

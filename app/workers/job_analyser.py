@@ -29,6 +29,7 @@ from app.search_profile import (
 from app.settings import settings
 from app.utils.ats_discovery import (
     discover_career_page,
+    discover_custom_career_page,
     extract_slug_from_career_page_url,
 )
 from app.utils.locations.remote_scorer import RemoteScorer
@@ -117,8 +118,8 @@ def _discover_career_page_from_linkedin(
 ) -> None:
     discovery = discover_career_page(external_apply_url)
     if not discovery:
-        Log.info(
-            f"LinkedIn job url: {external_apply_url}, doesn't match existing ats scrapers"
+        _discover_custom_career_page_from_linkedin(
+            job, external_apply_url, career_page_handler
         )
         return
 
@@ -135,6 +136,30 @@ def _discover_career_page_from_linkedin(
         Log.info(
             f"Discovered {provider} career page from LinkedIn job: {canonical_url}"
         )
+
+
+def _discover_custom_career_page_from_linkedin(
+    job: Job,
+    external_apply_url: str,
+    career_page_handler: CareerPageHandler,
+) -> None:
+    """Save a company's own careers site as a page for the ATS sync to check.
+
+    It starts UNCHECKED; the sync marks it UNSUPPORTED if no scraper matches,
+    so it is fetched once rather than on every run.
+    """
+    candidate_url = discover_custom_career_page(external_apply_url)
+    if not candidate_url:
+        Log.info(
+            f"LinkedIn job url: {external_apply_url}, doesn't match existing ats scrapers"
+        )
+        return
+
+    _, created = career_page_handler.upsert_discovered(
+        CareerPageCreate(company_name=job.company, url=candidate_url)
+    )
+    if created:
+        Log.info(f"Discovered custom career page from LinkedIn job: {candidate_url}")
 
 
 def _update_ats_url_for_linkedin_job(

@@ -12,11 +12,12 @@ from app.handlers.job import JobHandler
 from app.job_scrapers.ats_scraper_factory import (
     AtsScraperFactory,
     CareerPageDeactivatedError,
+    NoScraperMatchedError,
 )
 from app.log import Log
 from app.models.career_page import CareerPage
 from app.models.job import Job
-from app.search_profile import RELEVANCE_RESCAN_DAYS
+from app.search_profile import RELEVANCE_RESCAN_DAYS, UNSUPPORTED_RECHECK_DAYS
 from app.settings import settings
 from app.utils.locations.page_relevance import classify_career_page
 from app.workers.job_analyser import run_analyser
@@ -33,6 +34,7 @@ def run_sync_ats(
     max_age_hours: int | None = None,
     include_inactive: bool = False,
     include_low_relevance: bool = False,
+    include_unsupported: bool = False,
 ) -> dict[str, Any]:
     load_dotenv()
     Log.setup(application_name="sync_ats")
@@ -44,6 +46,7 @@ def run_sync_ats(
             max_age_hours=max_age_hours,
             include_inactive=include_inactive,
             include_low_relevance=include_low_relevance,
+            include_unsupported=include_unsupported,
         )
 
 
@@ -54,6 +57,7 @@ def run_sync_ats_with_session(
     max_age_hours: int | None = None,
     include_inactive: bool = False,
     include_low_relevance: bool = False,
+    include_unsupported: bool = False,
 ) -> dict[str, Any]:
     job_handler = JobHandler(db_session)
     page_handler = CareerPageHandler(db_session)
@@ -67,12 +71,16 @@ def run_sync_ats_with_session(
     pages_synced = 0
     pages_deactivated = 0
     pages_reclassified = 0
+    pages_unsupported = 0
 
     career_pages = page_handler.select_for_sync(
         career_page_ids=career_page_ids,
         max_age_hours=max_age_hours,
         include_inactive=include_inactive,
         relevance_rescan_days=None if include_low_relevance else RELEVANCE_RESCAN_DAYS,
+        unsupported_recheck_days=(
+            None if include_unsupported else UNSUPPORTED_RECHECK_DAYS
+        ),
     )
     pages_selected = len(career_pages)
 
@@ -94,9 +102,22 @@ def run_sync_ats_with_session(
                 f"with status {exc.status_code}"
             )
             continue
-        if not ats_scraper:
-            Log.warning(f"No supported ATS parser for {page.url}")
+        except NoScraperMatchedError:
+            page.record_scraper_check(
+                supported=False, checked_at=datetime.now(timezone.utc)
+            )
+            pending_pages.append(page)
+            pending_pages = flush_pending_pages(
+                db_session,
+                pending_pages,
+                batch_size=batch_size,
+            )
+            pages_unsupported += 1
             continue
+        if not ats_scraper:
+            Log.warning(f"Could not fetch career page {page.url}")
+            continue
+        page.record_scraper_check(supported=True, checked_at=datetime.now(timezone.utc))
 
         try:
             response = ats_scraper.scrape()
@@ -153,6 +174,7 @@ def run_sync_ats_with_session(
         "pages_synced": pages_synced,
         "pages_deactivated": pages_deactivated,
         "pages_reclassified": pages_reclassified,
+        "pages_unsupported": pages_unsupported,
         "jobs_processed": jobs_processed,
         "jobs_saved": jobs_saved,
     }

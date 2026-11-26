@@ -21,6 +21,20 @@ class CareerPageRelevance(str, Enum):
     OUTSIDE_EUROPE = "OUTSIDE_EUROPE"  # every role outside Europe and not remote
 
 
+class CareerPageScraperStatus(str, Enum):
+    """Whether any ATS scraper can read a career page.
+
+    Pages found outside the known ATS hosts (custom domains taken from
+    LinkedIn apply links, say) start UNCHECKED. The first scan that fetches the
+    page sets SUPPORTED or UNSUPPORTED. UNSUPPORTED pages are only re-checked
+    every ``UNSUPPORTED_RECHECK_DAYS`` (``app/search_profile.py``).
+    """
+
+    UNCHECKED = "UNCHECKED"
+    SUPPORTED = "SUPPORTED"
+    UNSUPPORTED = "UNSUPPORTED"
+
+
 class CareerPageBase(SQLModel, table=False):  # type: ignore
     company_name: Optional[str] = Field(default=None)
     url: str = Field(nullable=False, unique=True)
@@ -33,6 +47,11 @@ class CareerPageBase(SQLModel, table=False):  # type: ignore
     )
     # When set, scans no longer change ``relevance``: use it to pin a manual choice.
     relevance_locked: bool = Field(default=False, nullable=False)
+    scraper_status: CareerPageScraperStatus = Field(
+        default=CareerPageScraperStatus.UNCHECKED, nullable=False
+    )
+    # When a scan last fetched the page and checked it against the scrapers.
+    scraper_checked_at: datetime | None = Field(default=None)
 
 
 class CareerPage(CareerPageBase, table=True):  # type: ignore  # type: ignore
@@ -51,6 +70,15 @@ class CareerPage(CareerPageBase, table=True):  # type: ignore  # type: ignore
             return False
         self.relevance = relevance
         return True
+
+    def record_scraper_check(self, supported: bool, checked_at: datetime) -> None:
+        """Record whether a scraper matched the page on a scan."""
+        self.scraper_status = (
+            CareerPageScraperStatus.SUPPORTED
+            if supported
+            else CareerPageScraperStatus.UNSUPPORTED
+        )
+        self.scraper_checked_at = checked_at
 
 
 class CareerPageCreate(CareerPageBase, table=False):  # type: ignore

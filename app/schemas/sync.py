@@ -9,6 +9,8 @@ class AtsSyncRequest(BaseModel):
     include_inactive: bool = False
     # Scan low-relevance pages even when they are not yet due a re-check.
     include_low_relevance: bool = False
+    # Re-check pages no scraper matched even when they are not yet due.
+    include_unsupported: bool = False
 
 
 class LinkedinSyncRequest(BaseModel):
@@ -21,3 +23,5 @@ class SyncAllRequest(BaseModel):
     include_inactive: bool = False
     # Scan low-relevance pages even when they are not yet due a re-check.
     include_low_relevance: bool = False
+    # Re-check pages no scraper matched even when they are not yet due.
+    include_unsupported: bool = False

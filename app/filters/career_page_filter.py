@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.models.career_page import CareerPageRelevance
+from app.models.career_page import CareerPageRelevance, CareerPageScraperStatus
 
 
 class CareerPageFilter(BaseModel):
@@ -16,3 +16,4 @@ class CareerPageFilter(BaseModel):
     last_status_code: int | None = None
     relevance: CareerPageRelevance | None = None
     relevance_locked: bool | None = None
+    scraper_status: CareerPageScraperStatus | None = None

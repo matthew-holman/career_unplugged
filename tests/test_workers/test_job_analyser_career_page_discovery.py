@@ -2,10 +2,12 @@ from urllib.parse import quote
 
 from sqlmodel import Session, col, select
 
+from app.filters.career_page_filter import CareerPageFilter
 from app.handlers.career_page import CareerPageHandler
 from app.handlers.job import JobHandler
 from app.handlers.job_tag import JobTagHandler
 from app.job_scrapers.scraper import RemoteStatus, Source
+from app.models.career_page import CareerPageScraperStatus
 from app.models.job import Job
 from app.models.user import User
 from app.models.user_job import UserJob
@@ -75,6 +77,45 @@ def test_analyser_discovers_career_page_from_linkedin(db_session: Session) -> No
     page = career_handler.get_by_url("https://jobs.ashbyhq.com/acme")
     assert page is not None
     assert page.company_name == "acme"
+
+
+def _analyse_linkedin_job(db_session: Session, external_url: str) -> None:
+    job = Job(
+        title="Engineering Manager",
+        company="Acme",
+        source=Source.LINKEDIN,
+        linkedin_source_url="https://www.linkedin.com/jobs/view/321",
+        listing_remote=RemoteStatus.UNKNOWN,
+    )
+    db_session.add(job)
+    db_session.commit()
+
+    job_analyser._apply_description_analysis(
+        job,
+        _FakeSession(_FakeResponse(_make_linkedin_html(external_url))),
+        CareerPageHandler(db_session),
+        JobHandler(db_session),
+        JobTagHandler(db_session),
+    )
+
+
+def test_analyser_saves_custom_domain_career_page_unchecked(
+    db_session: Session,
+) -> None:
+    _analyse_linkedin_job(db_session, "https://careers.acme.com/jobs/321-em")
+
+    page = CareerPageHandler(db_session).get_by_url("https://careers.acme.com")
+    assert page is not None
+    assert page.company_name == "Acme"
+    assert page.scraper_status == CareerPageScraperStatus.UNCHECKED
+
+
+def test_analyser_skips_apply_url_on_shared_ats_host(db_session: Session) -> None:
+    _analyse_linkedin_job(
+        db_session, "https://acme.wd3.myworkdayjobs.com/careers/job/321"
+    )
+
+    assert CareerPageHandler(db_session).list(CareerPageFilter()) == []
 
 
 def test_analyser_sets_ats_source_url_on_linkedin_job_when_no_conflict(

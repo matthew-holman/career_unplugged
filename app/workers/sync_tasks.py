@@ -24,6 +24,7 @@ def run_ats_sync_background(*, worker_run_id: int, request: AtsSyncRequest) -> N
                 max_age_hours=request.max_age_hours,
                 include_inactive=request.include_inactive,
                 include_low_relevance=request.include_low_relevance,
+                include_unsupported=request.include_unsupported,
             )
             handler.mark_succeeded(run, summary)
         except Exception as exc:
