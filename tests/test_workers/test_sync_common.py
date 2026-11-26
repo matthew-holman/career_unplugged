@@ -60,7 +60,7 @@ def test_build_jobs_to_save_routes_ats_url_to_ats_source_url() -> None:
 
 
 # ---------------------------------------------------------------------------
-# should_save_job — preferred location bypass tests
+# should_save_job — title filtering applies to every location
 # ---------------------------------------------------------------------------
 
 
@@ -77,14 +77,9 @@ def _make_unmatched_title_job_post(
     )
 
 
-def test_preferred_city_saves_job_without_title_match() -> None:
+def test_preferred_city_does_not_bypass_title_check() -> None:
     job = _make_unmatched_title_job_post(city="Göteborg", country="Sweden")
-    assert should_save_job(job) is True
-
-
-def test_preferred_country_saves_job_without_title_match() -> None:
-    job = _make_unmatched_title_job_post(city="Alingsås", country="Sweden")
-    assert should_save_job(job) is True
+    assert should_save_job(job) is False
 
 
 def test_non_preferred_location_does_not_bypass_title_check() -> None:
@@ -92,7 +87,7 @@ def test_non_preferred_location_does_not_bypass_title_check() -> None:
     assert should_save_job(job) is False
 
 
-def test_preferred_location_still_respects_company_ignore() -> None:
+def test_company_ignore_applies() -> None:
     job = _make_unmatched_title_job_post(
         city="Berlin", country="Germany", company="Canonical"
     )

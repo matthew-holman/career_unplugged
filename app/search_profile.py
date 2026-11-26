@@ -72,8 +72,7 @@ ADDITIONAL_SEARCH_TERMS: List[str] = ["Agile", "scrum"]
 # Crossover seems a company to avoid
 COMPANIES_TO_IGNORE: List[str] = ["Canonical", "Crossover"]
 
-# Jobs from these locations are saved regardless of title match.
-# Useful for finding local jobs with unusual titles.
+# A career page with any job in one of these cities is always relevant.
 PREFERRED_LOCATIONS: set[str] = {
     "Alingsås",
     "Göteborg",

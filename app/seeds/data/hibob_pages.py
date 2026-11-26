@@ -1542,4 +1542,32 @@ HIBOB_PAGE_SEEDS = [
         "url": "https://zodiamarkets.careers.hibob.com",
         "active": True,
     },
+    {
+        "company_name": "acteon",
+        "url": "https://acteon.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "credo", "url": "https://credo.careers.hibob.com", "active": True},
+    {
+        "company_name": "databarracks",
+        "url": "https://databarracks.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "doutorfinancas",
+        "url": "https://doutorfinancas.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "happysignals",
+        "url": "https://happysignals.careers.hibob.com",
+        "active": True,
+    },
+    {
+        "company_name": "sdbzorgt",
+        "url": "https://sdbzorgt.careers.hibob.com",
+        "active": True,
+    },
+    {"company_name": "ustwo", "url": "https://ustwo.careers.hibob.com", "active": True},
+    {"company_name": "wint", "url": "https://wint.careers.hibob.com", "active": True},
 ]

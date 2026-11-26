@@ -19372,4 +19372,50 @@ RECRUITEE_PAGE_SEEDS = [
         "url": "https://yellowtail.recruitee.com",
         "active": True,
     },
+    {
+        "company_name": "1daysooner",
+        "url": "https://1daysooner.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "vandervalksystemen",
+        "url": "https://vandervalksystemen.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "verticalcompute",
+        "url": "https://verticalcompute.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "victronenergybv",
+        "url": "https://victronenergybv.recruitee.com",
+        "active": True,
+    },
+    {"company_name": "viewbox", "url": "https://viewbox.recruitee.com", "active": True},
+    {
+        "company_name": "wearekeen",
+        "url": "https://wearekeen.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "werkenbijadesso",
+        "url": "https://werkenbijadesso.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "werkenbijthuisgenoten",
+        "url": "https://werkenbijthuisgenoten.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "wingmangroup",
+        "url": "https://wingmangroup.recruitee.com",
+        "active": True,
+    },
+    {
+        "company_name": "zeosolar",
+        "url": "https://zeosolar.recruitee.com",
+        "active": True,
+    },
 ]
